@@ -3,36 +3,36 @@
 namespace ProblemDetailsTest;
 
 use PHPUnit\Framework\TestCase;
-use ProblemDetails\ProblemDetailsJsonResponse;
+use ProblemDetails\ProblemDetailsXmlResponse;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response\JsonResponse;
+use Zend\Diactoros\Response\TextResponse;
 
-class ProblemDetailsJsonResponseTest extends TestCase
+class ProblemDetailsXmlResponseTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
 
     public function testIsAResponseInterface()
     {
-        $response = new ProblemDetailsJsonResponse([]);
+        $response = new ProblemDetailsXmlResponse('<?xml version="1.0"?><root></root>');
         $this->assertInstanceOf(ResponseInterface::class, $response);
     }
 
-    public function testIsAJsonResponse()
+    public function testIsATextResponse()
     {
-        $response = new ProblemDetailsJsonResponse([]);
-        $this->assertInstanceOf(JsonResponse::class, $response);
+        $response = new ProblemDetailsXmlResponse('<?xml version="1.0"?><root></root>');
+        $this->assertInstanceOf(TextResponse::class, $response);
     }
 
-    public function testCreateReturnsAProblemDetailsJsonResponse()
+    public function testCreateReturnsAProblemDetailsXmlResponse()
     {
         $status = 400;
         $detail = 'Error in client submission';
         $title  = 'Bad Request';
         $type   = 'https://httpstatuses.com/400';
 
-        $response = ProblemDetailsJsonResponse::create($status, $detail, $title, $type);
+        $response = ProblemDetailsXmlResponse::create($status, $detail, $title, $type);
 
-        $this->assertInstanceOf(ProblemDetailsJsonResponse::class, $response);
+        $this->assertInstanceOf(ProblemDetailsXmlResponse::class, $response);
         return [
             'response' => $response,
             'status'   => $status,
@@ -43,23 +43,23 @@ class ProblemDetailsJsonResponseTest extends TestCase
     }
 
     /**
-     * @depends testCreateReturnsAProblemDetailsJsonResponse
+     * @depends testCreateReturnsAProblemDetailsXmlResponse
      */
     public function testCreatePopulatesResponseWithCorrectContentTypeHeader(array $expectations)
     {
         $response = $expectations['response'];
-        $this->assertEquals('application/problem-details+json', $response->getHeaderLine('Content-Type'));
+        $this->assertEquals('application/problem-details+xml', $response->getHeaderLine('Content-Type'));
     }
 
     /**
-     * @depends testCreateReturnsAProblemDetailsJsonResponse
+     * @depends testCreateReturnsAProblemDetailsXmlResponse
      */
     public function testCreatePopulatesResponseWithRequiredElements(array $expectations)
     {
         $response = $expectations['response'];
         unset($expectations['response']);
 
-        $payload = $this->getPayloadFromJsonResponse($response);
+        $payload = $this->getPayloadFromXmlResponse($response);
 
         $expectedKeys = array_keys($expectations);
         sort($expectedKeys);
@@ -67,7 +67,7 @@ class ProblemDetailsJsonResponseTest extends TestCase
         sort($payloadKeys);
 
         $this->assertSame($expectedKeys, $payloadKeys);
-        $this->assertSame($expectations['status'], $payload['status']);
+        $this->assertSame($expectations['status'], (int) $payload['status']);
         $this->assertSame($expectations['detail'], $payload['detail']);
         $this->assertSame($expectations['title'], $payload['title']);
         $this->assertSame($expectations['type'], $payload['type']);
@@ -89,21 +89,21 @@ class ProblemDetailsJsonResponseTest extends TestCase
     public function testCreateWillReturn500StatusForOutOfRangeStatus($status)
     {
         $status = is_int($status) ? $status : 0;
-        $response = ProblemDetailsJsonResponse::create($status, 'Invalid request provided');
+        $response = ProblemDetailsXmlResponse::create($status, 'Invalid request provided');
         $this->assertSame(500, $response->getStatusCode());
     }
 
     public function testCreateWillGenerateTitleFromStatusIfNotProvided()
     {
-        $response = ProblemDetailsJsonResponse::create(400, 'Invalid request provided');
-        $payload = $this->getPayloadFromJsonResponse($response);
+        $response = ProblemDetailsXmlResponse::create(400, 'Invalid request provided');
+        $payload = $this->getPayloadFromXmlResponse($response);
         $this->assertEquals('Bad Request', $payload['title']);
     }
 
     public function testCreateWillGenerateTypeFromStatusIfNotProvided()
     {
-        $response = ProblemDetailsJsonResponse::create(400, 'Invalid request provided');
-        $payload = $this->getPayloadFromJsonResponse($response);
+        $response = ProblemDetailsXmlResponse::create(400, 'Invalid request provided');
+        $payload = $this->getPayloadFromXmlResponse($response);
         $this->assertEquals('https://httpstatus.es/400', $payload['type']);
     }
 
@@ -122,12 +122,12 @@ class ProblemDetailsJsonResponseTest extends TestCase
             'new'    => 'Expected',
         ];
 
-        $response = ProblemDetailsJsonResponse::create($status, $detail, $title, $type, $additional);
+        $response = ProblemDetailsXmlResponse::create($status, $detail, $title, $type, $additional);
 
-        $this->assertInstanceOf(ProblemDetailsJsonResponse::class, $response);
+        $this->assertInstanceOf(ProblemDetailsXmlResponse::class, $response);
 
-        $payload = $this->getPayloadFromJsonResponse($response);
-        $this->assertSame($status, $payload['status']);
+        $payload = $this->getPayloadFromXmlResponse($response);
+        $this->assertSame($status, (int) $payload['status']);
         $this->assertSame($detail, $payload['detail']);
         $this->assertSame($title, $payload['title']);
         $this->assertSame($type, $payload['type']);
@@ -138,10 +138,10 @@ class ProblemDetailsJsonResponseTest extends TestCase
     {
         $e = new TestAsset\RuntimeException('An exception to throw', 424);
 
-        $response = ProblemDetailsJsonResponse::createFromThrowable($e);
+        $response = ProblemDetailsXmlResponse::createFromThrowable($e);
 
         $this->assertSame($e->getCode(), $response->getStatusCode());
-        $payload = $this->getPayloadFromJsonResponse($response);
+        $payload = $this->getPayloadFromXmlResponse($response);
         $this->assertEquals('Failed Dependency', $payload['title']);
         $this->assertEquals('https://httpstatus.es/424', $payload['type']);
         $this->assertEquals($e->getMessage(), $payload['detail']);
@@ -155,7 +155,7 @@ class ProblemDetailsJsonResponseTest extends TestCase
     {
         $e = new TestAsset\RuntimeException('An exception to throw', $code);
 
-        $response = ProblemDetailsJsonResponse::createFromThrowable($e);
+        $response = ProblemDetailsXmlResponse::createFromThrowable($e);
 
         $this->assertSame(500, $response->getStatusCode());
     }
@@ -164,13 +164,13 @@ class ProblemDetailsJsonResponseTest extends TestCase
     {
         $e = new TestAsset\RuntimeException('An exception to throw', 424);
 
-        $response = ProblemDetailsJsonResponse::createFromThrowable(
+        $response = ProblemDetailsXmlResponse::createFromThrowable(
             $e,
-            ProblemDetailsJsonResponse::INCLUDE_THROWABLE_DETAILS
+            ProblemDetailsXmlResponse::INCLUDE_THROWABLE_DETAILS
         );
 
         $this->assertSame($e->getCode(), $response->getStatusCode());
-        $payload = $this->getPayloadFromJsonResponse($response);
+        $payload = $this->getPayloadFromXmlResponse($response);
         $this->assertArrayHasKey('exception', $payload);
 
         $this->assertExceptionDetails($e, $payload['exception']);
@@ -182,13 +182,13 @@ class ProblemDetailsJsonResponseTest extends TestCase
         $second = new TestAsset\RuntimeException('Second exception', 500, $first);
         $thrown = new TestAsset\RuntimeException('An exception to throw', 424, $second);
 
-        $response = ProblemDetailsJsonResponse::createFromThrowable(
+        $response = ProblemDetailsXmlResponse::createFromThrowable(
             $thrown,
-            ProblemDetailsJsonResponse::INCLUDE_THROWABLE_DETAILS
+            ProblemDetailsXmlResponse::INCLUDE_THROWABLE_DETAILS
         );
 
         $this->assertSame($thrown->getCode(), $response->getStatusCode());
-        $payload = $this->getPayloadFromJsonResponse($response);
+        $payload = $this->getPayloadFromXmlResponse($response);
         $this->assertArrayHasKey('exception', $payload);
 
         $exceptionDetails = $payload['exception'];

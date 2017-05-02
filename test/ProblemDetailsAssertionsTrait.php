@@ -3,6 +3,7 @@
 namespace ProblemDetailsTest;
 
 use ProblemDetails\ProblemDetailsJsonResponse;
+use ProblemDetails\ProblemDetailsXmlResponse;
 use Throwable;
 
 trait ProblemDetailsAssertionsTrait
@@ -30,13 +31,13 @@ trait ProblemDetailsAssertionsTrait
         $this->assertArrayHasKey('class', $details);
         $this->assertSame(get_class($e), $details['class']);
         $this->assertArrayHasKey('code', $details);
-        $this->assertSame($e->getCode(), $details['code']);
+        $this->assertSame($e->getCode(), (int) $details['code']);
         $this->assertArrayHasKey('message', $details);
         $this->assertSame($e->getMessage(), $details['message']);
         $this->assertArrayHasKey('file', $details);
         $this->assertSame($e->getFile(), $details['file']);
         $this->assertArrayHasKey('line', $details);
-        $this->assertSame($e->getLine(), $details['line']);
+        $this->assertSame($e->getLine(), (int) $details['line']);
 
         // PHP does some odd things when creating the trace; individual items
         // may be objects, but once copied, they are arrays. This makes direct
@@ -49,6 +50,14 @@ trait ProblemDetailsAssertionsTrait
     {
         $body = $response->getBody();
         $json = (string) $body;
+        return json_decode($json, true);
+    }
+
+    public function getPayloadFromXmlResponse(ProblemDetailsXmlResponse $response) : array
+    {
+        $body = $response->getBody();
+        $xml = simplexml_load_string((string) $body);
+        $json = json_encode($xml);
         return json_decode($json, true);
     }
 }
