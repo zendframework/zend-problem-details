@@ -5,37 +5,11 @@ namespace ProblemDetailsTest;
 use PHPUnit\Framework\TestCase;
 use ProblemDetails\ProblemDetailsResponse;
 use Psr\Http\Message\ResponseInterface;
-use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
 
 class ProblemDetailsResponseTest extends TestCase
 {
-    public function assertExceptionDetails(Throwable $e, array $details)
-    {
-        $this->assertArrayHasKey('class', $details);
-        $this->assertSame(get_class($e), $details['class']);
-        $this->assertArrayHasKey('code', $details);
-        $this->assertSame($e->getCode(), $details['code']);
-        $this->assertArrayHasKey('message', $details);
-        $this->assertSame($e->getMessage(), $details['message']);
-        $this->assertArrayHasKey('file', $details);
-        $this->assertSame($e->getFile(), $details['file']);
-        $this->assertArrayHasKey('line', $details);
-        $this->assertSame($e->getLine(), $details['line']);
-
-        // PHP does some odd things when creating the trace; individual items
-        // may be objects, but once copied, they are arrays. This makes direct
-        // comparison impossible; thus, only testing for correct type.
-        $this->assertArrayHasKey('trace', $details);
-        $this->assertInternalType('array', $details['trace']);
-    }
-
-    public function getPayloadFromResponse(ProblemDetailsResponse $response) : array
-    {
-        $body = $response->getBody();
-        $json = (string) $body;
-        return json_decode($json, true);
-    }
+    use ProblemDetailsAssertionsTrait;
 
     public function testIsAResponseInterface()
     {
@@ -181,7 +155,7 @@ class ProblemDetailsResponseTest extends TestCase
     {
         $e = new TestAsset\RuntimeException('An exception to throw', 424);
 
-        $response = ProblemDetailsResponse::createFromThrowable($e, true);
+        $response = ProblemDetailsResponse::createFromThrowable($e, ProblemDetailsResponse::INCLUDE_THROWABLE_DETAILS);
 
         $this->assertSame($e->getCode(), $response->getStatusCode());
         $payload = $this->getPayloadFromResponse($response);
@@ -196,7 +170,10 @@ class ProblemDetailsResponseTest extends TestCase
         $second = new TestAsset\RuntimeException('Second exception', 500, $first);
         $thrown = new TestAsset\RuntimeException('An exception to throw', 424, $second);
 
-        $response = ProblemDetailsResponse::createFromThrowable($thrown, true);
+        $response = ProblemDetailsResponse::createFromThrowable(
+            $thrown,
+            ProblemDetailsResponse::INCLUDE_THROWABLE_DETAILS
+        );
 
         $this->assertSame($thrown->getCode(), $response->getStatusCode());
         $payload = $this->getPayloadFromResponse($response);

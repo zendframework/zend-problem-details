@@ -13,6 +13,9 @@ use Throwable;
  */
 class ProblemDetailsResponse extends JsonResponse
 {
+    const INCLUDE_THROWABLE_DETAILS = true;
+    const EXCLUDE_THROWABLE_DETAILS = false;
+
     /**
      * @var string[] Default problem detail titles based on status code
      */
@@ -88,7 +91,7 @@ class ProblemDetailsResponse extends JsonResponse
         return new self($payload, $status, ['Content-Type' => 'application/problem+json']);
     }
 
-    public static function createFromThrowable(Throwable $e, bool $includeThrowable = false)
+    public static function createFromThrowable(Throwable $e, bool $includeThrowable = self::EXCLUDE_THROWABLE_DETAILS)
     {
         $additionalDetails = $includeThrowable ? self::createThrowableDetail($e) : [];
         $code = is_int($e->getCode()) ? $e->getCode() : 0;
