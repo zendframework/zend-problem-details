@@ -5,7 +5,7 @@ namespace ProblemDetailsTest;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use ProblemDetails\ProblemDetailsErrorMiddleware;
-use ProblemDetails\ProblemDetailsResponse;
+use ProblemDetails\ProblemDetailsJsonResponse;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,10 +42,10 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
         $middleware = new ProblemDetailsErrorMiddleware();
         $result = $middleware->process($request, $delegate->reveal());
 
-        $this->assertInstanceOf(ProblemDetailsResponse::class, $result);
+        $this->assertInstanceOf(ProblemDetailsJsonResponse::class, $result);
         $this->assertEquals(500, $result->getStatusCode());
 
-        $payload = $this->getPayloadFromResponse($result);
+        $payload = $this->getPayloadFromJsonResponse($result);
         $this->assertProblemDetails([
             'title'  => 'Internal Server Error',
             'detail' => 'Application did not return a response',
@@ -68,10 +68,10 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
         $middleware = new ProblemDetailsErrorMiddleware();
         $result = $middleware->process($request, $delegate->reveal());
 
-        $this->assertInstanceOf(ProblemDetailsResponse::class, $result);
+        $this->assertInstanceOf(ProblemDetailsJsonResponse::class, $result);
         $this->assertEquals(507, $result->getStatusCode());
 
-        $payload = $this->getPayloadFromResponse($result);
+        $payload = $this->getPayloadFromJsonResponse($result);
         $this->assertProblemDetails([
             'title'  => 'Insufficient Storage',
             'detail' => 'Thrown!',
@@ -91,13 +91,13 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
             ->willThrow($exception);
 
 
-        $middleware = new ProblemDetailsErrorMiddleware(ProblemDetailsResponse::INCLUDE_THROWABLE_DETAILS);
+        $middleware = new ProblemDetailsErrorMiddleware(ProblemDetailsJsonResponse::INCLUDE_THROWABLE_DETAILS);
         $result = $middleware->process($request, $delegate->reveal());
 
-        $this->assertInstanceOf(ProblemDetailsResponse::class, $result);
+        $this->assertInstanceOf(ProblemDetailsJsonResponse::class, $result);
         $this->assertEquals(507, $result->getStatusCode());
 
-        $payload = $this->getPayloadFromResponse($result);
+        $payload = $this->getPayloadFromJsonResponse($result);
         $this->assertProblemDetails([
             'title'  => 'Insufficient Storage',
             'detail' => 'Thrown!',
@@ -121,10 +121,10 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
         $middleware = new ProblemDetailsErrorMiddleware();
         $result = $middleware->process($request, $delegate->reveal());
 
-        $this->assertInstanceOf(ProblemDetailsResponse::class, $result);
+        $this->assertInstanceOf(ProblemDetailsJsonResponse::class, $result);
         $this->assertEquals(500, $result->getStatusCode());
 
-        $payload = $this->getPayloadFromResponse($result);
+        $payload = $this->getPayloadFromJsonResponse($result);
         $this->assertProblemDetails([
             'title'  => 'Internal Server Error',
             'detail' => 'Triggered error!',

@@ -37,7 +37,7 @@ class ProblemDetailsErrorMiddleware implements MiddlewareInterface
                 throw new MissingResponseException('Application did not return a response');
             }
         } catch (Throwable $e) {
-            $response = ProblemDetailsResponse::createFromThrowable($e, $this->includeThrowableDetail);
+            $response = ProblemDetailsJsonResponse::createFromThrowable($e, $this->includeThrowableDetail);
         }
 
         restore_error_handler();

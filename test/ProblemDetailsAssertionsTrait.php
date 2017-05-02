@@ -2,7 +2,7 @@
 
 namespace ProblemDetailsTest;
 
-use ProblemDetails\ProblemDetailsResponse;
+use ProblemDetails\ProblemDetailsJsonResponse;
 use Throwable;
 
 trait ProblemDetailsAssertionsTrait
@@ -45,7 +45,7 @@ trait ProblemDetailsAssertionsTrait
         $this->assertInternalType('array', $details['trace']);
     }
 
-    public function getPayloadFromResponse(ProblemDetailsResponse $response) : array
+    public function getPayloadFromJsonResponse(ProblemDetailsJsonResponse $response) : array
     {
         $body = $response->getBody();
         $json = (string) $body;

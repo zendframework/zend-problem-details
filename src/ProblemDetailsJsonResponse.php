@@ -11,7 +11,7 @@ use Throwable;
  *
  * @see https://tools.ietf.org/html/rfc7807
  */
-class ProblemDetailsResponse extends JsonResponse
+class ProblemDetailsJsonResponse extends JsonResponse
 {
     const INCLUDE_THROWABLE_DETAILS = true;
     const EXCLUDE_THROWABLE_DETAILS = false;
