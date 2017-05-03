@@ -13,7 +13,7 @@ use Throwable;
  */
 class ProblemDetailsResponseFactory
 {
-    private static $negotiationPriorities = [
+    const NEGOTIATION_PRIORITIES = [
         'application/json',
         'application/*+json',
         'application/xml',
@@ -43,7 +43,7 @@ class ProblemDetailsResponseFactory
 
     private static function discoverResponseClass(string $accept) : string
     {
-        $mediaType = (new Negotiator())->getBest($accept, self::$negotiationPriorities);
+        $mediaType = (new Negotiator())->getBest($accept, self::NEGOTIATION_PRIORITIES);
 
         if (! $mediaType) {
             return ProblemDetailsXmlResponse::class;

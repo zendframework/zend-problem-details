@@ -6,6 +6,7 @@ use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use ProblemDetails\ProblemDetailsErrorMiddleware;
 use ProblemDetails\ProblemDetailsJsonResponse;
+use ProblemDetails\ProblemDetailsXmlResponse;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,38 +15,55 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
 
+    protected function setUp()
+    {
+        $this->request = $this->prophesize(ServerRequestInterface::class);
+    }
+
+    public function acceptHeaders()
+    {
+        return [
+            'application/xml'          => ['application/xml', ProblemDetailsXmlResponse::class],
+            'application/vnd.api+xml'  => ['application/vnd.api+xml', ProblemDetailsXmlResponse::class],
+            'application/json'         => ['application/json', ProblemDetailsJsonResponse::class],
+            'application/vnd.api+json' => ['application/vnd.api+json', ProblemDetailsJsonResponse::class],
+        ];
+    }
+
     public function testSuccessfulDelegationReturnsDelegateResponse()
     {
-        $request  = $this->prophesize(ServerRequestInterface::class)->reveal();
         $response = $this->prophesize(ResponseInterface::class);
         $delegate = $this->prophesize(DelegateInterface::class);
         $delegate
-            ->process($request)
+            ->process(Argument::that([$this->request, 'reveal']))
             ->will([$response, 'reveal']);
 
 
         $middleware = new ProblemDetailsErrorMiddleware();
-        $result = $middleware->process($request, $delegate->reveal());
+        $result = $middleware->process($this->request->reveal(), $delegate->reveal());
 
         $this->assertSame($response->reveal(), $result);
     }
 
-    public function testDelegateNotReturningResponseResultsInProblemDetails()
+    /**
+     * @dataProvider acceptHeaders
+     */
+    public function testDelegateNotReturningResponseResultsInProblemDetails(string $accept, string $expectedType)
     {
-        $request  = $this->prophesize(ServerRequestInterface::class)->reveal();
+        $this->request->getHeaderLine('Accept')->willReturn($accept);
         $delegate = $this->prophesize(DelegateInterface::class);
         $delegate
-            ->process($request)
+            ->process(Argument::that([$this->request, 'reveal']))
             ->willReturn('Unexpected');
 
 
         $middleware = new ProblemDetailsErrorMiddleware();
-        $result = $middleware->process($request, $delegate->reveal());
+        $result = $middleware->process($this->request->reveal(), $delegate->reveal());
 
-        $this->assertInstanceOf(ProblemDetailsJsonResponse::class, $result);
+        $this->assertInstanceOf($expectedType, $result);
         $this->assertEquals(500, $result->getStatusCode());
 
-        $payload = $this->getPayloadFromJsonResponse($result);
+        $payload = $this->getPayloadFromResponse($result);
         $this->assertProblemDetails([
             'title'  => 'Internal Server Error',
             'detail' => 'Application did not return a response',
@@ -55,23 +73,26 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
         $this->assertArrayNotHasKey('exception', $payload);
     }
 
-    public function testThrowableRaisedByDelegateResultsInProblemDetails()
+    /**
+     * @dataProvider acceptHeaders
+     */
+    public function testThrowableRaisedByDelegateResultsInProblemDetails(string $accept, string $expectedType)
     {
-        $request   = $this->prophesize(ServerRequestInterface::class)->reveal();
+        $this->request->getHeaderLine('Accept')->willReturn($accept);
         $exception = new TestAsset\RuntimeException('Thrown!', 507);
         $delegate  = $this->prophesize(DelegateInterface::class);
         $delegate
-            ->process($request)
+            ->process(Argument::that([$this->request, 'reveal']))
             ->willThrow($exception);
 
 
         $middleware = new ProblemDetailsErrorMiddleware();
-        $result = $middleware->process($request, $delegate->reveal());
+        $result = $middleware->process($this->request->reveal(), $delegate->reveal());
 
-        $this->assertInstanceOf(ProblemDetailsJsonResponse::class, $result);
+        $this->assertInstanceOf($expectedType, $result);
         $this->assertEquals(507, $result->getStatusCode());
 
-        $payload = $this->getPayloadFromJsonResponse($result);
+        $payload = $this->getPayloadFromResponse($result);
         $this->assertProblemDetails([
             'title'  => 'Insufficient Storage',
             'detail' => 'Thrown!',
@@ -81,23 +102,28 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
         $this->assertArrayNotHasKey('exception', $payload);
     }
 
-    public function testProblemDetailsContainThrowableDetailsWhenMiddlewareConfiguredToDoSo()
-    {
-        $request   = $this->prophesize(ServerRequestInterface::class)->reveal();
+    /**
+     * @dataProvider acceptHeaders
+     */
+    public function testProblemDetailsContainThrowableDetailsWhenMiddlewareConfiguredToDoSo(
+        string $accept,
+        string $expectedType
+    ) {
+        $this->request->getHeaderLine('Accept')->willReturn($accept);
         $exception = new TestAsset\RuntimeException('Thrown!', 507);
         $delegate  = $this->prophesize(DelegateInterface::class);
         $delegate
-            ->process($request)
+            ->process(Argument::that([$this->request, 'reveal']))
             ->willThrow($exception);
 
 
         $middleware = new ProblemDetailsErrorMiddleware(ProblemDetailsJsonResponse::INCLUDE_THROWABLE_DETAILS);
-        $result = $middleware->process($request, $delegate->reveal());
+        $result = $middleware->process($this->request->reveal(), $delegate->reveal());
 
-        $this->assertInstanceOf(ProblemDetailsJsonResponse::class, $result);
+        $this->assertInstanceOf($expectedType, $result);
         $this->assertEquals(507, $result->getStatusCode());
 
-        $payload = $this->getPayloadFromJsonResponse($result);
+        $payload = $this->getPayloadFromResponse($result);
         $this->assertProblemDetails([
             'title'  => 'Insufficient Storage',
             'detail' => 'Thrown!',
@@ -107,24 +133,29 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
         $this->assertArrayHasKey('exception', $payload);
     }
 
-    public function testMiddlewareRegistersErrorHandlerToConvertErrorsToProblemDetails()
-    {
-        $request  = $this->prophesize(ServerRequestInterface::class)->reveal();
+    /**
+     * @dataProvider acceptHeaders
+     */
+    public function testMiddlewareRegistersErrorHandlerToConvertErrorsToProblemDetails(
+        string $accept,
+        string $expectedType
+    ) {
+        $this->request->getHeaderLine('Accept')->willReturn($accept);
         $delegate = $this->prophesize(DelegateInterface::class);
         $delegate
-            ->process($request)
+            ->process(Argument::that([$this->request, 'reveal']))
             ->will(function () {
                 trigger_error('Triggered error!', \E_USER_ERROR);
             });
 
 
         $middleware = new ProblemDetailsErrorMiddleware();
-        $result = $middleware->process($request, $delegate->reveal());
+        $result = $middleware->process($this->request->reveal(), $delegate->reveal());
 
-        $this->assertInstanceOf(ProblemDetailsJsonResponse::class, $result);
+        $this->assertInstanceOf($expectedType, $result);
         $this->assertEquals(500, $result->getStatusCode());
 
-        $payload = $this->getPayloadFromJsonResponse($result);
+        $payload = $this->getPayloadFromResponse($result);
         $this->assertProblemDetails([
             'title'  => 'Internal Server Error',
             'detail' => 'Triggered error!',
@@ -132,5 +163,23 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
         ], $payload);
 
         $this->assertArrayNotHasKey('exception', $payload);
+    }
+
+    public function testRethrowsCaughtExceptionIfUnableToNegotiateAcceptHeader()
+    {
+        $this->request->getHeaderLine('Accept')->willReturn('text/html');
+        $exception = new TestAsset\RuntimeException('Thrown!', 507);
+        $delegate  = $this->prophesize(DelegateInterface::class);
+        $delegate
+            ->process(Argument::that([$this->request, 'reveal']))
+            ->willThrow($exception);
+
+
+        $middleware = new ProblemDetailsErrorMiddleware();
+
+        $this->expectException(TestAsset\RuntimeException::class);
+        $this->expectExceptionMessage('Thrown!');
+        $this->expectExceptionCode(507);
+        $result = $middleware->process($this->request->reveal(), $delegate->reveal());
     }
 }

@@ -3,6 +3,7 @@
 namespace ProblemDetailsTest;
 
 use ProblemDetails\ProblemDetailsJsonResponse;
+use ProblemDetails\ProblemDetailsResponse;
 use ProblemDetails\ProblemDetailsXmlResponse;
 use Throwable;
 
@@ -44,6 +45,17 @@ trait ProblemDetailsAssertionsTrait
         // comparison impossible; thus, only testing for correct type.
         $this->assertArrayHasKey('trace', $details);
         $this->assertInternalType('array', $details['trace']);
+    }
+
+    public function getPayloadFromResponse(ProblemDetailsResponse $response) : array
+    {
+        if ($response instanceof ProblemDetailsJsonResponse) {
+            return $this->getPayloadFromJsonResponse($response);
+        }
+
+        if ($response instanceof ProblemDetailsXmlResponse) {
+            return $this->getPayloadFromXmlResponse($response);
+        }
     }
 
     public function getPayloadFromJsonResponse(ProblemDetailsJsonResponse $response) : array

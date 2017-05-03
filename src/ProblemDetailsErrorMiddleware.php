@@ -5,6 +5,7 @@ namespace ProblemDetails;
 use ErrorException;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Negotiation\Negotiator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -37,7 +38,19 @@ class ProblemDetailsErrorMiddleware implements MiddlewareInterface
                 throw new MissingResponseException('Application did not return a response');
             }
         } catch (Throwable $e) {
-            $response = ProblemDetailsJsonResponse::createFromThrowable($e, $this->includeThrowableDetail);
+            $accept = $request->getHeaderLine('Accept');
+            $mediaType = (new Negotiator())->getBest($accept, ProblemDetailsResponseFactory::NEGOTIATION_PRIORITIES);
+
+            // Re-throw if we cannot provide a representation
+            if (! $mediaType) {
+                throw $e;
+            }
+
+            $response = ProblemDetailsResponseFactory::createResponseFromThrowable(
+                $accept,
+                $e,
+                $this->includeThrowableDetail
+            );
         }
 
         restore_error_handler();
