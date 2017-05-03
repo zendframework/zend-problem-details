@@ -17,9 +17,12 @@ use Zend\Stratigility\Exception\MissingResponseException;
  */
 class ProblemDetailsMiddleware implements MiddlewareInterface
 {
+    /**
+     * @var bool
+     */
     private $includeThrowableDetail;
 
-    public function __construct(bool $includeThrowableDetail = false)
+    public function __construct(bool $includeThrowableDetail = ProblemDetailsResponse::EXCLUDE_THROWABLE_DETAILS)
     {
         $this->includeThrowableDetail = $includeThrowableDetail;
     }
