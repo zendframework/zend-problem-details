@@ -3,8 +3,11 @@
 namespace ProblemDetailsTest;
 
 use PHPUnit\Framework\TestCase;
+use ProblemDetails\CommonProblemDetailsException;
+use ProblemDetails\ProblemDetailsException;
 use ProblemDetails\ProblemDetailsJsonResponse;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 use Zend\Diactoros\Response\JsonResponse;
 
 class ProblemDetailsJsonResponseTest extends TestCase
@@ -200,5 +203,52 @@ class ProblemDetailsJsonResponseTest extends TestCase
 
         $this->assertExceptionDetails($second, array_shift($exceptionDetails['stack']));
         $this->assertExceptionDetails($first, array_shift($exceptionDetails['stack']));
+    }
+
+    public function testCreateFromThrowableWillUseProblemDetailExceptionDetails()
+    {
+        $status = 400;
+        $detail = 'Error in client submission';
+        $title  = 'Bad Request';
+        $type   = 'https://httpstatuses.com/400';
+
+        $additional = [
+            'other' => 'Expected',
+        ];
+
+        $e = new class (
+            $status,
+            $detail,
+            $title,
+            $type,
+            $additional
+        ) extends RuntimeException implements ProblemDetailsException {
+            use CommonProblemDetailsException;
+
+            private $status;
+            private $type;
+            private $title;
+            private $detail;
+            private $additional;
+
+            public function __construct(int $status, string $detail, string $title, string $type, array $additional)
+            {
+                $this->status = $status;
+                $this->detail = $detail;
+                $this->title = $title;
+                $this->type = $type;
+                $this->additional = $additional;
+            }
+        };
+
+        $response = ProblemDetailsJsonResponse::createFromThrowable($e);
+
+        $this->assertSame($status, $response->getStatusCode());
+        $payload = $this->getPayloadFromResponse($response);
+        $this->assertEquals($status, $payload['status']);
+        $this->assertEquals($title, $payload['title']);
+        $this->assertEquals($type, $payload['type']);
+        $this->assertEquals($detail, $payload['detail']);
+        $this->assertEquals($additional['other'], $payload['other']);
     }
 }

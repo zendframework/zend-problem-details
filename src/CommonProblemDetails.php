@@ -99,6 +99,16 @@ trait CommonProblemDetails
         Throwable $e,
         bool $includeThrowable = ProblemDetailsResponse::EXCLUDE_THROWABLE_DETAILS
     ) : ProblemDetailsResponse {
+        if ($e instanceof ProblemDetailsException) {
+            return self::create(
+                $e->getStatus(),
+                $e->getDetail(),
+                $e->getTitle(),
+                $e->getType(),
+                $e->getAdditionalData()
+            );
+        }
+
         $additionalDetails = $includeThrowable ? self::createThrowableDetail($e) : [];
         $code = is_int($e->getCode()) ? $e->getCode() : 0;
         return self::create($code, $e->getMessage(), '', '', $additionalDetails);
