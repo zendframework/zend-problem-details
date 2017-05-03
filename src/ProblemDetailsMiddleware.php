@@ -9,7 +9,6 @@ use Negotiation\Negotiator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
-use Zend\Stratigility\Exception\MissingResponseException;
 
 /**
  * Middleware that ensures a Problem Details response is returned
