@@ -51,7 +51,7 @@ class ProblemDetailsXmlResponseTest extends TestCase
     public function testCreatePopulatesResponseWithCorrectContentTypeHeader(array $expectations)
     {
         $response = $expectations['response'];
-        $this->assertEquals('application/problem-details+xml', $response->getHeaderLine('Content-Type'));
+        $this->assertEquals('application/problem+xml', $response->getHeaderLine('Content-Type'));
     }
 
     /**

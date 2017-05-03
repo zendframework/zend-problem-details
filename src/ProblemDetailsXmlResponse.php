@@ -9,7 +9,7 @@ class ProblemDetailsXmlResponse extends TextResponse implements ProblemDetailsRe
 {
     use CommonProblemDetails;
 
-    private static $contentType = 'application/problem-details+xml';
+    private static $contentType = 'application/problem+xml';
 
     protected static function generatePayload(array $payload)
     {

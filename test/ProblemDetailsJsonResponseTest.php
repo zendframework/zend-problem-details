@@ -51,7 +51,7 @@ class ProblemDetailsJsonResponseTest extends TestCase
     public function testCreatePopulatesResponseWithCorrectContentTypeHeader(array $expectations)
     {
         $response = $expectations['response'];
-        $this->assertEquals('application/problem-details+json', $response->getHeaderLine('Content-Type'));
+        $this->assertEquals('application/problem+json', $response->getHeaderLine('Content-Type'));
     }
 
     /**

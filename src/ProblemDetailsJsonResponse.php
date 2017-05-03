@@ -14,7 +14,7 @@ class ProblemDetailsJsonResponse extends JsonResponse implements ProblemDetailsR
 {
     use CommonProblemDetails;
 
-    private static $contentType = 'application/problem-details+json';
+    private static $contentType = 'application/problem+json';
 
     /**
      * Generate the payload for the response.
