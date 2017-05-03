@@ -45,6 +45,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
 
             // Re-throw if we cannot provide a representation
             if (! $mediaType) {
+                restore_error_handler();
                 throw $e;
             }
 
