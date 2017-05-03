@@ -40,3 +40,5 @@ Documentation is [in the doc tree](doc/book/), and can be compiled using [mkdocs
 ```bash
 $ mkdocs build
 ```
+
+You may also [browse the documentation online](https://weierophinney.github.io/problem-details/index.html).
