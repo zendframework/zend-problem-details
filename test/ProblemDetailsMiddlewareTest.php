@@ -4,14 +4,14 @@ namespace ProblemDetailsTest;
 
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
-use ProblemDetails\ProblemDetailsErrorMiddleware;
 use ProblemDetails\ProblemDetailsJsonResponse;
+use ProblemDetails\ProblemDetailsMiddleware;
 use ProblemDetails\ProblemDetailsXmlResponse;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ProblemDetailsErrorMiddlewareTest extends TestCase
+class ProblemDetailsMiddlewareTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
 
@@ -39,7 +39,7 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
             ->will([$response, 'reveal']);
 
 
-        $middleware = new ProblemDetailsErrorMiddleware();
+        $middleware = new ProblemDetailsMiddleware();
         $result = $middleware->process($this->request->reveal(), $delegate->reveal());
 
         $this->assertSame($response->reveal(), $result);
@@ -57,7 +57,7 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
             ->willReturn('Unexpected');
 
 
-        $middleware = new ProblemDetailsErrorMiddleware();
+        $middleware = new ProblemDetailsMiddleware();
         $result = $middleware->process($this->request->reveal(), $delegate->reveal());
 
         $this->assertInstanceOf($expectedType, $result);
@@ -86,7 +86,7 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
             ->willThrow($exception);
 
 
-        $middleware = new ProblemDetailsErrorMiddleware();
+        $middleware = new ProblemDetailsMiddleware();
         $result = $middleware->process($this->request->reveal(), $delegate->reveal());
 
         $this->assertInstanceOf($expectedType, $result);
@@ -117,7 +117,7 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
             ->willThrow($exception);
 
 
-        $middleware = new ProblemDetailsErrorMiddleware(ProblemDetailsJsonResponse::INCLUDE_THROWABLE_DETAILS);
+        $middleware = new ProblemDetailsMiddleware(ProblemDetailsJsonResponse::INCLUDE_THROWABLE_DETAILS);
         $result = $middleware->process($this->request->reveal(), $delegate->reveal());
 
         $this->assertInstanceOf($expectedType, $result);
@@ -149,7 +149,7 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
             });
 
 
-        $middleware = new ProblemDetailsErrorMiddleware();
+        $middleware = new ProblemDetailsMiddleware();
         $result = $middleware->process($this->request->reveal(), $delegate->reveal());
 
         $this->assertInstanceOf($expectedType, $result);
@@ -175,7 +175,7 @@ class ProblemDetailsErrorMiddlewareTest extends TestCase
             ->willThrow($exception);
 
 
-        $middleware = new ProblemDetailsErrorMiddleware();
+        $middleware = new ProblemDetailsMiddleware();
 
         $this->expectException(TestAsset\RuntimeException::class);
         $this->expectExceptionMessage('Thrown!');

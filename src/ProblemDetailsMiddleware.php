@@ -15,7 +15,7 @@ use Zend\Stratigility\Exception\MissingResponseException;
  * Middleware that ensures a Problem Details response is returned
  * for all errors and Exceptions/Throwables.
  */
-class ProblemDetailsErrorMiddleware implements MiddlewareInterface
+class ProblemDetailsMiddleware implements MiddlewareInterface
 {
     private $includeThrowableDetail;
 
