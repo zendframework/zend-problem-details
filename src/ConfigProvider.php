@@ -21,7 +21,6 @@ class ConfigProvider
     {
         return [
             'dependencies' => $this->getDependencies(),
-            'templates'    => $this->getTemplates(),
         ];
     }
 
@@ -33,23 +32,8 @@ class ConfigProvider
     public function getDependencies()
     {
         return [
-            'invokables' => [
-            ],
             'factories'  => [
-            ],
-        ];
-    }
-
-    /**
-     * Returns the templates configuration
-     *
-     * @return array
-     */
-    public function getTemplates()
-    {
-        return [
-            'paths' => [
-                'problem' => [__DIR__ . '/../templates'],
+                ProblemDetailsMiddleware::class => ProblemDetailsMiddlewareFactory::class,
             ],
         ];
     }
