@@ -5,7 +5,7 @@ namespace ProblemDetails;
 /**
  * Common functionality for ProblemDetailsException implementations.
  *
- * Requires defining the following properties in the composing class:
+ * Requires setting the following properties in the composing class:
  *
  * - status (int)
  * - detail (string)
@@ -15,6 +15,31 @@ namespace ProblemDetails;
  */
 trait CommonProblemDetailsException
 {
+    /**
+     * @var int
+     */
+    private $status;
+
+    /**
+     * @var string
+     */
+    private $detail;
+
+    /**
+     * @var string
+     */
+    private $title;
+
+    /**
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @var array
+     */
+    private $additional = [];
+
     public function getStatus() : int
     {
         return $this->status;
