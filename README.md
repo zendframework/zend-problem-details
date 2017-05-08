@@ -8,26 +8,7 @@ exception types for [PSR-7](http://www.php-fig.org/psr/psr-7/) applications.
 
 ## Installation
 
-This library currently depends on an unreleased patch to willdurand/negotiation.
-Your first step is adding a repository entry to your `composer.json` for
-retrieving that patch:
-
-```json
-"repositories": [
-    {"type": "vcs", "url": "https://github.com/weierophinney/negotiation.git"}
-]
-```
-
-You will then need to provide a manual specification for the
-`willdurand/negotiation` requirement within `composer.json`:
-
-```json
-"require": {
-      "willdurand/negotiation": "dev-feature/plus-part-matching as 2.3.0"
-}
-```
-
-Once you have made those changes, run the following to install this library:
+Run the following to install this library:
 
 ```bash
 $ composer require weierophinney/problem-details
