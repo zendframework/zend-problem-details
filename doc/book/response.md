@@ -190,7 +190,7 @@ class ApiMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         // discovered an error, so returning problem details:
-        return ProblemDetailsResponseFactory::create(
+        return ProblemDetailsResponseFactory::createResponse(
             $request->getHeaderLine('Accept'),
             403,
             'You do not have valid credentials to access ' . $request->getUri()->getPath(),
