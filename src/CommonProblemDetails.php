@@ -116,7 +116,7 @@ trait CommonProblemDetails
 
     private static function normalizeStatus(int $status) : int
     {
-        if ($status < 100 || $status > 599) {
+        if ($status < 400 || $status > 599) {
             return 500;
         }
 

@@ -80,6 +80,7 @@ class ProblemDetailsXmlResponseTest extends TestCase
     {
         return [
             99       => [99],
+            399      => [399],
             600      => [600],
             0        => [0],
             'string' => ['string'],
