@@ -17,13 +17,13 @@ use Throwable;
 class ProblemDetailsMiddleware implements MiddlewareInterface
 {
     /**
-     * @var bool
+     * @var ProblemDetailsResponseFactory
      */
-    private $includeThrowableDetail;
+    private $responseFactory;
 
-    public function __construct(bool $includeThrowableDetail = ProblemDetailsResponse::EXCLUDE_THROWABLE_DETAILS)
+    public function __construct(ProblemDetailsResponseFactory $responseFactory = null)
     {
-        $this->includeThrowableDetail = $includeThrowableDetail;
+        $this->responseFactory = $responseFactory ?: new ProblemDetailsResponseFactory();
     }
 
     /**
@@ -31,34 +31,36 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, DelegateInterface $delegate) : ResponseInterface
     {
-        set_error_handler($this->createErrorHandler());
+        // If we cannot provide a representation, act as a no-op.
+        if (! $this->canActAsErrorHandler($request)) {
+            return $delegate->process($request);
+        }
 
         try {
+            set_error_handler($this->createErrorHandler());
             $response = $delegate->process($request);
 
             if (! $response instanceof ResponseInterface) {
                 throw new MissingResponseException('Application did not return a response');
             }
         } catch (Throwable $e) {
-            $accept = $request->getHeaderLine('Accept');
-            $mediaType = (new Negotiator())->getBest($accept, ProblemDetailsResponseFactory::NEGOTIATION_PRIORITIES);
-
-            // Re-throw if we cannot provide a representation
-            if (! $mediaType) {
-                restore_error_handler();
-                throw $e;
-            }
-
-            $response = ProblemDetailsResponseFactory::createResponseFromThrowable(
-                $accept,
-                $e,
-                $this->includeThrowableDetail
-            );
+            $response = $this->responseFactory->createResponseFromThrowable($request, $e);
+        } finally {
+            restore_error_handler();
         }
 
-        restore_error_handler();
-
         return $response;
+    }
+
+    private function canActAsErrorHandler(ServerRequestInterface $request) : bool
+    {
+        $accept = $request->getHeaderLine('Accept');
+        if (empty($accept)) {
+            return false;
+        }
+
+        return null !== (new Negotiator())
+            ->getBest($accept, ProblemDetailsResponseFactory::NEGOTIATION_PRIORITIES);
     }
 
     /**

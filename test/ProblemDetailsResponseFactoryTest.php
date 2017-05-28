@@ -7,19 +7,27 @@ use ProblemDetails\ProblemDetailsJsonResponse;
 use ProblemDetails\ProblemDetailsResponse;
 use ProblemDetails\ProblemDetailsResponseFactory;
 use ProblemDetails\ProblemDetailsXmlResponse;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
 class ProblemDetailsResponseFactoryTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
 
+    protected function setUp()
+    {
+        $this->request = $this->prophesize(ServerRequestInterface::class);
+        $this->factory = new ProblemDetailsResponseFactory();
+    }
+
     public function acceptHeaders()
     {
         return [
-            'application/xml'          => ['application/xml', ProblemDetailsXmlResponse::class],
-            'application/vnd.api+xml'  => ['application/vnd.api+xml', ProblemDetailsXmlResponse::class],
-            'application/json'         => ['application/json', ProblemDetailsJsonResponse::class],
-            'application/vnd.api+json' => ['application/vnd.api+json', ProblemDetailsJsonResponse::class],
+            'application/xml'          => ['application/xml', 'application/problem+xml'],
+            'application/vnd.api+xml'  => ['application/vnd.api+xml', 'application/problem+xml'],
+            'application/json'         => ['application/json', 'application/problem+json'],
+            'application/vnd.api+json' => ['application/vnd.api+json', 'application/problem+json'],
         ];
     }
 
@@ -28,13 +36,16 @@ class ProblemDetailsResponseFactoryTest extends TestCase
      */
     public function testCreateResponseCreatesExpectedType(string $header, string $expectedType)
     {
-        $response = ProblemDetailsResponseFactory::createResponse(
-            $header,
+        $this->request->getHeaderLine('Accept', 'application/xhtml+xml')->willReturn($header);
+
+        $response = $this->factory->createResponse(
+            $this->request->reveal(),
             500,
             'Unknown error occurred'
         );
 
-        $this->assertInstanceOf($expectedType, $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertEquals($expectedType, $response->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -42,13 +53,16 @@ class ProblemDetailsResponseFactoryTest extends TestCase
      */
     public function testCreateResponseFromThrowableCreatesExpectedType(string $header, string $expectedType)
     {
+        $this->request->getHeaderLine('Accept', 'application/xhtml+xml')->willReturn($header);
+
         $exception = new RuntimeException();
-        $response = ProblemDetailsResponseFactory::createResponseFromThrowable(
-            $header,
+        $response = $this->factory->createResponseFromThrowable(
+            $this->request->reveal(),
             $exception
         );
 
-        $this->assertInstanceOf($expectedType, $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertEquals($expectedType, $response->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -58,19 +72,20 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         string $header,
         string $expectedType
     ) {
+        $this->request->getHeaderLine('Accept', 'application/xhtml+xml')->willReturn($header);
+
+        $factory = new ProblemDetailsResponseFactory(ProblemDetailsResponseFactory::INCLUDE_THROWABLE_DETAILS);
+
         $exception = new RuntimeException();
-        $response = ProblemDetailsResponseFactory::createResponseFromThrowable(
-            $header,
-            $exception,
-            ProblemDetailsResponse::INCLUDE_THROWABLE_DETAILS
+        $response = $factory->createResponseFromThrowable(
+            $this->request->reveal(),
+            $exception
         );
 
-        $this->assertInstanceOf($expectedType, $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertEquals($expectedType, $response->getHeaderLine('Content-Type'));
 
-        $payload = ($expectedType === ProblemDetailsJsonResponse::class)
-            ? $this->getPayloadFromJsonResponse($response)
-            : $this->getPayloadFromXmlResponse($response);
-
+        $payload = $this->getPayloadFromResponse($response);
         $this->assertArrayHasKey('exception', $payload);
     }
 }

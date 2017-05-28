@@ -8,8 +8,8 @@ class ProblemDetailsMiddlewareFactory
 {
     public function __invoke(ContainerInterface $container) : ProblemDetailsMiddleware
     {
-        $config = $container->has('config') ? $container->get('config') : [];
-        $includeThrowableDetail = $config['debug'] ?? ProblemDetailsResponse::EXCLUDE_THROWABLE_DETAILS;
-        return new ProblemDetailsMiddleware($includeThrowableDetail);
+        return $container->has(ProblemDetailsResponseFactory::class)
+            ? new ProblemDetailsMiddleware($container->get(ProblemDetailsResponseFactory::class))
+            : new ProblemDetailsMiddleware();
     }
 }

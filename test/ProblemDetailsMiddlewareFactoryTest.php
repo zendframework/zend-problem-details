@@ -6,7 +6,7 @@ use Psr\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
 use ProblemDetails\ProblemDetailsMiddleware;
 use ProblemDetails\ProblemDetailsMiddlewareFactory;
-use ProblemDetails\ProblemDetailsResponse;
+use ProblemDetails\ProblemDetailsResponseFactory;
 
 class ProblemDetailsMiddlewareFactoryTest extends TestCase
 {
@@ -16,54 +16,33 @@ class ProblemDetailsMiddlewareFactoryTest extends TestCase
         $this->factory = new ProblemDetailsMiddlewareFactory();
     }
 
-    public function testCreatesMiddlewareUsingFalseForIncludeThrowableDetailFlagInAbsenceOfConfigService()
+    public function testCreatesMiddlewareWithoutResponseFactoryIfServiceDoesNotExist()
     {
-        $this->container->has('config')->willReturn(false);
+        $this->container->has(ProblemDetailsResponseFactory::class)->willReturn(false);
+        $this->container->get(ProblemDetailsResponseFactory::class)->shouldNotBeCalled();
 
         $middleware = ($this->factory)($this->container->reveal());
+
         $this->assertInstanceOf(ProblemDetailsMiddleware::class, $middleware);
-        $this->assertAttributeSame(
-            ProblemDetailsResponse::EXCLUDE_THROWABLE_DETAILS,
-            'includeThrowableDetail',
+        $this->assertAttributeInstanceOf(
+            ProblemDetailsResponseFactory::class,
+            'responseFactory',
             $middleware
         );
     }
 
-    public function testCreatesMiddlewareUsingFalseForIncludeThrowableDetailFlagIfDebugConfigFlagIsMissing()
+    public function testCreatesMiddlewareUsingResponseFactoryService()
     {
-        $this->container->has('config')->willReturn(true);
-        $this->container->get('config')->willReturn([]);
+        $responseFactory = $this->prophesize(ProblemDetailsResponseFactory::class)->reveal();
+        $this->container->has(ProblemDetailsResponseFactory::class)->willReturn(true);
+        $this->container->get(ProblemDetailsResponseFactory::class)->willReturn($responseFactory);
 
         $middleware = ($this->factory)($this->container->reveal());
+
         $this->assertInstanceOf(ProblemDetailsMiddleware::class, $middleware);
         $this->assertAttributeSame(
-            ProblemDetailsResponse::EXCLUDE_THROWABLE_DETAILS,
-            'includeThrowableDetail',
-            $middleware
-        );
-    }
-
-    public function debugFlags()
-    {
-        return [
-            'enabled'  => [true],
-            'disabled' => [false],
-        ];
-    }
-
-    /**
-     * @dataProvider debugFlags
-     */
-    public function testCreatesMiddlewareUsingDebugConfigFlagWhenPresent($flag)
-    {
-        $this->container->has('config')->willReturn(true);
-        $this->container->get('config')->willReturn(['debug' => $flag]);
-
-        $middleware = ($this->factory)($this->container->reveal());
-        $this->assertInstanceOf(ProblemDetailsMiddleware::class, $middleware);
-        $this->assertAttributeSame(
-            $flag,
-            'includeThrowableDetail',
+            $responseFactory,
+            'responseFactory',
             $middleware
         );
     }

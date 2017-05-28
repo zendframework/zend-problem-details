@@ -5,6 +5,7 @@ namespace ProblemDetailsTest;
 use ProblemDetails\ProblemDetailsJsonResponse;
 use ProblemDetails\ProblemDetailsResponse;
 use ProblemDetails\ProblemDetailsXmlResponse;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 trait ProblemDetailsAssertionsTrait
@@ -47,25 +48,27 @@ trait ProblemDetailsAssertionsTrait
         $this->assertInternalType('array', $details['trace']);
     }
 
-    public function getPayloadFromResponse(ProblemDetailsResponse $response) : array
+    public function getPayloadFromResponse(ResponseInterface $response) : array
     {
-        if ($response instanceof ProblemDetailsJsonResponse) {
+        $contentType = $response->getHeaderLine('Content-Type');
+
+        if ('application/problem+json' === $contentType) {
             return $this->getPayloadFromJsonResponse($response);
         }
 
-        if ($response instanceof ProblemDetailsXmlResponse) {
+        if ('application/problem+xml' === $contentType) {
             return $this->getPayloadFromXmlResponse($response);
         }
     }
 
-    public function getPayloadFromJsonResponse(ProblemDetailsJsonResponse $response) : array
+    public function getPayloadFromJsonResponse(ResponseInterface $response) : array
     {
         $body = $response->getBody();
         $json = (string) $body;
         return json_decode($json, true);
     }
 
-    public function getPayloadFromXmlResponse(ProblemDetailsXmlResponse $response) : array
+    public function getPayloadFromXmlResponse(ResponseInterface $response) : array
     {
         $body = $response->getBody();
         $xml = simplexml_load_string((string) $body);
