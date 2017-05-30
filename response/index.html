@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <link rel="shortcut icon" href="../img/favicon.ico">
 
-    <title>Response Types - Problem Details</title>
+    <title>Generating Responses - Problem Details</title>
 
     <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
@@ -84,25 +84,31 @@
                 
                 
                 
+                    <li >
+                        <a href="../quick-start/">Quick Start</a>
+                    </li>
+                
+                
+                
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reference <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li class="active">
-    <a href="./">Response Types</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../middleware/">Error Handling Middleware</a>
+    <a href="./">Generating Responses</a>
 </li>
 
                         
                             
 <li >
     <a href="../exception/">Exceptions</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../middleware/">Error Handling Middleware</a>
 </li>
 
                         
@@ -146,7 +152,11 @@
         <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#problem-details-responses">Problem Details Responses</a></li>
+        <li class="main active"><a href="#generating-problem-details-responses">Generating Problem Details Responses</a></li>
+        
+            <li><a href="#problemdetailsresponsefactory">ProblemDetailsResponseFactory</a></li>
+        
+            <li><a href="#problemdetailsresponsefactoryfactory">ProblemDetailsResponseFactoryFactory</a></li>
         
             <li><a href="#examples">Examples</a></li>
         
@@ -156,10 +166,10 @@
     
     <ul class="pager hidden-print">
       <li class="previous">
-        <a rel="prev" href="../intro/"><i class="fa fa-arrow-left"></i> Previous</a>
+        <a rel="prev" href="../quick-start/"><i class="fa fa-arrow-left"></i> Previous</a>
       </li>
       <li class="next">
-        <a rel="next" href="../middleware/">Next <i class="fa fa-arrow-right"></i></a>
+        <a rel="next" href="../exception/">Next <i class="fa fa-arrow-right"></i></a>
       </li>
     </ul>
     
@@ -175,87 +185,149 @@
       
     
   
-  <li class="active">Response Types</li>
+  <li class="active">Generating Responses</li>
 </ol>
 
-<h1 id="problem-details-responses">Problem Details Responses</h1>
+<h1 id="generating-problem-details-responses">Generating Problem Details Responses</h1>
 <p>When writing middleware, you will often be able to detect error conditions
 within the middleware logic. When you do, you can immediately return a problem
 details response.</p>
-<p>This library provides the following:</p>
+<h2 id="problemdetailsresponsefactory">ProblemDetailsResponseFactory</h2>
+<p>This library provides a factory named
+<code>ProblemDetails\ProblemDetailsResponseFactory</code>. It defines two static methods, <code>createResponse()</code>
+and <code>createResponseFromThrowable()</code>. Each accepts the PSR-7 <code>ServerRequestInterface</code>
+instance as its first argument, and then additional arguments in order to create
+the response itself:</p>
+<p>For <code>createResponse()</code>, the signature is:</p>
+<pre class="codehilite"><code class="language-php">use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+public function createResponse(
+    ServerRequestInterface $request,
+    int $status,
+    string $detail,
+    string $title = '',
+    string $type = '',
+    array $additional = []
+) : ResponseInterface {</code></pre>
+
+
+<p>where:</p>
 <ul>
-<li><code>ProblemDetailsResponse</code> is an interface defining two static methods, <code>create</code>
-  and <code>createFromThrowable()</code>.</li>
-<li><code>ProblemDetailsJsonResponse</code> implements <code>ProblemDetailsResponse</code> and extends
-  <code>Zend\Diactoros\Response\JsonResponse</code> in order to provide a JSON
-  representation of problem details.</li>
-<li><code>ProblemDetailsXmlResponse</code> implements <code>ProblemDetailsResponse</code> and extends
-  <code>Zend\Diactoros\Response\TextResponse</code> in order to provide an XML
-  representation of problem details.</li>
-<li><code>ProblemDetailsResponseFactory</code> defines two static methods, <code>createResponse()</code>
-  and <code>createResponseFromThrowable()</code>. Each accepts the same arguments as the
-  <code>create()</code> and <code>createFromThrowable()</code> methods of <code>ProblemDetailsResponse</code>,
-  respectively, but with an additional initial argument, <code>$accept</code>, representing
-  an <code>Accept</code> header to negotiate in order to determine which specific response
-  type to create.</li>
+<li><code>ServerRequestInterface $request</code> is the current request.</li>
+<li><code>int $status</code> indicates the HTTP status to return.</li>
+<li><code>string $detail</code> is a short message describing the specifics of the problem.</li>
+<li><code>string $title = ''</code> is a title for the general category of problem. This
+  should be the same for all problems of the same type, and defaults to the
+  HTTP reason phrase associated with the <code>$status</code>.</li>
+<li><code>string $type = ''</code> is, generally, a URI to a human readable description of
+  the general category of problem.</li>
+<li><code>array $additional</code> is an associative array of additional data relevant to the
+  specific problem being raised. This might be validation messages,
+  transaction data, etc.</li>
 </ul>
-<p>The signature of <code>ProblemDetailsResponse</code> is as follows:</p>
-<pre class="codehilite"><code class="language-php">namespace ProblemDetails;
+<p>The signature of <code>createResponseFromThrowable()</code> is:</p>
+<pre class="codehilite"><code class="language-php">use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-use Throwable;
-
-interface ProblemDetailsResponse
-{
-    const INCLUDE_THROWABLE_DETAILS = true;
-    const EXCLUDE_THROWABLE_DETAILS = false;
-
-    public static function create(
-        int $status,
-        string $detail,
-        string $title = '',
-        string $type = '',
-        array $additional = []
-    ) : ProblemDetailsResponse;
-
-    public static function createFromThrowable(
-        Throwable $e,
-        bool $includeThrowable = self::EXCLUDE_THROWABLE_DETAILS
-    ) : ProblemDetailsResponse;
-}</code></pre>
+public function createResponseFromThrowable(
+    ServerRequestInterface $request,
+    Throwable $e
+) : ResponseInterface {</code></pre>
 
 
-<p>While that for <code>ProblemDetailsResponseFactory</code> is this:</p>
-<pre class="codehilite"><code class="language-php">namespace ProblemDetails;
+<p>where:</p>
+<ul>
+<li><code>ServerRequestInterface $request</code> is the current request.</li>
+<li><code>Throwable $e</code> is an exception or throwable to use when generating problem
+  details. By default, it will use the exception code for the HTTP status if it
+  is in the 400-599 range, and the exception message for the detail. If the
+  exception is a <code>ProblemDetailsException</code>, it will pull data via its exposed
+  methods to populate the response; see the <a href="../exception/">chapter on
+  exceptions</a> for more details.</li>
+</ul>
+<p>Normal usage of the factory will use a response and a stream from
+<a href="https://docs.zendframework.com/zend-diactoros/">zend-diactoros</a> for the
+response prototype and response body, respectively; additionally, responses will
+not include exception details (file, line number, backtrace, etc.), and JSON
+responses will use a set of flags for generating human-readable JSON. If these
+defaults work for your needs, you can instantiate the factory directly in your
+code in order to generate a response:</p>
+<pre class="codehilite"><code class="language-php">// From scalar data:
+$response = (new ProblemDetailsResponseFactory())-&gt;createResponse(
+    $request,
+    400,
+    'Unrecognized fields present in request'
+);
 
-use Negotiation\Negotiator;
-use Throwable;
-
-class ProblemDetailsResponseFactory
-{
-    public static function createResponse(
-        string $accept,
-        int $status,
-        string $detail,
-        string $title = '',
-        string $type = '',
-        array $additional = []
-    ) : ProblemDetailsResponse;
-
-    public static function createResponseFromThrowable(
-        string $accept,
-        Throwable $e,
-        bool $includeThrowable = ProblemDetailsResponse::EXCLUDE_THROWABLE_DETAILS
-    ) : ProblemDetailsResponse;
-}</code></pre>
+// From a throwable:
+$response = (new ProblemDetailsResponseFactory())
+    -&gt;createResponseFromThrowable($request, $e);</code></pre>
 
 
+<p>More often, you will want to customize behavior of the factory; for instance,
+you may want it to act differently in development than in production, or provide
+an alternate PSR-7 implementation. As such, the constructor has the following
+signature:</p>
+<pre class="codehilite"><code class="language-php">use Psr\Http\Message\ResponseInterface;
+
+public function __construct(
+    bool $isDebug = ProblemDetailsResponseFactory::EXCLUDE_THROWABLE_DETAILS,
+    int $jsonFlags = null,
+    ResponseInterface $response = null,
+    callable $bodyFactory = null
+) {</code></pre>
+
+
+<p>where:</p>
+<ul>
+<li><code>bool $isDebug</code> is a flag indicating whether or not the factory should operate
+  in debug mode; the default is not to. You may use the class constants
+  <code>INCLUDE_THROWABLE_DETAILS</code> or <code>EXCLUDE_THROWABLE_DETAILS</code> if desired.</li>
+<li><code>int $jsonFlags</code> is an integer bitmask of <a href="http://php.net/manual/en/json.constants.php">JSON encoding
+  constants</a> to use with
+  <code>json_encode()</code> when generating JSON problem details. If you pass a <code>null</code>
+  value, <code>JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE |
+  JSON_PRESERVE_ZERO_FRACTION</code> will be used.</li>
+<li><code>ResponseInterface $response</code> is a PSR-7 response instance to use as the base
+  for any generated response.</li>
+<li><code>callable $bodyFactory</code> is a PHP callable that will return a PSR-7
+  <code>StreamInterface</code> instance. Since some stream implementations are mutable (for
+  instance, those backed by a resource), a factory is necessary in order to
+  ensure a new instance is returned. If you provide such a factory, the stream
+  must be writable. The default will return a zend-diactoros <code>Stream</code> instance
+  backed by a PHP temp stream in <code>wb+</code> mode.</li>
+</ul>
+<h2 id="problemdetailsresponsefactoryfactory">ProblemDetailsResponseFactoryFactory</h2>
+<p>This package also provides a factory for generating the
+<code>ProblemDetailsResponseFactory</code> for usage within dependency injection containers:
+<code>ProblemDetails\ProblemDetailsResponseFactoryFactory</code>. It does the following:</p>
+<ul>
+<li>If a <code>config</code> service is present:</li>
+<li>If the service contains a <code>debug</code> key with a boolean value, that value is
+    provided as the <code>$isDebug</code> parameter.</li>
+<li>If the service contains a <code>problem-details</code> key with an array value
+    containing a <code>json_flags</code> key, and that value is an integer, that value is
+    provided as the <code>$jsonFlags</code> parameter.</li>
+<li>If a <code>Psr\Http\Message\ResponseInterface</code> service is present, that service
+  will be provided as the <code>$response</code> parameter.</li>
+<li>If a <code>ProblemDetails\StreamFactory</code> service is present, that service will be
+  provided as the <code>$bodyFactory</code> parameter.</li>
+</ul>
+<p>If any of the above are not present, a <code>null</code> value will be passed, allowing the
+default value to be used.</p>
+<p>If you are using <a href="https://docs.zendframework.com/zend-expressive/">Expressive</a>
+and have installed <a href="https://docs.zendframework.com/zend-component-installer">zend-component-installer</a>
+in your application, the above factory will be wired already to the
+<code>ProblemDetails\ProblemDetailsResponseFactory</code> service via the provided
+<code>ProblemDetails\ConfigProvider</code> class.</p>
 <h2 id="examples">Examples</h2>
-<h3 id="returning-a-json-or-xml-response">Returning a JSON or XML response</h3>
-<p>Let's say you have middleware that you know will only be used in a JSON context,
-and need to return problem details:</p>
+<h3 id="returning-a-problem-details-response">Returning a Problem Details response</h3>
+<p>Let's say you have middleware that you know will only be used in a production
+context, and need to return problem details:</p>
 <pre class="codehilite"><code class="language-php">use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsJsonResponse;
+use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ApiMiddleware implements MiddlewareInterface
@@ -263,7 +335,8 @@ class ApiMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         // discovered an error, so returning problem details:
-        return ProblemDetailsJsonResponse::create(
+        return (new ProblemDetailsResponseFactory())-&gt;createResponse(
+            $request,
             403,
             'You do not have valid credentials to access ' . $request-&gt;getUri()-&gt;getPath(),
             '',
@@ -274,16 +347,16 @@ class ApiMiddleware implements MiddlewareInterface
 }</code></pre>
 
 
-<p>If you wanted to return an XML version instead, you would replace
-<code>ProblemDetailsJsonResponse</code> with <code>ProblemDetailsXmlResponse</code> in the above
-example.</p>
+<p>The above will return a JSON response if the <code>Accept</code> request header matches
+<code>application/json</code> or any <code>application/*+json</code> mediatype. Any other mediatype
+will generate an XML response.</p>
 <h3 id="using-a-throwable-to-create-the-response">Using a Throwable to create the response</h3>
 <p>Let's say you have middleware that invokes functionality from a service it
 composes, and that service could raise an exception or other <code>Throwable</code>. For
-this, you can use the <code>createFromThrowable()</code> method instead.</p>
+this, you can use the <code>createResponseFromThrowable()</code> method instead.</p>
 <pre class="codehilite"><code class="language-php">use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsJsonResponse;
+use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
@@ -294,78 +367,25 @@ class ApiMiddleware implements MiddlewareInterface
         try {
             // some code that may raise an exception or throwable
         } catch (Throwable $e) {
-            return ProblemDetailsJsonResponse::createFromThrowable($e);
+            return (new ProblemDetailsResponseFactory())
+                -&gt;createResponseFromThrowable($request, $e);
         }
     }
 }</code></pre>
 
 
-<p>As with the previous example, for an XML serialization, you would substitute
-<code>ProblemDetailsXmlResponse</code> for <code>ProblemDetailsJsonResponse</code>.</p>
-<p>By default, <code>createFromThrowable()</code> will only use the exception message, and
+<p>As with the previous example, the above will return a JSON response if the
+<code>Accept</code> request header matches <code>application/json</code> or any <code>application/*+json</code>
+mediatype. Any other mediatype will generate an XML response.</p>
+<p>By default, <code>createResponseFromThrowable()</code> will only use the exception message, and
 potentially the exception code (if it falls in the 400 or 500 range). If you
 want to include full exception details &mdash; line, file, backtrace, previous
-exceptions &mdash; you must pass a boolean <code>true</code> as the second argument to the
-method. In most cases, you should only do this in your development or testing
+exceptions &mdash; you must pass a boolean <code>true</code> as the first argument to the
+constructor. In most cases, you should only do this in your development or testing
 environment; as such, you would need to provide a flag to your middleware to use
-when invoking the <code>createFromThrowable()</code> method. As a more complete example:</p>
-<pre class="codehilite"><code class="language-php">use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsJsonResponse;
-use Psr\Http\Message\ServerRequestInterface;
-use Throwable;
-
-class ApiMiddleware implements MiddlewareInterface
-{
-    private $debug;
-
-    public function __construct(/* other arguments*/ boolean $debug = false)
-    {
-        // ...
-        $this-&gt;debug = $debug;
-    }
-
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
-    {
-        try {
-            // some code that may raise an exception or throwable
-        } catch (Throwable $e) {
-            return ProblemDetailsJsonResponse::createFromThrowable($e, $this-&gt;debug);
-        }
-    }
-}</code></pre>
-
-
-<h3 id="varying-the-serialization-based-on-accept-header">Varying the serialization based on Accept header</h3>
-<p>If your API should respond to either JSON or XML requests, you will need to use
-the <code>ProblemDetailsResponseFactory</code> to create the response. To do so, you will
-pull the <code>Accept</code> header from the request when passing it to the factory.</p>
-<pre class="codehilite"><code class="language-php">use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsResponseFactory;
-use Psr\Http\Message\ServerRequestInterface;
-
-class ApiMiddleware implements MiddlewareInterface
-{
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
-    {
-        // discovered an error, so returning problem details:
-        return ProblemDetailsResponseFactory::create(
-            $request-&gt;getHeaderLine('Accept'),
-            403,
-            'You do not have valid credentials to access ' . $request-&gt;getUri()-&gt;getPath(),
-            '',
-            '',
-            ['login' =&gt; '/login']
-        );
-    }
-}</code></pre>
-
-
-<p>If you wish to use a <code>Throwable</code> or <code>Exception</code> to create the response, you
-would use <code>createResponseFromThrowable()</code>; just like <code>createFromThrowable()</code>
-this method also accepts the flag for whether or not to include
-exception/throwable details.</p>
+when invoking the <code>createResponseFromThrowable()</code> method, or, more correctly,
+pass a configured <code>ProblemDetailsResponseFactory</code> instance to your middleware's
+constructor. As a more complete example:</p>
 <pre class="codehilite"><code class="language-php">use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use ProblemDetails\ProblemDetailsResponseFactory;
@@ -374,12 +394,14 @@ use Throwable;
 
 class ApiMiddleware implements MiddlewareInterface
 {
-    private $debug;
+    private $problemDetailsFactory;
 
-    public function __construct(/* other arguments*/ boolean $debug = false)
+    public function __construct(
+        /* other arguments*/
+        ProblemDetailsResponseFactory $problemDetailsFactory)
     {
         // ...
-        $this-&gt;debug = $debug;
+        $this-&gt;problemDetailsFactory = $problemDetailsFactory;
     }
 
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
@@ -387,11 +409,8 @@ class ApiMiddleware implements MiddlewareInterface
         try {
             // some code that may raise an exception or throwable
         } catch (Throwable $e) {
-            return ProblemDetailsResponseFactory::createResponseFromThrowable(
-                $request-&gt;getHeaderLine('Accept'),
-                $e,
-                $this-&gt;debug
-            );
+            return $this-&gt;problemDetailsFactory
+                -&gt;createResponseFromThrowable($request, $e);
         }
     }
 }</code></pre>
@@ -404,6 +423,7 @@ problem details. For those, we suggest creating extensions to
 <code>ProblemDetailsResponseFactory</code>. To use the example from the introduction, we
 could have a <code>RateLimitResponse</code> generated as follows:</p>
 <pre class="codehilite"><code class="language-php">use ProblemDetails\ProblemDetailsResponseFactory;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RateLimitResponseFactory extends ProblemDetailsResponseFactory
 {
@@ -411,14 +431,14 @@ class RateLimitResponseFactory extends ProblemDetailsResponseFactory
     const TITLE = 'https://example.com/problems/rate-limit-exceeded';
     const TYPE = 'You have exceeded the rate limit.';
 
-    public static function create(
-        string $accept,
+    public function create(
+        ServerRequestInterface $request,
         int $tries,
         int $rateLimit,
         int $expires
     ) {
         return self::createResponse(
-            $accept,
+            $request,
             self::STATUS,
             sprintf('You have exceeded your %d requests per hour rate limit', $rateLimit),
             self::TITLE,
@@ -433,9 +453,10 @@ class RateLimitResponseFactory extends ProblemDetailsResponseFactory
 }</code></pre>
 
 
-<p>You would then create and return your response as follows:</p>
-<pre class="codehilite"><code class="language-php">RateLimitResponseFactory::create(
-    $request-&gt;getHeaderLine('Accept'),
+<p>You would then compose this alternate factory in your middleware, and invoke it
+as follows:</p>
+<pre class="codehilite"><code class="language-php">$this-&gt;rateLimitResponseFactory-&gt;create(
+    $request,
     $tries,
     $rateLimit,
     $expires
@@ -447,10 +468,10 @@ class RateLimitResponseFactory extends ProblemDetailsResponseFactory
 <nav>
   <ul class="pager hidden-print">
     <li class="previous">
-      <a rel="prev" href="../intro/"><i class="fa fa-arrow-left"></i> Previous</a>
+      <a rel="prev" href="../quick-start/"><i class="fa fa-arrow-left"></i> Previous</a>
     </li>
     <li class="next">
-      <a rel="next" href="../middleware/">Next <i class="fa fa-arrow-right"></i></a>
+      <a rel="next" href="../exception/">Next <i class="fa fa-arrow-right"></i></a>
     </li>
   </ul>
 </nav>

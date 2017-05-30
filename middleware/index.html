@@ -84,25 +84,31 @@
                 
                 
                 
+                    <li >
+                        <a href="../quick-start/">Quick Start</a>
+                    </li>
+                
+                
+                
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reference <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../response/">Response Types</a>
-</li>
-
-                        
-                            
-<li class="active">
-    <a href="./">Error Handling Middleware</a>
+    <a href="../response/">Generating Responses</a>
 </li>
 
                         
                             
 <li >
     <a href="../exception/">Exceptions</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">Error Handling Middleware</a>
 </li>
 
                         
@@ -156,10 +162,10 @@
     
     <ul class="pager hidden-print">
       <li class="previous">
-        <a rel="prev" href="../response/"><i class="fa fa-arrow-left"></i> Previous</a>
+        <a rel="prev" href="../exception/"><i class="fa fa-arrow-left"></i> Previous</a>
       </li>
-      <li class="next">
-        <a rel="next" href="../exception/">Next <i class="fa fa-arrow-right"></i></a>
+      <li class="next disabled ">
+        <a rel="next" >Next <i class="fa fa-arrow-right"></i></a>
       </li>
     </ul>
     
@@ -186,20 +192,20 @@ them yourself.</p>
 <p>For this purpose, this library provides <code>ProblemDetailsMiddleware</code>.</p>
 <p>This middleware does the following:</p>
 <ul>
-<li>Composes an <code>$includeThrowableDetail</code> flag, <code>false</code> by default, to indicate if
-  throwable/exception details should be provided with responses.</li>
+<li>Composes a <code>ProblemDetailsResponseFactory</code>; if none is passed during
+  instantiation, one is created with no arguments, defaulting to usage of
+  zend-diactoros for response and response body generation, and defaulting to
+  production settings.</li>
+<li>Determines if the request accepts JSON or XML; if neither is accepted, it
+  simply passes execution to the delegate.</li>
 <li>Registers a PHP error handler using the current <code>error_reporting</code> mask, and
   throwing any errors handled as <code>ErrorException</code> instances.</li>
 <li>Wraps a call to the <code>$delegate</code> in a <code>try</code>/<code>catch</code> block; if nothing is
   caught, and a response is returned, it returns the response immediately. If a
   response is <em>not</em> returned, it raises a <code>ProblemDetails\MissingResponseException</code>.</li>
-<li>For all caught throwables, it pulls the <code>Accept</code> header and determines if the
-  client can accept either JSON or XML. If it can accept neither, the exception is
-  re-thrown.</li>
-<li>For acceptable responses, it passes the accept header, caught throwable, and
-  <code>$includeThrowableDetail</code> flag to the
-  <code>ProblemDetailsResponseFactory::createResponseFromThrowable()</code> method, and
-  returns the generated response.</li>
+<li>For all caught throwables, it passes the throwable to
+  <code>ProblemDetailsResponseFactory::createResponseFromThrowable()</code> to generate a
+  Problem Details response.</li>
 </ul>
 <p>As such, you can register this in middleware stacks in order to automate
 generation of problem details for exceptions and PHP errors.</p>
@@ -210,7 +216,7 @@ your application:</p>
 
 
 <p>Or for a subpath of your application:</p>
-<pre class="codehilite"><code class="language-php">$app-&gt;pipe('/api', 'ProblemDetailsMiddleware::class);</code></pre>
+<pre class="codehilite"><code class="language-php">$app-&gt;pipe('/api', ProblemDetailsMiddleware::class);</code></pre>
 
 
 <p>Alternately, you could pipe it within a routed-middleware pipeline:</p>
@@ -226,11 +232,11 @@ traditional web content in your application.</p>
 <h3 id="factory">Factory</h3>
 <p>The <code>ProblemDetailsMiddleware</code> ships with a corresponding PSR-11 compatible factory,
 <code>ProblemDetailsMiddlewareFactory</code>. This factory looks for a service named
-<code>config</code> containing a <code>debug</code> key; the value of that key is then used to create
-the <code>ProblemDetailsMiddleware</code> instance itself.</p>
+<code>ProblemDetails\ProblemDetailsResponseFactory</code>; if present, that value is used
+to instantiate the middleware.</p>
 <p>For Expressive 2 users, this middleware should be registered automatically with
 your application on install, assuming you have the zend-component-installer
-plugin in place (it's shipped by default with the Expresive skeleton).</p>
+plugin in place (it's shipped by default with the Expressive skeleton).</p>
 
 <hr />
 
@@ -238,10 +244,10 @@ plugin in place (it's shipped by default with the Expresive skeleton).</p>
 <nav>
   <ul class="pager hidden-print">
     <li class="previous">
-      <a rel="prev" href="../response/"><i class="fa fa-arrow-left"></i> Previous</a>
+      <a rel="prev" href="../exception/"><i class="fa fa-arrow-left"></i> Previous</a>
     </li>
-    <li class="next">
-      <a rel="next" href="../exception/">Next <i class="fa fa-arrow-right"></i></a>
+    <li class="next disabled ">
+      <a rel="next" >Next <i class="fa fa-arrow-right"></i></a>
     </li>
   </ul>
 </nav>

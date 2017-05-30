@@ -4,7 +4,7 @@
     
     <url>
      <loc>None/</loc>
-     <lastmod>2017-05-03</lastmod>
+     <lastmod>2017-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -12,7 +12,15 @@
     
     <url>
      <loc>None/intro/</loc>
-     <lastmod>2017-05-03</lastmod>
+     <lastmod>2017-05-30</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>None/quick-start/</loc>
+     <lastmod>2017-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -21,19 +29,19 @@
         
     <url>
      <loc>None/response/</loc>
-     <lastmod>2017-05-03</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/middleware/</loc>
-     <lastmod>2017-05-03</lastmod>
+     <lastmod>2017-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/exception/</loc>
-     <lastmod>2017-05-03</lastmod>
+     <lastmod>2017-05-30</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/middleware/</loc>
+     <lastmod>2017-05-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         

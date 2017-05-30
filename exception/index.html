@@ -84,25 +84,31 @@
                 
                 
                 
+                    <li >
+                        <a href="../quick-start/">Quick Start</a>
+                    </li>
+                
+                
+                
                     <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reference <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../response/">Response Types</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../middleware/">Error Handling Middleware</a>
+    <a href="../response/">Generating Responses</a>
 </li>
 
                         
                             
 <li class="active">
     <a href="./">Exceptions</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../middleware/">Error Handling Middleware</a>
 </li>
 
                         
@@ -154,10 +160,10 @@
     
     <ul class="pager hidden-print">
       <li class="previous">
-        <a rel="prev" href="../middleware/"><i class="fa fa-arrow-left"></i> Previous</a>
+        <a rel="prev" href="../response/"><i class="fa fa-arrow-left"></i> Previous</a>
       </li>
-      <li class="next disabled ">
-        <a rel="next" >Next <i class="fa fa-arrow-right"></i></a>
+      <li class="next">
+        <a rel="next" href="../middleware/">Next <i class="fa fa-arrow-right"></i></a>
       </li>
     </ul>
     
@@ -202,9 +208,9 @@ interface ProblemDetailsException extends JsonSerializable
 
 
 <p>You may create exceptions that implement this interface. When such exceptions
-are passed to <code>ProblemDetailsResponse::createFromThrowable()</code> or
-<code>ProblemDetailsResponseFactory::createResponseFromThrowable()</code>, these will pull
-the relevant details in order to create a <code>ProblemDetailsResponse</code>.</p>
+are passed to <code>ProblemDetailsResponseFactory::createResponseFromThrowable()</code>,
+these will pull the relevant details in order to create a Problem Details
+response.</p>
 <p>To facilitate creating such exception types, we also ship the trait
 <code>CommonProblemDetailsException</code>. This trait defines the following properties:</p>
 <ul>
@@ -276,10 +282,10 @@ re-purposed immediately to provide problem details in your application.</p>
 <nav>
   <ul class="pager hidden-print">
     <li class="previous">
-      <a rel="prev" href="../middleware/"><i class="fa fa-arrow-left"></i> Previous</a>
+      <a rel="prev" href="../response/"><i class="fa fa-arrow-left"></i> Previous</a>
     </li>
-    <li class="next disabled ">
-      <a rel="next" >Next <i class="fa fa-arrow-right"></i></a>
+    <li class="next">
+      <a rel="next" href="../middleware/">Next <i class="fa fa-arrow-right"></i></a>
     </li>
   </ul>
 </nav>
