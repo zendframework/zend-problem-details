@@ -3,10 +3,11 @@ site_dir: doc/html
 pages:
     - index.md
     - Introduction: intro.md
+    - "Quick Start": quick-start.md
     - Reference:
-        - "Response Types": response.md
-        - "Error Handling Middleware": middleware.md
+        - "Generating Responses": response.md
         - "Exceptions": exception.md
+        - "Error Handling Middleware": middleware.md
 site_name: Problem Details
 site_description: 'Problem Details for PSR-7 Applications'
 repo_url: 'https://github.com/weierophinney/problem-details'

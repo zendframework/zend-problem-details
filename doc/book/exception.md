@@ -28,9 +28,9 @@ interface ProblemDetailsException extends JsonSerializable
 ```
 
 You may create exceptions that implement this interface. When such exceptions
-are passed to `ProblemDetailsResponse::createFromThrowable()` or
-`ProblemDetailsResponseFactory::createResponseFromThrowable()`, these will pull
-the relevant details in order to create a `ProblemDetailsResponse`.
+are passed to `ProblemDetailsResponseFactory::createResponseFromThrowable()`,
+these will pull the relevant details in order to create a Problem Details
+response.
 
 To facilitate creating such exception types, we also ship the trait
 `CommonProblemDetailsException`. This trait defines the following properties:
