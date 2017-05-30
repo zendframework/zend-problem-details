@@ -3,8 +3,10 @@
 [![Build Status](https://secure.travis-ci.org/weierophinney/problem-details.svg?branch=master)](https://secure.travis-ci.org/weierophinney/problem-details)
 [![Coverage Status](https://coveralls.io/repos/github/weierophinney/problem-details/badge.svg?branch=master)](https://coveralls.io/github/weierophinney/problem-details?branch=master)
 
-This library provides custom response types, error handling middleware, and
-exception types for [PSR-7](http://www.php-fig.org/psr/psr-7/) applications.
+This library provides provides a factory for generating Problem Details
+responses, error handling middleware for automatically generating Problem
+Details responses from errors and exceptions, and custom exception types for
+[PSR-7](http://www.php-fig.org/psr/psr-7/) applications.
 
 ## Installation
 

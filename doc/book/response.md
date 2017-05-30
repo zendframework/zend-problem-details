@@ -1,91 +1,162 @@
-# Problem Details Responses
+# Generating Problem Details Responses
 
 When writing middleware, you will often be able to detect error conditions
 within the middleware logic. When you do, you can immediately return a problem
 details response.
 
-This library provides the following:
+## ProblemDetailsResponseFactory
 
-- `ProblemDetailsResponse` is an interface defining two static methods, `create`
-  and `createFromThrowable()`.
-- `ProblemDetailsJsonResponse` implements `ProblemDetailsResponse` and extends
-  `Zend\Diactoros\Response\JsonResponse` in order to provide a JSON
-  representation of problem details.
-- `ProblemDetailsXmlResponse` implements `ProblemDetailsResponse` and extends
-  `Zend\Diactoros\Response\TextResponse` in order to provide an XML
-  representation of problem details.
-- `ProblemDetailsResponseFactory` defines two static methods, `createResponse()`
-  and `createResponseFromThrowable()`. Each accepts the same arguments as the
-  `create()` and `createFromThrowable()` methods of `ProblemDetailsResponse`,
-  respectively, but with an additional initial argument, `$accept`, representing
-  an `Accept` header to negotiate in order to determine which specific response
-  type to create.
+This library provides a factory named
+`ProblemDetails\ProblemDetailsResponseFactory`. It defines two static methods, `createResponse()`
+and `createResponseFromThrowable()`. Each accepts the PSR-7 `ServerRequestInterface`
+instance as its first argument, and then additional arguments in order to create
+the response itself:
 
-The signature of `ProblemDetailsResponse` is as follows:
+For `createResponse()`, the signature is:
 
 ```php
-namespace ProblemDetails;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-use Throwable;
-
-interface ProblemDetailsResponse
-{
-    const INCLUDE_THROWABLE_DETAILS = true;
-    const EXCLUDE_THROWABLE_DETAILS = false;
-
-    public static function create(
-        int $status,
-        string $detail,
-        string $title = '',
-        string $type = '',
-        array $additional = []
-    ) : ProblemDetailsResponse;
-
-    public static function createFromThrowable(
-        Throwable $e,
-        bool $includeThrowable = self::EXCLUDE_THROWABLE_DETAILS
-    ) : ProblemDetailsResponse;
-}
+public function createResponse(
+    ServerRequestInterface $request,
+    int $status,
+    string $detail,
+    string $title = '',
+    string $type = '',
+    array $additional = []
+) : ResponseInterface {
 ```
 
-While that for `ProblemDetailsResponseFactory` is this:
+where:
+
+- `ServerRequestInterface $request` is the current request.
+- `int $status` indicates the HTTP status to return.
+- `string $detail` is a short message describing the specifics of the problem.
+- `string $title = ''` is a title for the general category of problem. This
+  should be the same for all problems of the same type, and defaults to the
+  HTTP reason phrase associated with the `$status`.
+- `string $type = ''` is, generally, a URI to a human readable description of
+  the general category of problem.
+- `array $additional` is an associative array of additional data relevant to the
+  specific problem being raised. This might be validation messages,
+  transaction data, etc.
+
+The signature of `createResponseFromThrowable()` is:
 
 ```php
-namespace ProblemDetails;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-use Negotiation\Negotiator;
-use Throwable;
-
-class ProblemDetailsResponseFactory
-{
-    public static function createResponse(
-        string $accept,
-        int $status,
-        string $detail,
-        string $title = '',
-        string $type = '',
-        array $additional = []
-    ) : ProblemDetailsResponse;
-
-    public static function createResponseFromThrowable(
-        string $accept,
-        Throwable $e,
-        bool $includeThrowable = ProblemDetailsResponse::EXCLUDE_THROWABLE_DETAILS
-    ) : ProblemDetailsResponse;
-}
+public function createResponseFromThrowable(
+    ServerRequestInterface $request,
+    Throwable $e
+) : ResponseInterface {
 ```
+
+where:
+
+- `ServerRequestInterface $request` is the current request.
+- `Throwable $e` is an exception or throwable to use when generating problem
+  details. By default, it will use the exception code for the HTTP status if it
+  is in the 400-599 range, and the exception message for the detail. If the
+  exception is a `ProblemDetailsException`, it will pull data via its exposed
+  methods to populate the response; see the [chapter on
+  exceptions](exception.md) for more details.
+
+Normal usage of the factory will use a response and a stream from
+[zend-diactoros](https://docs.zendframework.com/zend-diactoros/) for the
+response prototype and response body, respectively; additionally, responses will
+not include exception details (file, line number, backtrace, etc.), and JSON
+responses will use a set of flags for generating human-readable JSON. If these
+defaults work for your needs, you can instantiate the factory directly in your
+code in order to generate a response:
+
+```php
+// From scalar data:
+$response = (new ProblemDetailsResponseFactory())->createResponse(
+    $request,
+    400,
+    'Unrecognized fields present in request'
+);
+
+// From a throwable:
+$response = (new ProblemDetailsResponseFactory())
+    ->createResponseFromThrowable($request, $e);
+```
+
+More often, you will want to customize behavior of the factory; for instance,
+you may want it to act differently in development than in production, or provide
+an alternate PSR-7 implementation. As such, the constructor has the following
+signature:
+
+```php
+use Psr\Http\Message\ResponseInterface;
+
+public function __construct(
+    bool $isDebug = ProblemDetailsResponseFactory::EXCLUDE_THROWABLE_DETAILS,
+    int $jsonFlags = null,
+    ResponseInterface $response = null,
+    callable $bodyFactory = null
+) {
+```
+
+where:
+
+- `bool $isDebug` is a flag indicating whether or not the factory should operate
+  in debug mode; the default is not to. You may use the class constants
+  `INCLUDE_THROWABLE_DETAILS` or `EXCLUDE_THROWABLE_DETAILS` if desired.
+- `int $jsonFlags` is an integer bitmask of [JSON encoding
+  constants](http://php.net/manual/en/json.constants.php) to use with
+  `json_encode()` when generating JSON problem details. If you pass a `null`
+  value, `JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE |
+  JSON_PRESERVE_ZERO_FRACTION` will be used.
+- `ResponseInterface $response` is a PSR-7 response instance to use as the base
+  for any generated response.
+- `callable $bodyFactory` is a PHP callable that will return a PSR-7
+  `StreamInterface` instance. Since some stream implementations are mutable (for
+  instance, those backed by a resource), a factory is necessary in order to
+  ensure a new instance is returned. If you provide such a factory, the stream
+  must be writable. The default will return a zend-diactoros `Stream` instance
+  backed by a PHP temp stream in `wb+` mode.
+
+## ProblemDetailsResponseFactoryFactory
+
+This package also provides a factory for generating the
+`ProblemDetailsResponseFactory` for usage within dependency injection containers:
+`ProblemDetails\ProblemDetailsResponseFactoryFactory`. It does the following:
+
+- If a `config` service is present:
+  - If the service contains a `debug` key with a boolean value, that value is
+    provided as the `$isDebug` parameter.
+  - If the service contains a `problem-details` key with an array value
+    containing a `json_flags` key, and that value is an integer, that value is
+    provided as the `$jsonFlags` parameter.
+- If a `Psr\Http\Message\ResponseInterface` service is present, that service
+  will be provided as the `$response` parameter.
+- If a `ProblemDetails\StreamFactory` service is present, that service will be
+  provided as the `$bodyFactory` parameter.
+
+If any of the above are not present, a `null` value will be passed, allowing the
+default value to be used.
+
+If you are using [Expressive](https://docs.zendframework.com/zend-expressive/)
+and have installed [zend-component-installer](https://docs.zendframework.com/zend-component-installer)
+in your application, the above factory will be wired already to the
+`ProblemDetails\ProblemDetailsResponseFactory` service via the provided
+`ProblemDetails\ConfigProvider` class.
 
 ## Examples
 
-### Returning a JSON or XML response
+### Returning a Problem Details response
 
-Let's say you have middleware that you know will only be used in a JSON context,
-and need to return problem details:
+Let's say you have middleware that you know will only be used in a production
+context, and need to return problem details:
 
 ```php
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsJsonResponse;
+use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ApiMiddleware implements MiddlewareInterface
@@ -93,7 +164,8 @@ class ApiMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         // discovered an error, so returning problem details:
-        return ProblemDetailsJsonResponse::create(
+        return (new ProblemDetailsResponseFactory())->createResponse(
+            $request,
             403,
             'You do not have valid credentials to access ' . $request->getUri()->getPath(),
             '',
@@ -104,20 +176,20 @@ class ApiMiddleware implements MiddlewareInterface
 }
 ```
 
-If you wanted to return an XML version instead, you would replace
-`ProblemDetailsJsonResponse` with `ProblemDetailsXmlResponse` in the above
-example.
+The above will return a JSON response if the `Accept` request header matches
+`application/json` or any `application/*+json` mediatype. Any other mediatype
+will generate an XML response.
 
 ### Using a Throwable to create the response
 
 Let's say you have middleware that invokes functionality from a service it
 composes, and that service could raise an exception or other `Throwable`. For
-this, you can use the `createFromThrowable()` method instead.
+this, you can use the `createResponseFromThrowable()` method instead.
 
 ```php
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsJsonResponse;
+use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
@@ -128,84 +200,26 @@ class ApiMiddleware implements MiddlewareInterface
         try {
             // some code that may raise an exception or throwable
         } catch (Throwable $e) {
-            return ProblemDetailsJsonResponse::createFromThrowable($e);
+            return (new ProblemDetailsResponseFactory())
+                ->createResponseFromThrowable($request, $e);
         }
     }
 }
 ```
 
-As with the previous example, for an XML serialization, you would substitute
-`ProblemDetailsXmlResponse` for `ProblemDetailsJsonResponse`.
+As with the previous example, the above will return a JSON response if the
+`Accept` request header matches `application/json` or any `application/*+json`
+mediatype. Any other mediatype will generate an XML response.
 
-By default, `createFromThrowable()` will only use the exception message, and
+By default, `createResponseFromThrowable()` will only use the exception message, and
 potentially the exception code (if it falls in the 400 or 500 range). If you
 want to include full exception details &mdash; line, file, backtrace, previous
-exceptions &mdash; you must pass a boolean `true` as the second argument to the
-method. In most cases, you should only do this in your development or testing
+exceptions &mdash; you must pass a boolean `true` as the first argument to the
+constructor. In most cases, you should only do this in your development or testing
 environment; as such, you would need to provide a flag to your middleware to use
-when invoking the `createFromThrowable()` method. As a more complete example:
-
-```php
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsJsonResponse;
-use Psr\Http\Message\ServerRequestInterface;
-use Throwable;
-
-class ApiMiddleware implements MiddlewareInterface
-{
-    private $debug;
-
-    public function __construct(/* other arguments*/ boolean $debug = false)
-    {
-        // ...
-        $this->debug = $debug;
-    }
-
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
-    {
-        try {
-            // some code that may raise an exception or throwable
-        } catch (Throwable $e) {
-            return ProblemDetailsJsonResponse::createFromThrowable($e, $this->debug);
-        }
-    }
-}
-```
-
-### Varying the serialization based on Accept header
-
-If your API should respond to either JSON or XML requests, you will need to use
-the `ProblemDetailsResponseFactory` to create the response. To do so, you will
-pull the `Accept` header from the request when passing it to the factory.
-
-```php
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsResponseFactory;
-use Psr\Http\Message\ServerRequestInterface;
-
-class ApiMiddleware implements MiddlewareInterface
-{
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
-    {
-        // discovered an error, so returning problem details:
-        return ProblemDetailsResponseFactory::createResponse(
-            $request->getHeaderLine('Accept'),
-            403,
-            'You do not have valid credentials to access ' . $request->getUri()->getPath(),
-            '',
-            '',
-            ['login' => '/login']
-        );
-    }
-}
-```
-
-If you wish to use a `Throwable` or `Exception` to create the response, you
-would use `createResponseFromThrowable()`; just like `createFromThrowable()`
-this method also accepts the flag for whether or not to include
-exception/throwable details.
+when invoking the `createResponseFromThrowable()` method, or, more correctly,
+pass a configured `ProblemDetailsResponseFactory` instance to your middleware's
+constructor. As a more complete example:
 
 ```php
 use Interop\Http\ServerMiddleware\DelegateInterface;
@@ -216,12 +230,14 @@ use Throwable;
 
 class ApiMiddleware implements MiddlewareInterface
 {
-    private $debug;
+    private $problemDetailsFactory;
 
-    public function __construct(/* other arguments*/ boolean $debug = false)
+    public function __construct(
+        /* other arguments*/
+        ProblemDetailsResponseFactory $problemDetailsFactory)
     {
         // ...
-        $this->debug = $debug;
+        $this->problemDetailsFactory = $problemDetailsFactory;
     }
 
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
@@ -229,11 +245,8 @@ class ApiMiddleware implements MiddlewareInterface
         try {
             // some code that may raise an exception or throwable
         } catch (Throwable $e) {
-            return ProblemDetailsResponseFactory::createResponseFromThrowable(
-                $request->getHeaderLine('Accept'),
-                $e,
-                $this->debug
-            );
+            return $this->problemDetailsFactory
+                ->createResponseFromThrowable($request, $e);
         }
     }
 }
@@ -249,6 +262,7 @@ could have a `RateLimitResponse` generated as follows:
 
 ```php
 use ProblemDetails\ProblemDetailsResponseFactory;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RateLimitResponseFactory extends ProblemDetailsResponseFactory
 {
@@ -256,14 +270,14 @@ class RateLimitResponseFactory extends ProblemDetailsResponseFactory
     const TITLE = 'https://example.com/problems/rate-limit-exceeded';
     const TYPE = 'You have exceeded the rate limit.';
 
-    public static function create(
-        string $accept,
+    public function create(
+        ServerRequestInterface $request,
         int $tries,
         int $rateLimit,
         int $expires
     ) {
         return self::createResponse(
-            $accept,
+            $request,
             self::STATUS,
             sprintf('You have exceeded your %d requests per hour rate limit', $rateLimit),
             self::TITLE,
@@ -278,11 +292,12 @@ class RateLimitResponseFactory extends ProblemDetailsResponseFactory
 }
 ```
 
-You would then create and return your response as follows:
+You would then compose this alternate factory in your middleware, and invoke it
+as follows:
 
 ```php
-RateLimitResponseFactory::create(
-    $request->getHeaderLine('Accept'),
+$this->rateLimitResponseFactory->create(
+    $request,
     $tries,
     $rateLimit,
     $expires
