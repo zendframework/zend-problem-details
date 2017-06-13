@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 0.2.1 - 2017-06-13
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#5](https://github.com/weierophinney/problem-details/pull/5) updates the
+  response factory and middleware to treat lack of/empty `Accept` header values
+  as `*/*`, per RFC-7231 section 5.3.2.
+
 ## 0.2.0 - 2017-05-30
 
 ### Added

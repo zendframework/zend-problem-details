@@ -24,6 +24,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
     public function acceptHeaders()
     {
         return [
+            'empty'                    => ['', 'application/problem+json'],
             'application/xml'          => ['application/xml', 'application/problem+xml'],
             'application/vnd.api+xml'  => ['application/vnd.api+xml', 'application/problem+xml'],
             'application/json'         => ['application/json', 'application/problem+json'],
@@ -36,7 +37,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
      */
     public function testCreateResponseCreatesExpectedType(string $header, string $expectedType)
     {
-        $this->request->getHeaderLine('Accept', 'application/xhtml+xml')->willReturn($header);
+        $this->request->getHeaderLine('Accept')->willReturn($header);
 
         $response = $this->factory->createResponse(
             $this->request->reveal(),
@@ -53,7 +54,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
      */
     public function testCreateResponseFromThrowableCreatesExpectedType(string $header, string $expectedType)
     {
-        $this->request->getHeaderLine('Accept', 'application/xhtml+xml')->willReturn($header);
+        $this->request->getHeaderLine('Accept')->willReturn($header);
 
         $exception = new RuntimeException();
         $response = $this->factory->createResponseFromThrowable(
@@ -72,7 +73,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         string $header,
         string $expectedType
     ) {
-        $this->request->getHeaderLine('Accept', 'application/xhtml+xml')->willReturn($header);
+        $this->request->getHeaderLine('Accept')->willReturn($header);
 
         $factory = new ProblemDetailsResponseFactory(ProblemDetailsResponseFactory::INCLUDE_THROWABLE_DETAILS);
 
@@ -98,7 +99,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $e->getType()->willReturn('https://example.com/api/doc/invalid-client-request');
         $e->getAdditionalData()->willReturn(['foo' => 'bar']);
 
-        $this->request->getHeaderLine('Accept', 'application/xhtml+xml')->willReturn('application/json');
+        $this->request->getHeaderLine('Accept')->willReturn('application/json');
 
         $factory = new ProblemDetailsResponseFactory();
 
@@ -121,7 +122,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
     public function testFactoryRaisesExceptionIfBodyFactoryDoesNotReturnStream()
     {
-        $this->request->getHeaderLine('Accept', 'application/xhtml+xml')->willReturn('application/json');
+        $this->request->getHeaderLine('Accept')->willReturn('application/json');
 
         $factory = new ProblemDetailsResponseFactory(false, null, null, function () {
             return null;
@@ -133,7 +134,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
     public function testFactoryGeneratesXmlResponseIfNegotiationFails()
     {
-        $this->request->getHeaderLine('Accept', 'application/xhtml+xml')->willReturn('text/plain');
+        $this->request->getHeaderLine('Accept')->willReturn('text/plain');
 
         $response = $this->factory->createResponse(
             $this->request->reveal(),
@@ -147,7 +148,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
     public function testFactoryRendersPreviousExceptionsInDebugMode()
     {
-        $this->request->getHeaderLine('Accept', 'application/xhtml+xml')->willReturn('application/json');
+        $this->request->getHeaderLine('Accept')->willReturn('application/json');
 
         $first = new RuntimeException('first', 101010);
         $second = new RuntimeException('second', 101011, $first);
