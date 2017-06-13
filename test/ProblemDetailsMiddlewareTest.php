@@ -26,6 +26,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
     public function acceptHeaders()
     {
         return [
+            'empty'                    => [''],
             'application/xml'          => ['application/xml'],
             'application/vnd.api+xml'  => ['application/vnd.api+xml'],
             'application/json'         => ['application/json'],

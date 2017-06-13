@@ -285,7 +285,7 @@ class ProblemDetailsResponseFactory
 
     private function getResponseGenerator(ServerRequestInterface $request) : callable
     {
-        $accept    = $request->getHeaderLine('Accept', 'application/xhtml+xml');
+        $accept    = $request->getHeaderLine('Accept') ?: '*/*';
         $mediaType = (new Negotiator())->getBest($accept, self::NEGOTIATION_PRIORITIES);
 
         if (! $mediaType) {
