@@ -293,7 +293,7 @@ class ProblemDetailsResponseFactory
         }
 
         $value = $mediaType->getValue();
-        return strstr($value, 'json')
+        return false !== strpos($value, 'json')
             ? Closure::fromCallable([$this, 'generateJsonResponse'])
             : Closure::fromCallable([$this, 'generateXmlResponse']);
     }
