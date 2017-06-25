@@ -27,12 +27,6 @@ class ProblemDetailsExceptionTest extends TestCase
         ) implements ProblemDetailsException {
             use CommonProblemDetailsException;
 
-            private $status;
-            private $type;
-            private $title;
-            private $detail;
-            private $additional;
-
             public function __construct(int $status, string $detail, string $title, string $type, array $additional)
             {
                 $this->status = $status;
