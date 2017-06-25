@@ -80,7 +80,7 @@ trait CommonProblemDetailsException
             'type'   => $this->type,
         ];
 
-        if (! empty($this->additional)) {
+        if ($this->additional) {
             $problem = array_merge($this->additional, $problem);
         }
 

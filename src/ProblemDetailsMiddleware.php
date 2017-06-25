@@ -55,7 +55,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
     private function canActAsErrorHandler(ServerRequestInterface $request) : bool
     {
         $accept = $request->getHeaderLine('Accept') ?: '*/*';
-        if (empty($accept)) {
+        if (! $accept) {
             return false;
         }
 
