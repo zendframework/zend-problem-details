@@ -87,7 +87,7 @@ trait CommonProblemDetailsException
         return $problem;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         return $this->toArray();
     }
