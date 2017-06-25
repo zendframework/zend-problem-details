@@ -184,8 +184,8 @@ class ProblemDetailsResponseFactory
         array $additional = []
     ) : ResponseInterface {
         $status = $this->normalizeStatus($status);
-        $title  = empty($title) ? $this->createTitleFromStatus($status) : $title;
-        $type   = empty($type) ? $this->createTypeFromStatus($status) : $type;
+        $title  = $title ?: $this->createTitleFromStatus($status);
+        $type   = $type ?: $this->createTypeFromStatus($status);
 
         $payload = [
             'title'  => $title,
