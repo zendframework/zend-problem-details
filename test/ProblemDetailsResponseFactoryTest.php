@@ -5,7 +5,6 @@ namespace ProblemDetailsTest;
 use PHPUnit\Framework\TestCase;
 use ProblemDetails\InvalidResponseBodyException;
 use ProblemDetails\ProblemDetailsException;
-use ProblemDetails\ProblemDetailsResponse;
 use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
