@@ -103,7 +103,6 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
         $factory = new ProblemDetailsResponseFactory();
 
-        $exception = new RuntimeException();
         $response = $factory->createResponseFromThrowable(
             $this->request->reveal(),
             $e->reveal()
@@ -155,7 +154,6 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
         $factory = new ProblemDetailsResponseFactory(ProblemDetailsResponseFactory::INCLUDE_THROWABLE_DETAILS);
 
-        $exception = new RuntimeException();
         $response = $factory->createResponseFromThrowable(
             $this->request->reveal(),
             $second

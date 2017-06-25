@@ -138,6 +138,6 @@ class ProblemDetailsMiddlewareTest extends TestCase
         $this->expectException(TestAsset\RuntimeException::class);
         $this->expectExceptionMessage('Thrown!');
         $this->expectExceptionCode(507);
-        $result = $middleware->process($this->request->reveal(), $delegate->reveal());
+        $middleware->process($this->request->reveal(), $delegate->reveal());
     }
 }
