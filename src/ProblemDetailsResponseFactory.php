@@ -288,14 +288,9 @@ class ProblemDetailsResponseFactory
         $accept    = $request->getHeaderLine('Accept') ?: '*/*';
         $mediaType = (new Negotiator())->getBest($accept, self::NEGOTIATION_PRIORITIES);
 
-        if (! $mediaType) {
-            return Closure::fromCallable([$this, 'generateXmlResponse']);
-        }
-
-        $value = $mediaType->getValue();
-        return false !== strpos($value, 'json')
-            ? Closure::fromCallable([$this, 'generateJsonResponse'])
-            : Closure::fromCallable([$this, 'generateXmlResponse']);
+        return ! $mediaType || false === strpos($mediaType->getValue(), 'json')
+            ? Closure::fromCallable([$this, 'generateXmlResponse'])
+            : Closure::fromCallable([$this, 'generateJsonResponse']);
     }
 
     private function normalizeStatus(int $status) : int
