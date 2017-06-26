@@ -2,11 +2,11 @@
 
 namespace ProblemDetailsTest;
 
-use Psr\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
 use ProblemDetails\ProblemDetailsMiddleware;
 use ProblemDetails\ProblemDetailsMiddlewareFactory;
 use ProblemDetails\ProblemDetailsResponseFactory;
+use Psr\Container\ContainerInterface;
 
 class ProblemDetailsMiddlewareFactoryTest extends TestCase
 {

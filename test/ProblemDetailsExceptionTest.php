@@ -3,8 +3,8 @@
 namespace ProblemDetailsTest;
 
 use PHPUnit\Framework\TestCase;
-use ProblemDetails\ProblemDetailsException;
 use ProblemDetails\CommonProblemDetailsException;
+use ProblemDetails\ProblemDetailsException;
 
 class ProblemDetailsExceptionTest extends TestCase
 {
