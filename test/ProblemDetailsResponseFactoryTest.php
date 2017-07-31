@@ -1,14 +1,20 @@
 <?php
+/**
+ * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
+ */
 
-namespace ProblemDetailsTest;
+namespace ZendTest\ProblemDetails;
 
 use PHPUnit\Framework\TestCase;
-use ProblemDetails\Exception\InvalidResponseBodyException;
-use ProblemDetails\Exception\ProblemDetailsException;
-use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
+use Zend\ProblemDetails\Exception\InvalidResponseBodyException;
+use Zend\ProblemDetails\Exception\ProblemDetailsException;
+use Zend\ProblemDetails\ProblemDetailsResponse;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ProblemDetailsResponseFactoryTest extends TestCase
 {

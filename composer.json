@@ -1,8 +1,22 @@
 {
-    "name": "weierophinney/problem-details",
+    "name": "zendframework/zend-problem-details",
     "description": "Problem Details for PSR-7 HTTP APIs",
     "type": "library",
     "license": "BSD-3-Clause",
+    "keywords": [
+        "api",
+        "rest",
+        "problem-details",
+        "zendframework",
+        "zf"
+    ],
+    "support": {
+        "docs": "https://docs.zendframework.com/zend-problem-details/",
+        "issues": "https://github.com/zendframework/zend-problem-details/issues",
+        "source": "https://github.com/zendframework/zend-problem-details",
+        "slack": "https://zendframework-slack.herokuapp.com",
+        "forum": "https://discourse.zendframework.com/c/questions/expressive"
+    },
     "config": {
         "sort-packages": true
     },
@@ -23,17 +37,17 @@
     },
     "autoload": {
         "psr-4": {
-            "ProblemDetails\\": "src/"
+            "Zend\\ProblemDetails\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ProblemDetailsTest\\": "test/"
+            "ZendTest\\ProblemDetails\\": "test/"
         }
     },
     "extra": {
         "zf": {
-            "config-provider": "ProblemDetails\\ConfigProvider"
+            "config-provider": "Zend\\ProblemDetails\\ConfigProvider"
         }
     },
     "scripts": {

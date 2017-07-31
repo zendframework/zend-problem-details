@@ -7,7 +7,7 @@ details.
 To facilitate this, we provide an interface, `ProblemDetailsException`:
 
 ```php
-namespace ProblemDetails\Exception;
+namespace Zend\ProblemDetails\Exception;
 
 use JsonSerializable;
 
@@ -50,8 +50,8 @@ transaction problem details, you might do so as follows:
 
 ```php
 use DomainException;
-use ProblemDetails\Exception\CommonProblemDetailsException;
-use ProblemDetails\Exception\ProblemDetailsException;
+use Zend\ProblemDetails\Exception\CommonProblemDetailsException;
+use Zend\ProblemDetails\Exception\ProblemDetailsException;
 
 class TransactionException extends DomainException implements ProblemDetailsException
 {

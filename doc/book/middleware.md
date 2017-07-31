@@ -59,7 +59,7 @@ traditional web content in your application.
 
 The `ProblemDetailsMiddleware` ships with a corresponding PSR-11 compatible factory,
 `ProblemDetailsMiddlewareFactory`. This factory looks for a service named
-`ProblemDetails\ProblemDetailsResponseFactory`; if present, that value is used
+`Zend\ProblemDetails\ProblemDetailsResponseFactory`; if present, that value is used
 to instantiate the middleware.
 
 For Expressive 2 users, this middleware should be registered automatically with

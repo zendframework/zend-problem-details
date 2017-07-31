@@ -6,11 +6,10 @@ details response.
 
 ## ProblemDetailsResponseFactory
 
-This library provides a factory named
-`ProblemDetails\ProblemDetailsResponseFactory`. It defines two static methods, `createResponse()`
-and `createResponseFromThrowable()`. Each accepts the PSR-7 `ServerRequestInterface`
-instance as its first argument, and then additional arguments in order to create
-the response itself:
+This library provides a factory named `Zend\ProblemDetails\ProblemDetailsResponseFactory`.
+It defines two static methods, `createResponse()` and `createResponseFromThrowable()`.
+Each accepts the PSR-7 `ServerRequestInterface` instance as its first argument,
+and then additional arguments in order to create the response itself:
 
 For `createResponse()`, the signature is:
 
@@ -124,7 +123,7 @@ where:
 
 This package also provides a factory for generating the
 `ProblemDetailsResponseFactory` for usage within dependency injection containers:
-`ProblemDetails\ProblemDetailsResponseFactoryFactory`. It does the following:
+`Zend\ProblemDetails\ProblemDetailsResponseFactoryFactory`. It does the following:
 
 - If a `config` service is present:
   - If the service contains a `debug` key with a boolean value, that value is
@@ -143,8 +142,8 @@ default value to be used.
 If you are using [Expressive](https://docs.zendframework.com/zend-expressive/)
 and have installed [zend-component-installer](https://docs.zendframework.com/zend-component-installer)
 in your application, the above factory will be wired already to the
-`ProblemDetails\ProblemDetailsResponseFactory` service via the provided
-`ProblemDetails\ConfigProvider` class.
+`Zend\ProblemDetails\ProblemDetailsResponseFactory` service via the provided
+`Zend\ProblemDetails\ConfigProvider` class.
 
 ## Examples
 
@@ -156,8 +155,8 @@ context, and need to return problem details:
 ```php
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ApiMiddleware implements MiddlewareInterface
 {
@@ -189,9 +188,9 @@ this, you can use the `createResponseFromThrowable()` method instead.
 ```php
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ApiMiddleware implements MiddlewareInterface
 {
@@ -224,9 +223,9 @@ constructor. As a more complete example:
 ```php
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ApiMiddleware implements MiddlewareInterface
 {
@@ -261,8 +260,8 @@ problem details. For those, we suggest creating extensions to
 could have a `RateLimitResponse` generated as follows:
 
 ```php
-use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class RateLimitResponseFactory extends ProblemDetailsResponseFactory
 {

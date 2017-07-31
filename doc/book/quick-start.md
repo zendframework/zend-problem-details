@@ -6,7 +6,7 @@ To install this package in your application, use
 [Composer](https://getcomposer.org):
 
 ```bash
-$ composer require weierophinney/problem-details
+$ composer require zendframework/zend-problem-details
 ```
 
 ## Usage
@@ -28,7 +28,7 @@ Problem Details responses:
 If you are using [Expressive](https://docs.zendframework.com/zend-expressive/)
 and have installed [zend-component-installer](https://docs.zendframework.com/zend-component-installer)
 (which is installed by default in v2.0 and above), you can write middleware that
-composes the `ProblemDetails\ProblemDetailsResponseFactory` immediately, and
+composes the `Zend\ProblemDetails\ProblemDetailsResponseFactory` immediately, and
 inject that service in your middleware.
 
 As an example, the following catches domain excpetions and uses them to create
@@ -37,10 +37,10 @@ problem details responses:
 ```php
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class DomainTransactionMiddleware implements MiddlewareInterface
 {
@@ -71,8 +71,8 @@ class DomainTransactionMiddleware implements MiddlewareInterface
 The factory for the above might look like:
 
 ```php
-use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Container\ContainerInterface;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class DomainTransactionMiddlewareFactory
 {
@@ -93,11 +93,11 @@ result in problem details to the end user.
 ```php
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\InputFilter\InputFilterInterface;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class DomainTransactionMiddleware implements MiddlewareInterface
 {
@@ -155,11 +155,11 @@ as the HTTP status if it falls in the 400 or 500 range (500 will be used
 otherwise).
 
 You can also create custom exceptions that provide details for the factory to
-consume by implementing `ProblemDetails\Exception\ProblemDetailsException`,
+consume by implementing `Zend\ProblemDetails\Exception\ProblemDetailsException`,
 which defines the following:
 
 ```php
-namespace ProblemDetails\Exception;
+namespace Zend\ProblemDetails\Exception;
 
 use JsonSerializable;
 
@@ -211,8 +211,8 @@ By composing this trait, you can easily define custom exception types:
 namespace Api;
 
 use DomainException as PhpDomainException;
-use ProblemDetails\Exception\CommonProblemDetailsException;
-use ProblemDetails\Exception\ProblemDetailsException;
+use Zend\ProblemDetails\Exception\CommonProblemDetailsException;
+use Zend\ProblemDetails\Exception\ProblemDetailsException;
 
 class DomainException extends PhpDomainException implements ProblemDetailsException
 {
