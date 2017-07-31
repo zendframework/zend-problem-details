@@ -202,7 +202,8 @@ them yourself.</p>
   throwing any errors handled as <code>ErrorException</code> instances.</li>
 <li>Wraps a call to the <code>$delegate</code> in a <code>try</code>/<code>catch</code> block; if nothing is
   caught, and a response is returned, it returns the response immediately. If a
-  response is <em>not</em> returned, it raises a <code>ProblemDetails\MissingResponseException</code>.</li>
+  response is <em>not</em> returned, it raises a
+  <code>ProblemDetails\Exception\MissingResponseException</code>.</li>
 <li>For all caught throwables, it passes the throwable to
   <code>ProblemDetailsResponseFactory::createResponseFromThrowable()</code> to generate a
   Problem Details response.</li>

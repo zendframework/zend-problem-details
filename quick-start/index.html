@@ -323,9 +323,9 @@ the exception message as the Problem Details description, and the exception code
 as the HTTP status if it falls in the 400 or 500 range (500 will be used
 otherwise).</p>
 <p>You can also create custom exceptions that provide details for the factory to
-consume by implementing <code>ProblemDetails\ProblemDetailsException</code>, which defines
-the following:</p>
-<pre class="codehilite"><code class="language-php">namespace ProblemDetails;
+consume by implementing <code>ProblemDetails\Exception\ProblemDetailsException</code>,
+which defines the following:</p>
+<pre class="codehilite"><code class="language-php">namespace ProblemDetails\Exception;
 
 use JsonSerializable;
 
@@ -373,8 +373,8 @@ private $additional = [];</code></pre>
 <pre class="codehilite"><code class="language-php">namespace Api;
 
 use DomainException as PhpDomainException;
-use ProblemDetails\CommonProblemDetailsException;
-use ProblemDetails\ProblemDetailsException;
+use ProblemDetails\Exception\CommonProblemDetailsException;
+use ProblemDetails\Exception\ProblemDetailsException;
 
 class DomainException extends PhpDomainException implements ProblemDetailsException
 {
@@ -408,8 +408,8 @@ a <code>ProblemDetailsResponseFactory</code>, and does the following:</p>
 <li>Otherwise, it creates a PHP error handler that converts PHP errors to
   <code>ErrorException</code> instances, and then wraps processing of the delegate in a
   try/catch block. If the delegate does not return a <code>ResponseInterface</code>, a
-  <code>ProblemDetails\MissingResponseException</code> is raised; otherwise, the response
-  is returned.</li>
+  <code>ProblemDetails\Exception\MissingResponseException</code> is raised; otherwise, the
+  response is returned.</li>
 <li>Any throwable or exception caught is passed to the
   <code>ProblemDetailsResponseFactory::createResponseFromThrowable()</code> method, and the
   response generated is returned.</li>

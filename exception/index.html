@@ -187,7 +187,7 @@
 business domain that contain all the information necessary to report problem
 details.</p>
 <p>To facilitate this, we provide an interface, <code>ProblemDetailsException</code>:</p>
-<pre class="codehilite"><code class="language-php">namespace ProblemDetails;
+<pre class="codehilite"><code class="language-php">namespace ProblemDetails\Exception;
 
 use JsonSerializable;
 
@@ -226,8 +226,8 @@ constructors for generating exception instances.</p>
 <p>As an example, if you wanted to create an exception type for providing
 transaction problem details, you might do so as follows:</p>
 <pre class="codehilite"><code class="language-php">use DomainException;
-use ProblemDetails\CommonProblemDetailsException;
-use ProblemDetails\ProblemDetailsException;
+use ProblemDetails\Exception\CommonProblemDetailsException;
+use ProblemDetails\Exception\ProblemDetailsException;
 
 class TransactionException extends DomainException implements ProblemDetailsException
 {
@@ -268,7 +268,7 @@ class TransactionException extends DomainException implements ProblemDetailsExce
     &quot;title&quot;: &quot;You have insufficient funds to complete the transaction.&quot;,
     &quot;detail&quot;: &quot;Your transaction required 5.63, but you only have 1.37 in your account&quot;,
     &quot;account&quot;: &quot;https://example.com/api/accounts/12345&quot;,
-    &quot;balance&quot;: 1.37,
+    &quot;balance&quot;: 1.37
 }</code></pre>
 
 
