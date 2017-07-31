@@ -3,8 +3,8 @@
 namespace ProblemDetailsTest;
 
 use PHPUnit\Framework\TestCase;
-use ProblemDetails\ProblemDetailsException;
 use ProblemDetails\CommonProblemDetailsException;
+use ProblemDetails\ProblemDetailsException;
 
 class ProblemDetailsExceptionTest extends TestCase
 {
@@ -26,12 +26,6 @@ class ProblemDetailsExceptionTest extends TestCase
             $this->additional
         ) implements ProblemDetailsException {
             use CommonProblemDetailsException;
-
-            private $status;
-            private $type;
-            private $title;
-            private $detail;
-            private $additional;
 
             public function __construct(int $status, string $detail, string $title, string $type, array $additional)
             {

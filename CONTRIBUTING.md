@@ -19,7 +19,7 @@ To run tests:
 
   ```console
   $ git clone git://github.com/weierophinney/problem-details.git
-  $ cd zend-expressive
+  $ cd problem-details
   ```
 
 - Install dependencies via composer:
@@ -75,14 +75,14 @@ pull your work into the master repository. We recommend using
 
    ```console
    $ git clone git://github.com/weierophinney/problem-details.git
-   $ cd zend-expressive
+   $ cd problem-details
    ```
 
 4. Add a remote to your fork; substitute your GitHub username in the command
    below.
 
    ```console
-   $ git remote add {username} git@github.com:{username}/zend-expressive.git
+   $ git remote add {username} git@github.com:{username}/problem-details.git
    $ git fetch {username}
    ```
 
@@ -145,7 +145,7 @@ Delta compression using up to 2 threads.
 Compression objects: 100% (18/18), done.
 Writing objects: 100% (20/20), 8.19KiB, done.
 Total 20 (delta 12), reused 0 (delta 0)
-To ssh://git@github.com/{username}/zend-expressive.git
+To ssh://git@github.com/{username}/problem-details.git
    b5583aa..4f51698  HEAD -> master
 ```
 

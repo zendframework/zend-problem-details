@@ -96,7 +96,7 @@ And it might result in the following:
     "title": "You have insufficient funds to complete the transaction.",
     "detail": "Your transaction required 5.63, but you only have 1.37 in your account",
     "account": "https://example.com/api/accounts/12345",
-    "balance": 1.37,
+    "balance": 1.37
 }
 ```
 

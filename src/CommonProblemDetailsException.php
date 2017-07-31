@@ -66,11 +66,11 @@ trait CommonProblemDetailsException
     }
 
     /**
-    * Serialize the exception to an array of problem details.
-    *
-    * Likely useful for the JsonSerializable implementation, but also
-    * for cases where the XML variant is desired.
-    */
+     * Serialize the exception to an array of problem details.
+     *
+     * Likely useful for the JsonSerializable implementation, but also
+     * for cases where the XML variant is desired.
+     */
     public function toArray() : array
     {
         $problem = [
@@ -80,14 +80,14 @@ trait CommonProblemDetailsException
             'type'   => $this->type,
         ];
 
-        if (! empty($this->additional)) {
+        if ($this->additional) {
             $problem = array_merge($this->additional, $problem);
         }
 
         return $problem;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         return $this->toArray();
     }

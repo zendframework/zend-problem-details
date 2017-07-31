@@ -2,9 +2,6 @@
 
 namespace ProblemDetailsTest;
 
-use ProblemDetails\ProblemDetailsJsonResponse;
-use ProblemDetails\ProblemDetailsResponse;
-use ProblemDetails\ProblemDetailsXmlResponse;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 

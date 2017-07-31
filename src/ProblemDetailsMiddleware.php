@@ -55,7 +55,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
     private function canActAsErrorHandler(ServerRequestInterface $request) : bool
     {
         $accept = $request->getHeaderLine('Accept') ?: '*/*';
-        if (empty($accept)) {
+        if (! $accept) {
             return false;
         }
 
@@ -70,7 +70,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
      *
      * @return callable
      */
-    private function createErrorHandler()
+    private function createErrorHandler() : callable
     {
         /**
          * @param int $errno
@@ -80,7 +80,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
          * @return void
          * @throws ErrorException if error is not within the error_reporting mask.
          */
-        return function ($errno, $errstr, $errfile, $errline) {
+        return function (int $errno, string $errstr, string $errfile, int $errline) : void {
             if (! (error_reporting() & $errno)) {
                 // error_reporting does not include this error
                 return;

@@ -5,7 +5,6 @@ namespace ProblemDetailsTest;
 use PHPUnit\Framework\TestCase;
 use ProblemDetails\InvalidResponseBodyException;
 use ProblemDetails\ProblemDetailsException;
-use ProblemDetails\ProblemDetailsResponse;
 use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -103,7 +102,6 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
         $factory = new ProblemDetailsResponseFactory();
 
-        $exception = new RuntimeException();
         $response = $factory->createResponseFromThrowable(
             $this->request->reveal(),
             $e->reveal()
@@ -155,7 +153,6 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
         $factory = new ProblemDetailsResponseFactory(ProblemDetailsResponseFactory::INCLUDE_THROWABLE_DETAILS);
 
-        $exception = new RuntimeException();
         $response = $factory->createResponseFromThrowable(
             $this->request->reveal(),
             $second
