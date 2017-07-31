@@ -184,8 +184,8 @@ class ProblemDetailsResponseFactory
         array $additional = []
     ) : ResponseInterface {
         $status = $this->normalizeStatus($status);
-        $title  = empty($title) ? $this->createTitleFromStatus($status) : $title;
-        $type   = empty($type) ? $this->createTypeFromStatus($status) : $type;
+        $title  = $title ?: $this->createTitleFromStatus($status);
+        $type   = $type ?: $this->createTypeFromStatus($status);
 
         $payload = [
             'title'  => $title,
@@ -208,7 +208,7 @@ class ProblemDetailsResponseFactory
         ServerRequestInterface $request,
         Throwable $e
     ) : ResponseInterface {
-        if ($e instanceof ProblemDetailsException) {
+        if ($e instanceof Exception\ProblemDetailsException) {
             return $this->createResponse(
                 $request,
                 $e->getStatus(),
@@ -258,13 +258,13 @@ class ProblemDetailsResponseFactory
     }
 
     /**
-     * @throws InvalidResponseBodyException
+     * @throws Exception\InvalidResponseBodyException
      */
     protected function generateResponse(int $status, string $contentType, string $payload) : ResponseInterface
     {
         $body = ($this->bodyFactory)();
         if (! $body instanceof StreamInterface) {
-            throw new InvalidResponseBodyException(sprintf(
+            throw new Exception\InvalidResponseBodyException(sprintf(
                 'The factory for generating a problem details response body stream did not return a %s',
                 StreamInterface::class
             ));
@@ -288,14 +288,9 @@ class ProblemDetailsResponseFactory
         $accept    = $request->getHeaderLine('Accept') ?: '*/*';
         $mediaType = (new Negotiator())->getBest($accept, self::NEGOTIATION_PRIORITIES);
 
-        if (! $mediaType) {
-            return Closure::fromCallable([$this, 'generateXmlResponse']);
-        }
-
-        $value = $mediaType->getValue();
-        return strstr($value, 'json')
-            ? Closure::fromCallable([$this, 'generateJsonResponse'])
-            : Closure::fromCallable([$this, 'generateXmlResponse']);
+        return ! $mediaType || false === strpos($mediaType->getValue(), 'json')
+            ? Closure::fromCallable([$this, 'generateXmlResponse'])
+            : Closure::fromCallable([$this, 'generateJsonResponse']);
     }
 
     private function normalizeStatus(int $status) : int

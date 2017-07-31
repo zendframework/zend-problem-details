@@ -29,7 +29,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate) : ResponseInterface
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         // If we cannot provide a representation, act as a no-op.
         if (! $this->canActAsErrorHandler($request)) {
@@ -41,7 +41,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
             $response = $delegate->process($request);
 
             if (! $response instanceof ResponseInterface) {
-                throw new MissingResponseException('Application did not return a response');
+                throw new Exception\MissingResponseException('Application did not return a response');
             }
         } catch (Throwable $e) {
             $response = $this->responseFactory->createResponseFromThrowable($request, $e);
@@ -52,12 +52,14 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
         return $response;
     }
 
+    /**
+     * Can the middleware act as an error handler?
+     *
+     * Returns a boolean false if negotiation fails.
+     */
     private function canActAsErrorHandler(ServerRequestInterface $request) : bool
     {
         $accept = $request->getHeaderLine('Accept') ?: '*/*';
-        if (empty($accept)) {
-            return false;
-        }
 
         return null !== (new Negotiator())
             ->getBest($accept, ProblemDetailsResponseFactory::NEGOTIATION_PRIORITIES);
@@ -70,7 +72,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
      *
      * @return callable
      */
-    private function createErrorHandler()
+    private function createErrorHandler() : callable
     {
         /**
          * @param int $errno
@@ -80,7 +82,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
          * @return void
          * @throws ErrorException if error is not within the error_reporting mask.
          */
-        return function ($errno, $errstr, $errfile, $errline) {
+        return function (int $errno, string $errstr, string $errfile, int $errline) : void {
             if (! (error_reporting() & $errno)) {
                 // error_reporting does not include this error
                 return;

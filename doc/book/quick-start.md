@@ -155,11 +155,11 @@ as the HTTP status if it falls in the 400 or 500 range (500 will be used
 otherwise).
 
 You can also create custom exceptions that provide details for the factory to
-consume by implementing `ProblemDetails\ProblemDetailsException`, which defines
-the following:
+consume by implementing `ProblemDetails\Exception\ProblemDetailsException`,
+which defines the following:
 
 ```php
-namespace ProblemDetails;
+namespace ProblemDetails\Exception;
 
 use JsonSerializable;
 
@@ -211,8 +211,8 @@ By composing this trait, you can easily define custom exception types:
 namespace Api;
 
 use DomainException as PhpDomainException;
-use ProblemDetails\CommonProblemDetailsException;
-use ProblemDetails\ProblemDetailsException;
+use ProblemDetails\Exception\CommonProblemDetailsException;
+use ProblemDetails\Exception\ProblemDetailsException;
 
 class DomainException extends PhpDomainException implements ProblemDetailsException
 {
@@ -249,8 +249,8 @@ a `ProblemDetailsResponseFactory`, and does the following:
 - Otherwise, it creates a PHP error handler that converts PHP errors to
   `ErrorException` instances, and then wraps processing of the delegate in a
   try/catch block. If the delegate does not return a `ResponseInterface`, a
-  `ProblemDetails\MissingResponseException` is raised; otherwise, the response
-  is returned.
+  `ProblemDetails\Exception\MissingResponseException` is raised; otherwise, the
+  response is returned.
 - Any throwable or exception caught is passed to the
   `ProblemDetailsResponseFactory::createResponseFromThrowable()` method, and the
   response generated is returned.

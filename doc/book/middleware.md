@@ -19,7 +19,8 @@ This middleware does the following:
   throwing any errors handled as `ErrorException` instances.
 - Wraps a call to the `$delegate` in a `try`/`catch` block; if nothing is
   caught, and a response is returned, it returns the response immediately. If a
-  response is _not_ returned, it raises a `ProblemDetails\MissingResponseException`.
+  response is _not_ returned, it raises a
+  `ProblemDetails\Exception\MissingResponseException`.
 - For all caught throwables, it passes the throwable to
   `ProblemDetailsResponseFactory::createResponseFromThrowable()` to generate a
   Problem Details response.

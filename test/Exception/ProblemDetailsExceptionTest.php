@@ -1,10 +1,10 @@
 <?php
 
-namespace ProblemDetailsTest;
+namespace ProblemDetailsTest\Exception;
 
 use PHPUnit\Framework\TestCase;
-use ProblemDetails\ProblemDetailsException;
-use ProblemDetails\CommonProblemDetailsException;
+use ProblemDetails\Exception\CommonProblemDetailsException;
+use ProblemDetails\Exception\ProblemDetailsException;
 
 class ProblemDetailsExceptionTest extends TestCase
 {
@@ -16,7 +16,7 @@ class ProblemDetailsExceptionTest extends TestCase
         'foo' => 'bar',
     ];
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->exception = new class (
             $this->status,
@@ -26,12 +26,6 @@ class ProblemDetailsExceptionTest extends TestCase
             $this->additional
         ) implements ProblemDetailsException {
             use CommonProblemDetailsException;
-
-            private $status;
-            private $type;
-            private $title;
-            private $detail;
-            private $additional;
 
             public function __construct(int $status, string $detail, string $title, string $type, array $additional)
             {
@@ -44,7 +38,7 @@ class ProblemDetailsExceptionTest extends TestCase
         };
     }
 
-    public function testCanPullDetailsIndividually()
+    public function testCanPullDetailsIndividually() : void
     {
         $this->assertEquals($this->status, $this->exception->getStatus());
         $this->assertEquals($this->detail, $this->exception->getDetail());
@@ -53,7 +47,7 @@ class ProblemDetailsExceptionTest extends TestCase
         $this->assertEquals($this->additional, $this->exception->getAdditionalData());
     }
 
-    public function testCanCastDetailsToArray()
+    public function testCanCastDetailsToArray() : void
     {
         $this->assertEquals([
             'status' => $this->status,
@@ -64,7 +58,7 @@ class ProblemDetailsExceptionTest extends TestCase
         ], $this->exception->toArray());
     }
 
-    public function testIsJsonSerializable()
+    public function testIsJsonSerializable() : void
     {
         $problem = json_decode(json_encode($this->exception), true);
 

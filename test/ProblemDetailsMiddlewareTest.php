@@ -5,9 +5,10 @@ namespace ProblemDetailsTest;
 use ErrorException;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
-use ProblemDetails\MissingResponseException;
+use ProblemDetails\Exception\MissingResponseException;
 use ProblemDetails\ProblemDetailsMiddleware;
 use ProblemDetails\ProblemDetailsResponseFactory;
+use ProblemDetailsTest\TestAsset;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -16,14 +17,14 @@ class ProblemDetailsMiddlewareTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->request = $this->prophesize(ServerRequestInterface::class);
         $this->responseFactory = $this->prophesize(ProblemDetailsResponseFactory::class);
         $this->middleware = new ProblemDetailsMiddleware($this->responseFactory->reveal());
     }
 
-    public function acceptHeaders()
+    public function acceptHeaders() : array
     {
         return [
             'empty'                    => [''],
@@ -34,7 +35,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
         ];
     }
 
-    public function testSuccessfulDelegationReturnsDelegateResponse()
+    public function testSuccessfulDelegationReturnsDelegateResponse() : void
     {
         $response = $this->prophesize(ResponseInterface::class);
         $delegate = $this->prophesize(DelegateInterface::class);
@@ -52,7 +53,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
     /**
      * @dataProvider acceptHeaders
      */
-    public function testDelegateNotReturningResponseResultsInProblemDetails(string $accept)
+    public function testDelegateNotReturningResponseResultsInProblemDetails(string $accept) : void
     {
         $this->request->getHeaderLine('Accept')->willReturn($accept);
 
@@ -74,7 +75,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
     /**
      * @dataProvider acceptHeaders
      */
-    public function testThrowableRaisedByDelegateResultsInProblemDetails(string $accept)
+    public function testThrowableRaisedByDelegateResultsInProblemDetails(string $accept) : void
     {
         $this->request->getHeaderLine('Accept')->willReturn($accept);
 
@@ -98,7 +99,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
     /**
      * @dataProvider acceptHeaders
      */
-    public function testMiddlewareRegistersErrorHandlerToConvertErrorsToProblemDetails(string $accept)
+    public function testMiddlewareRegistersErrorHandlerToConvertErrorsToProblemDetails(string $accept) : void
     {
         $this->request->getHeaderLine('Accept')->willReturn($accept);
 
@@ -124,7 +125,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function testRethrowsCaughtExceptionIfUnableToNegotiateAcceptHeader()
+    public function testRethrowsCaughtExceptionIfUnableToNegotiateAcceptHeader() : void
     {
         $this->request->getHeaderLine('Accept')->willReturn('text/html');
         $exception = new TestAsset\RuntimeException('Thrown!', 507);
@@ -138,6 +139,6 @@ class ProblemDetailsMiddlewareTest extends TestCase
         $this->expectException(TestAsset\RuntimeException::class);
         $this->expectExceptionMessage('Thrown!');
         $this->expectExceptionCode(507);
-        $result = $middleware->process($this->request->reveal(), $delegate->reveal());
+        $middleware->process($this->request->reveal(), $delegate->reveal());
     }
 }

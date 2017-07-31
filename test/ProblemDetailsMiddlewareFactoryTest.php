@@ -2,21 +2,21 @@
 
 namespace ProblemDetailsTest;
 
-use Psr\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
 use ProblemDetails\ProblemDetailsMiddleware;
 use ProblemDetails\ProblemDetailsMiddlewareFactory;
 use ProblemDetails\ProblemDetailsResponseFactory;
+use Psr\Container\ContainerInterface;
 
 class ProblemDetailsMiddlewareFactoryTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->container = $this->prophesize(ContainerInterface::class);
         $this->factory = new ProblemDetailsMiddlewareFactory();
     }
 
-    public function testCreatesMiddlewareWithoutResponseFactoryIfServiceDoesNotExist()
+    public function testCreatesMiddlewareWithoutResponseFactoryIfServiceDoesNotExist() : void
     {
         $this->container->has(ProblemDetailsResponseFactory::class)->willReturn(false);
         $this->container->get(ProblemDetailsResponseFactory::class)->shouldNotBeCalled();
@@ -31,7 +31,7 @@ class ProblemDetailsMiddlewareFactoryTest extends TestCase
         );
     }
 
-    public function testCreatesMiddlewareUsingResponseFactoryService()
+    public function testCreatesMiddlewareUsingResponseFactoryService() : void
     {
         $responseFactory = $this->prophesize(ProblemDetailsResponseFactory::class)->reveal();
         $this->container->has(ProblemDetailsResponseFactory::class)->willReturn(true);

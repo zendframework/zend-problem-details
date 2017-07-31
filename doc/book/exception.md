@@ -7,7 +7,7 @@ details.
 To facilitate this, we provide an interface, `ProblemDetailsException`:
 
 ```php
-namespace ProblemDetails;
+namespace ProblemDetails\Exception;
 
 use JsonSerializable;
 
@@ -50,8 +50,8 @@ transaction problem details, you might do so as follows:
 
 ```php
 use DomainException;
-use ProblemDetails\CommonProblemDetailsException;
-use ProblemDetails\ProblemDetailsException;
+use ProblemDetails\Exception\CommonProblemDetailsException;
+use ProblemDetails\Exception\ProblemDetailsException;
 
 class TransactionException extends DomainException implements ProblemDetailsException
 {
@@ -96,7 +96,7 @@ And it might result in the following:
     "title": "You have insufficient funds to complete the transaction.",
     "detail": "Your transaction required 5.63, but you only have 1.37 in your account",
     "account": "https://example.com/api/accounts/12345",
-    "balance": 1.37,
+    "balance": 1.37
 }
 ```
 

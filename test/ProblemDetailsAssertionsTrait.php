@@ -2,15 +2,12 @@
 
 namespace ProblemDetailsTest;
 
-use ProblemDetails\ProblemDetailsJsonResponse;
-use ProblemDetails\ProblemDetailsResponse;
-use ProblemDetails\ProblemDetailsXmlResponse;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 trait ProblemDetailsAssertionsTrait
 {
-    public function assertProblemDetails(array $expected, array $details)
+    public function assertProblemDetails(array $expected, array $details) : void
     {
         foreach ($expected as $key => $value) {
             $this->assertArrayHasKey(
@@ -28,7 +25,7 @@ trait ProblemDetailsAssertionsTrait
         }
     }
 
-    public function assertExceptionDetails(Throwable $e, array $details)
+    public function assertExceptionDetails(Throwable $e, array $details) : void
     {
         $this->assertArrayHasKey('class', $details);
         $this->assertSame(get_class($e), $details['class']);
