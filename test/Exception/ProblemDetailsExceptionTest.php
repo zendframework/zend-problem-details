@@ -1,10 +1,10 @@
 <?php
 
-namespace ProblemDetailsTest;
+namespace ProblemDetailsTest\Exception;
 
 use PHPUnit\Framework\TestCase;
-use ProblemDetails\CommonProblemDetailsException;
-use ProblemDetails\ProblemDetailsException;
+use ProblemDetails\Exception\CommonProblemDetailsException;
+use ProblemDetails\Exception\ProblemDetailsException;
 
 class ProblemDetailsExceptionTest extends TestCase
 {

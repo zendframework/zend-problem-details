@@ -208,7 +208,7 @@ class ProblemDetailsResponseFactory
         ServerRequestInterface $request,
         Throwable $e
     ) : ResponseInterface {
-        if ($e instanceof ProblemDetailsException) {
+        if ($e instanceof Exception\ProblemDetailsException) {
             return $this->createResponse(
                 $request,
                 $e->getStatus(),
@@ -258,13 +258,13 @@ class ProblemDetailsResponseFactory
     }
 
     /**
-     * @throws InvalidResponseBodyException
+     * @throws Exception\InvalidResponseBodyException
      */
     protected function generateResponse(int $status, string $contentType, string $payload) : ResponseInterface
     {
         $body = ($this->bodyFactory)();
         if (! $body instanceof StreamInterface) {
-            throw new InvalidResponseBodyException(sprintf(
+            throw new Exception\InvalidResponseBodyException(sprintf(
                 'The factory for generating a problem details response body stream did not return a %s',
                 StreamInterface::class
             ));

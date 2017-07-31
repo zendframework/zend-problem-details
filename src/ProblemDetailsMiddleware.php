@@ -41,7 +41,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
             $response = $delegate->process($request);
 
             if (! $response instanceof ResponseInterface) {
-                throw new MissingResponseException('Application did not return a response');
+                throw new Exception\MissingResponseException('Application did not return a response');
             }
         } catch (Throwable $e) {
             $response = $this->responseFactory->createResponseFromThrowable($request, $e);

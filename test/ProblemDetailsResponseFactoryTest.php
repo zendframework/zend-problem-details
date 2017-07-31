@@ -3,8 +3,8 @@
 namespace ProblemDetailsTest;
 
 use PHPUnit\Framework\TestCase;
-use ProblemDetails\InvalidResponseBodyException;
-use ProblemDetails\ProblemDetailsException;
+use ProblemDetails\Exception\InvalidResponseBodyException;
+use ProblemDetails\Exception\ProblemDetailsException;
 use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace ProblemDetails;
+namespace ProblemDetails\Exception;
 
 /**
  * Common functionality for ProblemDetailsException implementations.
