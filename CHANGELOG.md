@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 0.3.0 - 2017-07-31
+
+### Added
+
+- [#7](https://github.com/weierophinney/problem-details/pull/7) adds an explicit
+  dependency on ext/json.
+
+### Changed
+
+- [#7](https://github.com/weierophinney/problem-details/pull/7) updates each
+  of the following to place them under the new `ProblemDetails\Exception`
+  namespace:
+  - `CommonProblemDetailsException`
+  - `InvalidResponseBodyException`
+  - `MissingResponseException`
+  - `ProblemDetailsException`
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 0.2.1 - 2017-06-13
 
 ### Added
