@@ -14,13 +14,13 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->request = $this->prophesize(ServerRequestInterface::class);
         $this->factory = new ProblemDetailsResponseFactory();
     }
 
-    public function acceptHeaders()
+    public function acceptHeaders() : array
     {
         return [
             'empty'                    => ['', 'application/problem+json'],
@@ -34,7 +34,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
     /**
      * @dataProvider acceptHeaders
      */
-    public function testCreateResponseCreatesExpectedType(string $header, string $expectedType)
+    public function testCreateResponseCreatesExpectedType(string $header, string $expectedType) : void
     {
         $this->request->getHeaderLine('Accept')->willReturn($header);
 
@@ -51,7 +51,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
     /**
      * @dataProvider acceptHeaders
      */
-    public function testCreateResponseFromThrowableCreatesExpectedType(string $header, string $expectedType)
+    public function testCreateResponseFromThrowableCreatesExpectedType(string $header, string $expectedType) : void
     {
         $this->request->getHeaderLine('Accept')->willReturn($header);
 
@@ -71,7 +71,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
     public function testCreateResponseFromThrowableCreatesExpectedTypeWithExtraInformation(
         string $header,
         string $expectedType
-    ) {
+    ) : void {
         $this->request->getHeaderLine('Accept')->willReturn($header);
 
         $factory = new ProblemDetailsResponseFactory(ProblemDetailsResponseFactory::INCLUDE_THROWABLE_DETAILS);
@@ -89,7 +89,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $this->assertArrayHasKey('exception', $payload);
     }
 
-    public function testCreateResponseFromThrowableWillPullDetailsFromProblemDetailsException()
+    public function testCreateResponseFromThrowableWillPullDetailsFromProblemDetailsException() : void
     {
         $e = $this->prophesize(RuntimeException::class)->willImplement(ProblemDetailsException::class);
         $e->getStatus()->willReturn(400);
@@ -118,7 +118,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $this->assertSame('bar', $payload['foo']);
     }
 
-    public function testFactoryRaisesExceptionIfBodyFactoryDoesNotReturnStream()
+    public function testFactoryRaisesExceptionIfBodyFactoryDoesNotReturnStream() : void
     {
         $this->request->getHeaderLine('Accept')->willReturn('application/json');
 
@@ -130,7 +130,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $factory->createResponse($this->request->reveal(), '500', 'This is an error');
     }
 
-    public function testFactoryGeneratesXmlResponseIfNegotiationFails()
+    public function testFactoryGeneratesXmlResponseIfNegotiationFails() : void
     {
         $this->request->getHeaderLine('Accept')->willReturn('text/plain');
 
@@ -144,7 +144,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $this->assertEquals('application/problem+xml', $response->getHeaderLine('Content-Type'));
     }
 
-    public function testFactoryRendersPreviousExceptionsInDebugMode()
+    public function testFactoryRendersPreviousExceptionsInDebugMode() : void
     {
         $this->request->getHeaderLine('Accept')->willReturn('application/json');
 

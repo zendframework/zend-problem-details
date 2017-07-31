@@ -12,12 +12,12 @@ use Zend\Diactoros\Response;
 
 class ProblemDetailsResponseFactoryFactoryTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->container = $this->prophesize(ContainerInterface::class);
     }
 
-    public function testLackOfOptionalServicesResultsInFactoryUsingDefaults()
+    public function testLackOfOptionalServicesResultsInFactoryUsingDefaults() : void
     {
         $this->container->has('config')->willReturn(false);
         $this->container->has(ResponseInterface::class)->willReturn(false);
@@ -38,7 +38,7 @@ class ProblemDetailsResponseFactoryFactoryTest extends TestCase
         $this->assertAttributeInstanceOf(Closure::class, 'bodyFactory', $factory);
     }
 
-    public function testUsesDebugSettingFromConfigWhenPresent()
+    public function testUsesDebugSettingFromConfigWhenPresent() : void
     {
         $this->container->has('config')->willReturn(true);
         $this->container->get('config')->willReturn(['debug' => true]);
@@ -53,7 +53,7 @@ class ProblemDetailsResponseFactoryFactoryTest extends TestCase
         $this->assertAttributeSame(ProblemDetailsResponseFactory::INCLUDE_THROWABLE_DETAILS, 'isDebug', $factory);
     }
 
-    public function testUsesJsonFlagsSettingFromConfigWhenPresent()
+    public function testUsesJsonFlagsSettingFromConfigWhenPresent() : void
     {
         $this->container->has('config')->willReturn(true);
         $this->container->get('config')->willReturn(['problem-details' => ['json_flags' => JSON_PRETTY_PRINT]]);
@@ -68,7 +68,7 @@ class ProblemDetailsResponseFactoryFactoryTest extends TestCase
         $this->assertAttributeSame(JSON_PRETTY_PRINT, 'jsonFlags', $factory);
     }
 
-    public function testUsesResponseServiceFromContainerWhenPresent()
+    public function testUsesResponseServiceFromContainerWhenPresent() : void
     {
         $response = $this->prophesize(ResponseInterface::class)->reveal();
 
@@ -84,7 +84,7 @@ class ProblemDetailsResponseFactoryFactoryTest extends TestCase
         $this->assertAttributeSame($response, 'response', $factory);
     }
 
-    public function testUsesStreamFactoryServiceFromContainerWhenPresent()
+    public function testUsesStreamFactoryServiceFromContainerWhenPresent() : void
     {
         // @codingStandardsIgnoreStart
         $streamFactory = function () { };

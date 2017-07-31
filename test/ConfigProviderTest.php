@@ -11,7 +11,7 @@ use ProblemDetails\ProblemDetailsResponseFactoryFactory;
 
 class ConfigProviderTest extends TestCase
 {
-    public function testReturnsExpectedDependencies()
+    public function testReturnsExpectedDependencies() : void
     {
         $provider = new ConfigProvider();
         $config = $provider();

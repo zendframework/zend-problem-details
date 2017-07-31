@@ -3,19 +3,14 @@
 namespace ProblemDetails;
 
 /**
- * The configuration provider for the ProblemDetails module
+ * Configuration provider for the package.
  *
  * @see https://docs.zendframework.com/zend-component-installer/
  */
 class ConfigProvider
 {
     /**
-     * Returns the configuration array
-     *
-     * To add a bit of a structure, each section is defined in a separate
-     * method which returns an array with its configuration.
-     *
-     * @return array
+     * Returns the configuration array.
      */
     public function __invoke() : array
     {
@@ -25,9 +20,7 @@ class ConfigProvider
     }
 
     /**
-     * Returns the container dependencies
-     *
-     * @return array
+     * Returns the container dependencies.
      */
     public function getDependencies() : array
     {

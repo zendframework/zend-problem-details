@@ -5,7 +5,7 @@ namespace ProblemDetails;
 use JsonSerializable;
 
 /**
- * Define an exception type for generating Problem Details.
+ * Defines an exception type for generating Problem Details.
  */
 interface ProblemDetailsException extends JsonSerializable
 {

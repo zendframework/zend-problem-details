@@ -29,7 +29,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate) : ResponseInterface
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         // If we cannot provide a representation, act as a no-op.
         if (! $this->canActAsErrorHandler($request)) {
@@ -52,12 +52,14 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
         return $response;
     }
 
+    /**
+     * Can the middleware act as an error handler?
+     *
+     * Returns a boolean false if negotiation fails.
+     */
     private function canActAsErrorHandler(ServerRequestInterface $request) : bool
     {
         $accept = $request->getHeaderLine('Accept') ?: '*/*';
-        if (empty($accept)) {
-            return false;
-        }
 
         return null !== (new Negotiator())
             ->getBest($accept, ProblemDetailsResponseFactory::NEGOTIATION_PRIORITIES);
