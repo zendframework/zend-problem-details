@@ -203,7 +203,6 @@ interface ProblemDetailsException extends JsonSerializable
     public function toArray() : array;
 }</code></pre>
 
-
 <p>You may create exceptions that implement this interface. When such exceptions
 are passed to <code>ProblemDetailsResponseFactory::createResponseFromThrowable()</code>,
 these will pull the relevant details in order to create a Problem Details
@@ -253,10 +252,8 @@ class TransactionException extends DomainException implements ProblemDetailsExce
     }
 }</code></pre>
 
-
 <p>You might then raise the exception as follows:</p>
 <pre class="codehilite"><code class="language-php">throw TransactionException::create($price, $balance, $accountUri);</code></pre>
-
 
 <p>And it might result in the following:</p>
 <pre class="codehilite"><code class="language-json">{
@@ -267,7 +264,6 @@ class TransactionException extends DomainException implements ProblemDetailsExce
     &quot;account&quot;: &quot;https://example.com/api/accounts/12345&quot;,
     &quot;balance&quot;: 1.37
 }</code></pre>
-
 
 <p>The benefit to this approach is that you can easily provide domain-specific
 exceptions throughout your application that can, as a side-effect, be

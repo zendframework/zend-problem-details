@@ -207,7 +207,6 @@ public function createResponse(
     array $additional = []
 ) : ResponseInterface {</code></pre>
 
-
 <p>where:</p>
 <ul>
 <li><code>ServerRequestInterface $request</code> is the current request.</li>
@@ -230,7 +229,6 @@ public function createResponseFromThrowable(
     ServerRequestInterface $request,
     Throwable $e
 ) : ResponseInterface {</code></pre>
-
 
 <p>where:</p>
 <ul>
@@ -260,7 +258,6 @@ $response = (new ProblemDetailsResponseFactory())-&gt;createResponse(
 $response = (new ProblemDetailsResponseFactory())
     -&gt;createResponseFromThrowable($request, $e);</code></pre>
 
-
 <p>More often, you will want to customize behavior of the factory; for instance,
 you may want it to act differently in development than in production, or provide
 an alternate PSR-7 implementation. As such, the constructor has the following
@@ -273,7 +270,6 @@ public function __construct(
     ResponseInterface $response = null,
     callable $bodyFactory = null
 ) {</code></pre>
-
 
 <p>where:</p>
 <ul>
@@ -342,7 +338,6 @@ class ApiMiddleware implements MiddlewareInterface
     }
 }</code></pre>
 
-
 <p>The above will return a JSON response if the <code>Accept</code> request header matches
 <code>application/json</code> or any <code>application/*+json</code> mediatype. Any other mediatype
 will generate an XML response.</p>
@@ -368,7 +363,6 @@ class ApiMiddleware implements MiddlewareInterface
         }
     }
 }</code></pre>
-
 
 <p>As with the previous example, the above will return a JSON response if the
 <code>Accept</code> request header matches <code>application/json</code> or any <code>application/*+json</code>
@@ -411,7 +405,6 @@ class ApiMiddleware implements MiddlewareInterface
     }
 }</code></pre>
 
-
 <h3 id="creating-custom-response-types">Creating Custom Response Types</h3>
 <p>If you have common problem types you will use over and over again, you may not
 wish to provide the <code>type</code>, <code>title</code>, and/or <code>status</code> each time you create the
@@ -447,7 +440,6 @@ class RateLimitResponseFactory extends ProblemDetailsResponseFactory
         );
     }
 }</code></pre>
-
 
 <p>You would then compose this alternate factory in your middleware, and invoke it
 as follows:</p>

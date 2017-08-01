@@ -212,17 +212,14 @@ your application pipeline, having it handle <em>all</em> errors and exceptions f
 your application:</p>
 <pre class="codehilite"><code class="language-php">$app-&gt;pipe(ProblemDetailsMiddleware::class);</code></pre>
 
-
 <p>Or for a subpath of your application:</p>
 <pre class="codehilite"><code class="language-php">$app-&gt;pipe('/api', ProblemDetailsMiddleware::class);</code></pre>
-
 
 <p>Alternately, you could pipe it within a routed-middleware pipeline:</p>
 <pre class="codehilite"><code class="language-php">$app-&gt;get('/api/books', [
     ProblemDetailsMiddleware::class,
     BooksList::class,
 ], 'books');</code></pre>
-
 
 <p>This latter approach ensures that you are only providing problem details for
 specific API endpoints, which can be useful when you have a mix of APIs and
