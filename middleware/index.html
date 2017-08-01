@@ -20,9 +20,6 @@
     <link href="../css/zf.css" rel="stylesheet">
     <link href="../css/prism-zf.css" rel="stylesheet">
 
-
-    <link href="../css/zend-expressive.css" rel="stylesheet">
-
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -133,7 +130,7 @@
                 </li>
                 
                     <li>
-                        <a href="https://github.com/weierophinney/problem-details">
+                        <a href="https://github.com/zendframework/zend-problem-details">
                             
                                 <i class="fa fa-github"></i>
                             
@@ -233,7 +230,7 @@ traditional web content in your application.</p>
 <h3 id="factory">Factory</h3>
 <p>The <code>ProblemDetailsMiddleware</code> ships with a corresponding PSR-11 compatible factory,
 <code>ProblemDetailsMiddlewareFactory</code>. This factory looks for a service named
-<code>ProblemDetails\ProblemDetailsResponseFactory</code>; if present, that value is used
+<code>Zend\ProblemDetails\ProblemDetailsResponseFactory</code>; if present, that value is used
 to instantiate the middleware.</p>
 <p>For Expressive 2 users, this middleware should be registered automatically with
 your application on install, assuming you have the zend-component-installer

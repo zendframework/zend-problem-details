@@ -20,9 +20,6 @@
     <link href="../css/zf.css" rel="stylesheet">
     <link href="../css/prism-zf.css" rel="stylesheet">
 
-
-    <link href="../css/zend-expressive.css" rel="stylesheet">
-
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -133,7 +130,7 @@
                 </li>
                 
                     <li>
-                        <a href="https://github.com/weierophinney/problem-details">
+                        <a href="https://github.com/zendframework/zend-problem-details">
                             
                                 <i class="fa fa-github"></i>
                             
@@ -186,7 +183,7 @@
 <h2 id="installation">Installation</h2>
 <p>To install this package in your application, use
 <a href="https://getcomposer.org">Composer</a>:</p>
-<pre class="codehilite"><code class="language-bash">$ composer require weierophinney/problem-details</code></pre>
+<pre class="codehilite"><code class="language-bash">$ composer require zendframework/zend-problem-details</code></pre>
 
 
 <h2 id="usage">Usage</h2>
@@ -206,16 +203,16 @@ Problem Details responses:</p>
 <p>If you are using <a href="https://docs.zendframework.com/zend-expressive/">Expressive</a>
 and have installed <a href="https://docs.zendframework.com/zend-component-installer">zend-component-installer</a>
 (which is installed by default in v2.0 and above), you can write middleware that
-composes the <code>ProblemDetails\ProblemDetailsResponseFactory</code> immediately, and
+composes the <code>Zend\ProblemDetails\ProblemDetailsResponseFactory</code> immediately, and
 inject that service in your middleware.</p>
 <p>As an example, the following catches domain excpetions and uses them to create
 problem details responses:</p>
 <pre class="codehilite"><code class="language-php">use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class DomainTransactionMiddleware implements MiddlewareInterface
 {
@@ -244,8 +241,8 @@ class DomainTransactionMiddleware implements MiddlewareInterface
 
 
 <p>The factory for the above might look like:</p>
-<pre class="codehilite"><code class="language-php">use ProblemDetails\ProblemDetailsResponseFactory;
-use Psr\Container\ContainerInterface;
+<pre class="codehilite"><code class="language-php">use Psr\Container\ContainerInterface;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class DomainTransactionMiddlewareFactory
 {
@@ -264,11 +261,11 @@ an example, validation failure is an expected condition, but should likely
 result in problem details to the end user.</p>
 <pre class="codehilite"><code class="language-php">use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\InputFilter\InputFilterInterface;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class DomainTransactionMiddleware implements MiddlewareInterface
 {
@@ -323,9 +320,9 @@ the exception message as the Problem Details description, and the exception code
 as the HTTP status if it falls in the 400 or 500 range (500 will be used
 otherwise).</p>
 <p>You can also create custom exceptions that provide details for the factory to
-consume by implementing <code>ProblemDetails\Exception\ProblemDetailsException</code>,
+consume by implementing <code>Zend\ProblemDetails\Exception\ProblemDetailsException</code>,
 which defines the following:</p>
-<pre class="codehilite"><code class="language-php">namespace ProblemDetails\Exception;
+<pre class="codehilite"><code class="language-php">namespace Zend\ProblemDetails\Exception;
 
 use JsonSerializable;
 
@@ -373,8 +370,8 @@ private $additional = [];</code></pre>
 <pre class="codehilite"><code class="language-php">namespace Api;
 
 use DomainException as PhpDomainException;
-use ProblemDetails\Exception\CommonProblemDetailsException;
-use ProblemDetails\Exception\ProblemDetailsException;
+use Zend\ProblemDetails\Exception\CommonProblemDetailsException;
+use Zend\ProblemDetails\Exception\ProblemDetailsException;
 
 class DomainException extends PhpDomainException implements ProblemDetailsException
 {
