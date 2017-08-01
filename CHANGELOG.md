@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file, in reverse 
 
 Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
+## 0.4.0 - 2017-08-01
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- The package is now named "zendframework/zend-problem-details".
+- The top-level namespace is now named `Zend\ProblemDetails`.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 0.3.0 - 2017-07-31
 
 ### Added
