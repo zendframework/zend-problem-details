@@ -126,8 +126,6 @@ class ProblemDetailsResponseFactory
         'application/*+xml',
     ];
 
-    const DEFAULT_NON_PROBLEM_DETAILS_MESSAGE = 'Internal Server Error';
-
     /**
      * Factory for generating an empty response body.
      *
