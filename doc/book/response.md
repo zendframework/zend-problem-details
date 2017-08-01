@@ -126,11 +126,11 @@ This package also provides a factory for generating the
 `Zend\ProblemDetails\ProblemDetailsResponseFactoryFactory`. It does the following:
 
 - If a `config` service is present:
-  - If the service contains a `debug` key with a boolean value, that value is
-    provided as the `$isDebug` parameter.
-  - If the service contains a `problem-details` key with an array value
-    containing a `json_flags` key, and that value is an integer, that value is
-    provided as the `$jsonFlags` parameter.
+    - If the service contains a `debug` key with a boolean value, that value is
+      provided as the `$isDebug` parameter.
+    - If the service contains a `problem-details` key with an array value
+      containing a `json_flags` key, and that value is an integer, that value is
+      provided as the `$jsonFlags` parameter.
 - If a `Psr\Http\Message\ResponseInterface` service is present, that service
   will be provided as the `$response` parameter.
 - If a `ProblemDetails\StreamFactory` service is present, that service will be
