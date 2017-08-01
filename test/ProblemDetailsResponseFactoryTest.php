@@ -179,7 +179,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $this->assertEquals('first', $payload['exception']['stack'][0]['message']);
     }
 
-    public function testFragileDataInExceptionShouldBeHideInBodyInNoneDebugMode()
+    public function testFragileDataInExceptionMessageShouldBeHiddenInResponseBodyInNoneDebugMode()
     {
         $fragileMessage = 'Your SQL or password here';
         $exception = new \Exception($fragileMessage);
