@@ -13,12 +13,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Zend\ProblemDetails\Exception\InvalidResponseBodyException;
 use Zend\ProblemDetails\Exception\ProblemDetailsException;
-use Zend\ProblemDetails\ProblemDetailsResponse;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ProblemDetailsResponseFactoryTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
+
+    private $request;
+    private $factory;
 
     protected function setUp() : void
     {
@@ -175,5 +177,15 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $this->assertInternalType('array', $payload['exception']['stack']);
         $this->assertEquals(101010, $payload['exception']['stack'][0]['code']);
         $this->assertEquals('first', $payload['exception']['stack'][0]['message']);
+    }
+
+    public function testFragileDataInExceptionShouldBeHideInBodyInNoneDebugMode()
+    {
+        $fragileMessage = 'Your SQL or password here';
+        $exception = new \Exception($fragileMessage);
+
+        $response = $this->factory->createResponseFromThrowable($this->request->reveal(), $exception);
+
+        $this->assertNotContains($fragileMessage, (string) $response->getBody());
     }
 }
