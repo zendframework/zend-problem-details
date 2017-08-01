@@ -351,7 +351,7 @@ class ProblemDetailsResponseFactory
             ];
         }
 
-        if (!empty($previous)) {
+        if (! empty($previous)) {
             $detail['stack'] = $previous;
         }
 
