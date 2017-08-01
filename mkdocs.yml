@@ -10,7 +10,5 @@ pages:
         - "Error Handling Middleware": middleware.md
 site_name: Problem Details
 site_description: 'Problem Details for PSR-7 Applications'
-repo_url: 'https://github.com/weierophinney/problem-details'
-copyright: 'Copyright (c) 2017 <a href="https://mwop.net/">Matthew Weier O&#39;Phinney</a>'
-extra_css:
-    - css/zend-expressive.css
+repo_url: 'https://github.com/zendframework/zend-problem-details'
+copyright: 'Copyright (c) 2017 <a href="http://www.zend.com/">Zend Technologies USA Inc.</a>'
