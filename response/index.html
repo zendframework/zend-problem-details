@@ -295,12 +295,14 @@ public function __construct(
 <code>ProblemDetailsResponseFactory</code> for usage within dependency injection containers:
 <code>Zend\ProblemDetails\ProblemDetailsResponseFactoryFactory</code>. It does the following:</p>
 <ul>
-<li>If a <code>config</code> service is present:</li>
+<li>If a <code>config</code> service is present:<ul>
 <li>If the service contains a <code>debug</code> key with a boolean value, that value is
-    provided as the <code>$isDebug</code> parameter.</li>
+  provided as the <code>$isDebug</code> parameter.</li>
 <li>If the service contains a <code>problem-details</code> key with an array value
-    containing a <code>json_flags</code> key, and that value is an integer, that value is
-    provided as the <code>$jsonFlags</code> parameter.</li>
+  containing a <code>json_flags</code> key, and that value is an integer, that value is
+  provided as the <code>$jsonFlags</code> parameter.</li>
+</ul>
+</li>
 <li>If a <code>Psr\Http\Message\ResponseInterface</code> service is present, that service
   will be provided as the <code>$response</code> parameter.</li>
 <li>If a <code>ProblemDetails\StreamFactory</code> service is present, that service will be
