@@ -126,6 +126,8 @@ class ProblemDetailsResponseFactory
         'application/*+xml',
     ];
 
+    const DEFAULT_NON_PROBLEM_DETAILS_MESSAGE = 'Internal Server Error';
+
     /**
      * Factory for generating an empty response body.
      *
@@ -167,17 +169,24 @@ class ProblemDetailsResponseFactory
      */
     private $response;
 
+    /**
+     * @var bool
+     */
+    private $showNonProblemDetailsMessage;
+
     public function __construct(
         bool $isDebug = self::EXCLUDE_THROWABLE_DETAILS,
         int $jsonFlags = null,
         ResponseInterface $response = null,
-        callable $bodyFactory = null
+        callable $bodyFactory = null,
+        bool $showNonProblemDetailsMessage = false
     ) {
         $this->isDebug = $isDebug;
         $this->jsonFlags = $jsonFlags
             ?: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
         $this->response = $response ?: new Response();
         $this->bodyFactory = $bodyFactory ?: Closure::fromCallable([$this, 'generateStream']);
+        $this->showNonProblemDetailsMessage = $showNonProblemDetailsMessage;
     }
 
     public function createResponse(
@@ -224,12 +233,14 @@ class ProblemDetailsResponseFactory
             );
         }
 
+        $detail = $this->isDebug || $this->showNonProblemDetailsMessage ? $e->getMessage() : '';
         $additionalDetails = $this->isDebug ? $this->createThrowableDetail($e) : [];
         $code = is_int($e->getCode()) ? $e->getCode() : 0;
+
         return $this->createResponse(
             $request,
             $code,
-            $e->getMessage(),
+            $detail,
             '',
             '',
             $additionalDetails
@@ -340,7 +351,7 @@ class ProblemDetailsResponseFactory
             ];
         }
 
-        if (count($previous) > 0) {
+        if (!empty($previous)) {
             $detail['stack'] = $previous;
         }
 

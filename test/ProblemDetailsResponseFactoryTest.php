@@ -188,4 +188,16 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
         $this->assertNotContains($fragileMessage, (string) $response->getBody());
     }
+
+    public function testFragileDataInExceptionMessageShouldBeVisibleInResponseBodyInNoneDebugModeWhenAllowToShowByFlag()
+    {
+        $fragileMessage = 'Your SQL or password here';
+        $exception = new \Exception($fragileMessage);
+
+        $factory = new ProblemDetailsResponseFactory(false, null, null, null, true);
+
+        $response = $factory->createResponseFromThrowable($this->request->reveal(), $exception);
+
+        $this->assertContains($fragileMessage, (string) $response->getBody());
+    }
 }
