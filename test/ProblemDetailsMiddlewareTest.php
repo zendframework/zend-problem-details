@@ -1,17 +1,22 @@
 <?php
+/**
+ * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
+ */
 
-namespace ProblemDetailsTest;
+namespace ZendTest\ProblemDetails;
 
 use ErrorException;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
-use ProblemDetails\Exception\MissingResponseException;
-use ProblemDetails\ProblemDetailsMiddleware;
-use ProblemDetails\ProblemDetailsResponseFactory;
-use ProblemDetailsTest\TestAsset;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\ProblemDetails\Exception\MissingResponseException;
+use Zend\ProblemDetails\ProblemDetailsMiddleware;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
+use ZendTest\ProblemDetails\TestAsset;
 
 class ProblemDetailsMiddlewareTest extends TestCase
 {

@@ -1,9 +1,17 @@
 <?php
+/**
+ * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
+ */
 
-namespace ProblemDetailsTest;
+namespace ZendTest\ProblemDetails;
 
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
+use Zend\ProblemDetails\ProblemDetailsJsonResponse;
+use Zend\ProblemDetails\ProblemDetailsResponse;
+use Zend\ProblemDetails\ProblemDetailsXmlResponse;
 
 trait ProblemDetailsAssertionsTrait
 {

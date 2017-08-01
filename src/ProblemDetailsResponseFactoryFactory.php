@@ -1,6 +1,11 @@
 <?php
+/**
+ * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
+ */
 
-namespace ProblemDetails;
+namespace Zend\ProblemDetails;
 
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -19,8 +24,8 @@ class ProblemDetailsResponseFactoryFactory
             ? $container->get(ResponseInterface::class)
             : null;
 
-        $streamFactory = $container->has('ProblemDetails\StreamFactory')
-            ? $container->get('ProblemDetails\StreamFactory')
+        $streamFactory = $container->has('Zend\ProblemDetails\StreamFactory')
+            ? $container->get('Zend\ProblemDetails\StreamFactory')
             : null;
 
         return new ProblemDetailsResponseFactory(
