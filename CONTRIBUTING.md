@@ -189,4 +189,4 @@ repository, we suggest doing some cleanup of these branches.
 
 ## Conduct
 
-Please see our [CONDUCT.md](CONDUCT.md) to understand expected behavior when interacting with others in the project.
+Please see our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) to understand expected behavior when interacting with others in the project.
