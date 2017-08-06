@@ -168,17 +168,17 @@ class ProblemDetailsResponseFactory
     private $response;
 
     /**
-     * Flag to enable show exception message in detail field.
+     * Flag to enable show exception details in detail field.
      *
      * Disabled by default for security reasons.
      *
      * @var bool
      */
-    private $showNonProblemDetailsMessage;
+    private $showExceptionDetailsInResponse;
 
     /**
      * Default detail field value. Will be visible when
-     * $showNonProblemDetailsMessage disabled.
+     * $showExceptionDetailsInResponse disabled.
      *
      * Empty string by default
      *
@@ -191,7 +191,7 @@ class ProblemDetailsResponseFactory
         int $jsonFlags = null,
         ResponseInterface $response = null,
         callable $bodyFactory = null,
-        bool $showNonProblemDetailsMessage = false,
+        bool $showExceptionDetailsInResponse = false,
         string $defaultDetailMessage = ''
     ) {
         $this->isDebug = $isDebug;
@@ -199,7 +199,7 @@ class ProblemDetailsResponseFactory
             ?: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
         $this->response = $response ?: new Response();
         $this->bodyFactory = $bodyFactory ?: Closure::fromCallable([$this, 'generateStream']);
-        $this->showNonProblemDetailsMessage = $showNonProblemDetailsMessage;
+        $this->showExceptionDetailsInResponse = $showExceptionDetailsInResponse;
         $this->defaultDetailMessage = $defaultDetailMessage;
     }
 
@@ -247,9 +247,9 @@ class ProblemDetailsResponseFactory
             );
         }
 
-        $detail = $this->isDebug || $this->showNonProblemDetailsMessage ? $e->getMessage() : $this->defaultDetailMessage;
+        $detail = $this->isDebug || $this->showExceptionDetailsInResponse ? $e->getMessage() : $this->defaultDetailMessage;
         $additionalDetails = $this->isDebug ? $this->createThrowableDetail($e) : [];
-        $code = is_int($e->getCode()) ? $e->getCode() : 0;
+        $code = $this->isDebug || $this->showExceptionDetailsInResponse ? $this->getThrowableCode($e) : 500;
 
         return $this->createResponse(
             $request,
@@ -259,6 +259,13 @@ class ProblemDetailsResponseFactory
             '',
             $additionalDetails
         );
+    }
+
+    protected function getThrowableCode(Throwable $e) : int
+    {
+        $code = $e->getCode();
+
+        return is_int($code) ? $code : 0;
     }
 
     protected function generateJsonResponse(array $payload) : ResponseInterface

@@ -127,6 +127,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
         $payload = $this->getPayloadFromResponse($response);
         $this->assertSame(400, $payload['status']);
+        $this->assertSame(400, $response->getStatusCode());
         $this->assertSame('Exception details', $payload['detail']);
         $this->assertSame('Invalid client request', $payload['title']);
         $this->assertSame('https://example.com/api/doc/invalid-client-request', $payload['type']);
@@ -186,7 +187,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $this->assertEquals('first', $payload['exception']['stack'][0]['message']);
     }
 
-    public function testFragileDataInExceptionMessageShouldBeHiddenInResponseBodyInNoneDebugMode()
+    public function testFragileDataInExceptionMessageShouldBeHiddenInResponseBodyInNoDebugMode()
     {
         $fragileMessage = 'Your SQL or password here';
         $exception = new \Exception($fragileMessage);
@@ -194,6 +195,18 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $response = $this->factory->createResponseFromThrowable($this->request->reveal(), $exception);
 
         $this->assertNotContains($fragileMessage, (string) $response->getBody());
+    }
+
+    public function testExceptionCodeShouldBeIgnoredAnd500ServedInResponseBodyInNoDebugMode()
+    {
+        $exception = new \Exception(null, 400);
+
+        $response = $this->factory->createResponseFromThrowable($this->request->reveal(), $exception);
+
+        $payload = $this->getPayloadFromResponse($response);
+
+        $this->assertSame(500, $payload['status']);
+        $this->assertSame(500, $response->getStatusCode());
     }
 
     public function testFragileDataInExceptionMessageShouldBeVisibleInResponseBodyInNoneDebugModeWhenAllowToShowByFlag()
