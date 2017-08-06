@@ -19,7 +19,14 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
 
+    /**
+     * @var ServerRequestInterface
+     */
     private $request;
+
+    /**
+     * @var ProblemDetailsResponseFactory
+     */
     private $factory;
 
     protected function setUp() : void
@@ -198,6 +205,21 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
         $response = $factory->createResponseFromThrowable($this->request->reveal(), $exception);
 
-        $this->assertContains($fragileMessage, (string) $response->getBody());
+        $payload = $this->getPayloadFromResponse($response);
+
+        $this->assertSame($fragileMessage, $payload['detail']);
+    }
+
+    public function testCustomDetailMessageShouldBeVisible()
+    {
+        $detailMessage = 'Custom detail message';
+
+        $factory = new ProblemDetailsResponseFactory(false, null, null, null, false, $detailMessage);
+
+        $response = $factory->createResponseFromThrowable($this->request->reveal(), new \Exception());
+
+        $payload = $this->getPayloadFromResponse($response);
+
+        $this->assertSame($detailMessage, $payload['detail']);
     }
 }

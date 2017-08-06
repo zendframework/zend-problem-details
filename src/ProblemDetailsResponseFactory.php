@@ -168,16 +168,31 @@ class ProblemDetailsResponseFactory
     private $response;
 
     /**
+     * Flag to enable show exception message in detail field.
+     *
+     * Disabled by default for security reasons.
+     *
      * @var bool
      */
     private $showNonProblemDetailsMessage;
+
+    /**
+     * Default detail field value. Will be visible when
+     * $showNonProblemDetailsMessage disabled.
+     *
+     * Empty string by default
+     *
+     * @var string
+     */
+    private $defaultDetailMessage;
 
     public function __construct(
         bool $isDebug = self::EXCLUDE_THROWABLE_DETAILS,
         int $jsonFlags = null,
         ResponseInterface $response = null,
         callable $bodyFactory = null,
-        bool $showNonProblemDetailsMessage = false
+        bool $showNonProblemDetailsMessage = false,
+        string $defaultDetailMessage = ''
     ) {
         $this->isDebug = $isDebug;
         $this->jsonFlags = $jsonFlags
@@ -185,6 +200,7 @@ class ProblemDetailsResponseFactory
         $this->response = $response ?: new Response();
         $this->bodyFactory = $bodyFactory ?: Closure::fromCallable([$this, 'generateStream']);
         $this->showNonProblemDetailsMessage = $showNonProblemDetailsMessage;
+        $this->defaultDetailMessage = $defaultDetailMessage;
     }
 
     public function createResponse(
@@ -231,7 +247,7 @@ class ProblemDetailsResponseFactory
             );
         }
 
-        $detail = $this->isDebug || $this->showNonProblemDetailsMessage ? $e->getMessage() : '';
+        $detail = $this->isDebug || $this->showNonProblemDetailsMessage ? $e->getMessage() : $this->defaultDetailMessage;
         $additionalDetails = $this->isDebug ? $this->createThrowableDetail($e) : [];
         $code = is_int($e->getCode()) ? $e->getCode() : 0;
 
