@@ -174,11 +174,11 @@ class ProblemDetailsResponseFactory
      *
      * @var bool
      */
-    private $showExceptionDetailsInResponse;
+    private $exceptionDetailsInResponse;
 
     /**
      * Default detail field value. Will be visible when
-     * $showExceptionDetailsInResponse disabled.
+     * $exceptionDetailsInResponse disabled.
      *
      * Empty string by default
      *
@@ -191,7 +191,7 @@ class ProblemDetailsResponseFactory
         int $jsonFlags = null,
         ResponseInterface $response = null,
         callable $bodyFactory = null,
-        bool $showExceptionDetailsInResponse = false,
+        bool $exceptionDetailsInResponse = false,
         string $defaultDetailMessage = ''
     ) {
         $this->isDebug = $isDebug;
@@ -199,7 +199,7 @@ class ProblemDetailsResponseFactory
             ?: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
         $this->response = $response ?: new Response();
         $this->bodyFactory = $bodyFactory ?: Closure::fromCallable([$this, 'generateStream']);
-        $this->showExceptionDetailsInResponse = $showExceptionDetailsInResponse;
+        $this->exceptionDetailsInResponse = $exceptionDetailsInResponse;
         $this->defaultDetailMessage = $defaultDetailMessage;
     }
 
@@ -247,9 +247,9 @@ class ProblemDetailsResponseFactory
             );
         }
 
-        $detail = $this->isDebug || $this->showExceptionDetailsInResponse ? $e->getMessage() : $this->defaultDetailMessage;
+        $detail = $this->isDebug || $this->exceptionDetailsInResponse ? $e->getMessage() : $this->defaultDetailMessage;
         $additionalDetails = $this->isDebug ? $this->createThrowableDetail($e) : [];
-        $code = $this->isDebug || $this->showExceptionDetailsInResponse ? $this->getThrowableCode($e) : 500;
+        $code = $this->isDebug || $this->exceptionDetailsInResponse ? $this->getThrowableCode($e) : 500;
 
         return $this->createResponse(
             $request,

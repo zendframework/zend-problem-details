@@ -5,3 +5,4 @@ zf-mkdoc-theme/
 clover.xml
 coveralls-upload.json
 zf-mkdoc-theme.tgz
+/nbproject/private/
