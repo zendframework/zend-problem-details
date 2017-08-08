@@ -24,4 +24,4 @@ Documentation is [in the doc tree](docs/book/), and can be compiled using [mkdoc
 $ mkdocs build
 ```
 
-You may also [browse the documentation online](https://docs.zendframework.com/problem-details/).
+You may also [browse the documentation online](https://docs.zendframework.com/zend-problem-details/).
