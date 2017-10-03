@@ -280,3 +280,22 @@ $app->post('/api/domain/transaction', [
     DomainTransactionMiddleware::class,
 ]);
 ```
+
+### Not Found handling
+
+When writing APIs you may also want 404 responses be in the accepted content-type.
+This package provides `ProblemDetailsNotFoundHandler` which will return a
+problem details `Response` with a `404` status if the request can accept either
+JSON or XML.
+
+To use this handler in Expressive add it into your pipeline immediate before the 
+default `NotFoundHandler`:
+
+```
+$app->pipe(\Zend\ProblemDetails\ProblemDetailsNotFoundHandler::class);
+$app->pipe(NotFoundHandler::class);
+```
+
+
+
+
