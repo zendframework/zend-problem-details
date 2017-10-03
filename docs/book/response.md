@@ -59,8 +59,8 @@ where:
 - `Throwable $e` is an exception or throwable to use when generating problem
   details. By default, it will use the exception code for the HTTP status if it
   is in the 400-599 range, and the exception message for the detail. If the
-  exception is a `ProblemDetailsException`, it will pull data via its exposed
-  methods to populate the response; see the [chapter on
+  exception is a `ProblemDetailsExceptionInterface`, it will pull data via its
+  exposed methods to populate the response; see the [chapter on
   exceptions](exception.md) for more details.
 
 Normal usage of the factory will use a response and a stream from
