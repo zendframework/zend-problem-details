@@ -21,11 +21,24 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
 
-    public function testReturnsResponseWith404StatusAndErrorMessageInBodyWithDefaultFactory()
+    public function acceptHeaders()
     {
+        return [
+            'application/json' => ['application/json', 'application/problem+json'],
+            'application/xml'  => ['application/xml', 'application/problem+xml'],
+        ];
+    }
+
+    /**
+     * @dataProvider acceptHeaders
+     */
+    public function testReturnsResponseWith404StatusAndErrorMessageInBodyWithDefaultFactory(
+        string $acceptHeader,
+        string $expectedHeader
+    ) {
         $request = $this->prophesize(ServerRequestInterface::class);
         $request->getMethod()->willReturn('POST');
-        $request->getHeaderLine('Accept')->willReturn('application/json');
+        $request->getHeaderLine('Accept')->willReturn($acceptHeader);
         $request->getUri()->willReturn('https://example.com/foo');
 
         $notFoundHandler = new ProblemDetailsNotFoundHandler();
@@ -42,16 +55,19 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
             "detail" => "Cannot POST https://example.com/foo!",
         ];
 
-        $this->assertSame($expectedBody, $this->getPayloadFromResponse($returnedResponse));
+        $this->assertEquals($expectedBody, $this->getPayloadFromResponse($returnedResponse));
         $this->assertSame(404, $returnedResponse->getStatusCode());
-        $this->assertSame('application/problem+json', $returnedResponse->getHeaderLine('Content-Type'));
+        $this->assertSame($expectedHeader, $returnedResponse->getHeaderLine('Content-Type'));
     }
 
-    public function testResponseFactoryPassedInConstructorGeneratesTheReturnedResponse()
+    /**
+     * @dataProvider acceptHeaders
+     */
+    public function testResponseFactoryPassedInConstructorGeneratesTheReturnedResponse(string $acceptHeader)
     {
         $request = $this->prophesize(ServerRequestInterface::class);
         $request->getMethod()->willReturn('POST');
-        $request->getHeaderLine('Accept')->willReturn('application/json');
+        $request->getHeaderLine('Accept')->willReturn($acceptHeader);
         $request->getUri()->willReturn('https://example.com/foo');
 
         $response = $this->prophesize(ResponseInterface::class);
