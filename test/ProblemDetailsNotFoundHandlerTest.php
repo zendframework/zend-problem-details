@@ -41,7 +41,7 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
             "status" => 404,
             "detail" => "Cannot POST https://example.com/foo!",
         ];
-        
+
         $this->assertSame($expectedBody, $this->getPayloadFromResponse($returnedResponse));
         $this->assertSame(404, $returnedResponse->getStatusCode());
         $this->assertSame('application/problem+json', $returnedResponse->getHeaderLine('Content-Type'));
