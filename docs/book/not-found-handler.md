@@ -10,14 +10,10 @@ the request's `Accept` header.
 This handler will only return a response if the request's accept header indicates
 that it will accept either JSON or XML.
 
-
 To use this handler in Expressive add it into your pipeline (usually `pipeline.php`)
 immediate before the default `NotFoundHandler`:
 
-
-```
+```php
 $app->pipe(\Zend\ProblemDetails\ProblemDetailsNotFoundHandler::class);
 $app->pipe(NotFoundHandler::class);
 ```
-
-

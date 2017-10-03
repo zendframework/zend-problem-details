@@ -291,11 +291,7 @@ JSON or XML.
 To use this handler in Expressive add it into your pipeline immediate before the 
 default `NotFoundHandler`:
 
-```
+```php
 $app->pipe(\Zend\ProblemDetails\ProblemDetailsNotFoundHandler::class);
 $app->pipe(NotFoundHandler::class);
 ```
-
-
-
-
