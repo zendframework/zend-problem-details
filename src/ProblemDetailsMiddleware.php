@@ -8,8 +8,8 @@
 namespace Zend\ProblemDetails;
 
 use ErrorException;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Negotiation\Negotiator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -34,16 +34,16 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
     {
         // If we cannot provide a representation, act as a no-op.
         if (! $this->canActAsErrorHandler($request)) {
-            return $delegate->process($request);
+            return $handler->handle($request);
         }
 
         try {
             set_error_handler($this->createErrorHandler());
-            $response = $delegate->process($request);
+            $response = $handler->handle($request);
 
             if (! $response instanceof ResponseInterface) {
                 throw new Exception\MissingResponseException('Application did not return a response');

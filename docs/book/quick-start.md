@@ -35,8 +35,8 @@ As an example, the following catches domain excpetions and uses them to create
 problem details responses:
 
 ```php
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
@@ -56,7 +56,7 @@ class DomainTransactionMiddleware implements MiddlewareInterface
         $this->problemDetailsFactory = $problemDetailsFactory;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
     {
         try {
             $result = $this->domainService->transaction($request->getParsedBody());
@@ -91,8 +91,8 @@ an example, validation failure is an expected condition, but should likely
 result in problem details to the end user.
 
 ```php
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
@@ -117,7 +117,7 @@ class DomainTransactionMiddleware implements MiddlewareInterface
         $this->problemDetailsFactory = $problemDetailsFactory;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
     {
         $this->inputFilter->setData($request->getParsedBody());
         if (! $this->inputFilter->isValid()) {
