@@ -1,4 +1,10 @@
 <?php
+/**
+ * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
+ */
+
 namespace Zend\ProblemDetails;
 
 use Interop\Http\ServerMiddleware\DelegateInterface;
@@ -16,7 +22,7 @@ class ProblemDetailsNotFoundHandler implements ServerMiddlewareInterface
     private $responseFactory;
 
     /**
-     * @param ProblemDetailsResponseFactory $responseFactory Factory to create a response to
+     * @param null|ProblemDetailsResponseFactory $responseFactory Factory to create a response to
      *     update and return when returning an 404 response.
      */
     public function __construct(ProblemDetailsResponseFactory $responseFactory = null)
@@ -48,7 +54,7 @@ class ProblemDetailsNotFoundHandler implements ServerMiddlewareInterface
     /**
      * Can the middleware act as an error handler?
      *
-     * Returns a boolean false if negotiation fails.
+     * @return boolean false if negotiation fails.
      */
     private function canActAsErrorHandler(ServerRequestInterface $request) : bool
     {
