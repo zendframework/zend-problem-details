@@ -49,10 +49,10 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
         );
 
         $expectedBody = [
-            "title" => "Not Found",
-            "type" => "https://httpstatus.es/404",
-            "status" => 404,
-            "detail" => "Cannot POST https://example.com/foo!",
+            'title' => 'Not Found',
+            'type' => 'https://httpstatus.es/404',
+            'status' => 404,
+            'detail' => 'Cannot POST https://example.com/foo!',
         ];
 
         $this->assertEquals($expectedBody, $this->getPayloadFromResponse($returnedResponse));

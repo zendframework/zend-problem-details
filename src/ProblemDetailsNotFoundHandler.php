@@ -43,7 +43,7 @@ class ProblemDetailsNotFoundHandler implements ServerMiddlewareInterface
         return $this->responseFactory->createResponse(
             $request,
             404,
-            sprintf("Cannot %s %s!", $request->getMethod(), (string) $request->getUri())
+            sprintf('Cannot %s %s!', $request->getMethod(), (string) $request->getUri())
         );
     }
 
