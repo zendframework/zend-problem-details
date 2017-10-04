@@ -33,7 +33,7 @@ class ProblemDetailsNotFoundHandler implements ServerMiddlewareInterface
     /**
      * Creates and returns a 404 response.
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate) : ResponseInterface
     {
         // If we cannot provide a representation, act as a no-op.
         if (! $this->canActAsErrorHandler($request)) {
