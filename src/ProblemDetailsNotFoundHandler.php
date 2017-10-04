@@ -32,10 +32,6 @@ class ProblemDetailsNotFoundHandler implements ServerMiddlewareInterface
 
     /**
      * Creates and returns a 404 response.
-     *
-     * @param ServerRequestInterface $request Ignored.
-     * @param DelegateInterface $delegate Ignored.
-     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
@@ -53,8 +49,6 @@ class ProblemDetailsNotFoundHandler implements ServerMiddlewareInterface
 
     /**
      * Can the middleware act as an error handler?
-     *
-     * @return boolean false if negotiation fails.
      */
     private function canActAsErrorHandler(ServerRequestInterface $request) : bool
     {
