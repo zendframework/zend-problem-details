@@ -86,4 +86,26 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
             $notFoundHandler->process($request->reveal(), $this->prophesize(DelegateInterface::class)->reveal())
         );
     }
+
+    public function testDelegateIsCalledIfAcceptHeaderIsUnacceptable() : void
+    {
+        $request = $this->prophesize(ServerRequestInterface::class);
+        $request->getMethod()->willReturn('POST');
+        $request->getHeaderLine('Accept')->willReturn('text/html');
+        $request->getUri()->willReturn('https://example.com/foo');
+
+        $response = $this->prophesize(ResponseInterface::class);
+
+        $delegate = $this->prophesize(DelegateInterface::class);
+        $delegate->process($request->reveal())->will([$response, 'reveal']);
+
+        $responseFactory = $this->prophesize(ProblemDetailsResponseFactory::class);
+
+        $notFoundHandler = new ProblemDetailsNotFoundHandler($responseFactory->reveal());
+
+        $this->assertSame(
+            $response->reveal(),
+            $notFoundHandler->process($request->reveal(), $delegate->reveal())
+        );
+    }
 }
