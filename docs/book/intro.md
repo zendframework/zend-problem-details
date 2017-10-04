@@ -1,7 +1,7 @@
 # Problem Details
 
 This library addresses [RFC 7807: Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807)
-for usage with [PSR-7 HTTP Messages](http://www.php-fig.org/psr/psr7/) and
+for usage with [PSR-7 HTTP Messages](http://www.php-fig.org/psr/psr-7/) and
 [http-interop/http-middleware](https://github.com/http-interop/http-middleware).
 
 ## Problem Details for HTTP APIs
