@@ -21,7 +21,7 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
 
-    public function acceptHeaders()
+    public function acceptHeaders() : array
     {
         return [
             'application/json' => ['application/json', 'application/problem+json'],
@@ -35,7 +35,7 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
     public function testReturnsResponseWith404StatusAndErrorMessageInBodyWithDefaultFactory(
         string $acceptHeader,
         string $expectedHeader
-    ) {
+    ) : void {
         $request = $this->prophesize(ServerRequestInterface::class);
         $request->getMethod()->willReturn('POST');
         $request->getHeaderLine('Accept')->willReturn($acceptHeader);
@@ -63,7 +63,7 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
     /**
      * @dataProvider acceptHeaders
      */
-    public function testResponseFactoryPassedInConstructorGeneratesTheReturnedResponse(string $acceptHeader)
+    public function testResponseFactoryPassedInConstructorGeneratesTheReturnedResponse(string $acceptHeader) : void
     {
         $request = $this->prophesize(ServerRequestInterface::class);
         $request->getMethod()->willReturn('POST');
