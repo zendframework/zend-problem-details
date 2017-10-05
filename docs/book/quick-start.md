@@ -163,7 +163,7 @@ namespace Zend\ProblemDetails\Exception;
 
 use JsonSerializable;
 
-interface ProblemDetailsExceptionInterface extends ExceptionInterface, JsonSerializable
+interface ProblemDetailsExceptionInterface extends JsonSerializable
 {
     public function getStatus() : int;
     public function getType() : string;
