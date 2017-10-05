@@ -27,7 +27,7 @@ class ConfigProviderTest extends TestCase
         $this->assertArrayHasKey('factories', $dependencies);
 
         $factories = $dependencies['factories'];
-        $this->assertCount(2, $factories);
+        $this->assertCount(3, $factories);
         $this->assertArrayHasKey(ProblemDetailsMiddleware::class, $factories);
         $this->assertArrayHasKey(ProblemDetailsResponseFactory::class, $factories);
 
