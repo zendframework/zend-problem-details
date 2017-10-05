@@ -49,6 +49,12 @@ class ProblemDetailsResponseFactory
     const CONTENT_TYPE_XML = 'application/problem+xml';
 
     /**
+     * @var string Default detail message to use for exceptions when the
+     *     $exceptionDetailsInResponse flag is false.
+     */
+    const DEFAULT_DETAIL_MESSAGE = 'An unknown error occurred.';
+
+    /**
      * @var string[] Default problem detail titles based on status code
      */
     const DEFAULT_TITLE_MAP = [
@@ -192,7 +198,7 @@ class ProblemDetailsResponseFactory
         ResponseInterface $response = null,
         callable $bodyFactory = null,
         bool $exceptionDetailsInResponse = false,
-        string $defaultDetailMessage = ''
+        string $defaultDetailMessage = self::DEFAULT_DETAIL_MESSAGE
     ) {
         $this->isDebug = $isDebug;
         $this->jsonFlags = $jsonFlags

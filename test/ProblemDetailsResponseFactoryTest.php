@@ -7,6 +7,7 @@
 
 namespace ZendTest\ProblemDetails;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -190,16 +191,17 @@ class ProblemDetailsResponseFactoryTest extends TestCase
     public function testFragileDataInExceptionMessageShouldBeHiddenInResponseBodyInNoDebugMode()
     {
         $fragileMessage = 'Your SQL or password here';
-        $exception = new \Exception($fragileMessage);
+        $exception = new Exception($fragileMessage);
 
         $response = $this->factory->createResponseFromThrowable($this->request->reveal(), $exception);
 
         $this->assertNotContains($fragileMessage, (string) $response->getBody());
+        $this->assertContains($this->factory::DEFAULT_DETAIL_MESSAGE, (string) $response->getBody());
     }
 
-    public function testExceptionCodeShouldBeIgnoredAnd500ServedInResponseBodyInNoDebugMode()
+    public function testExceptionCodeShouldBeIgnoredAnd500ServedInResponseBodyInNonDebugMode()
     {
-        $exception = new \Exception(null, 400);
+        $exception = new Exception(null, 400);
 
         $response = $this->factory->createResponseFromThrowable($this->request->reveal(), $exception);
 
@@ -209,10 +211,10 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $this->assertSame(500, $response->getStatusCode());
     }
 
-    public function testFragileDataInExceptionMessageShouldBeVisibleInResponseBodyInNoneDebugModeWhenAllowToShowByFlag()
+    public function testFragileDataInExceptionMessageShouldBeVisibleInResponseBodyInNonDebugModeWhenAllowToShowByFlag()
     {
         $fragileMessage = 'Your SQL or password here';
-        $exception = new \Exception($fragileMessage);
+        $exception = new Exception($fragileMessage);
 
         $factory = new ProblemDetailsResponseFactory(false, null, null, null, true);
 
@@ -229,7 +231,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
         $factory = new ProblemDetailsResponseFactory(false, null, null, null, false, $detailMessage);
 
-        $response = $factory->createResponseFromThrowable($this->request->reveal(), new \Exception());
+        $response = $factory->createResponseFromThrowable($this->request->reveal(), new Exception());
 
         $payload = $this->getPayloadFromResponse($response);
 
