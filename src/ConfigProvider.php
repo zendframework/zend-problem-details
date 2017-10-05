@@ -32,6 +32,7 @@ class ConfigProvider
         return [
             'factories'  => [
                 ProblemDetailsMiddleware::class => ProblemDetailsMiddlewareFactory::class,
+                ProblemDetailsNotFoundHandler::class => ProblemDetailsNotFoundHandlerFactory::class,
                 ProblemDetailsResponseFactory::class => ProblemDetailsResponseFactoryFactory::class,
             ],
         ];

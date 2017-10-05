@@ -8,6 +8,7 @@ pages:
         - "Generating Responses": response.md
         - "Exceptions": exception.md
         - "Error Handling Middleware": middleware.md
+        - "Not Found Handler": not-found-handler.md
 site_name: Problem Details
 site_description: 'Problem Details for PSR-7 Applications'
 repo_url: 'https://github.com/zendframework/zend-problem-details'
