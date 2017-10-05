@@ -7,15 +7,15 @@
 
 namespace ZendTest\ProblemDetails;
 
-use ErrorException;
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamInterface;
+use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
 use Zend\ProblemDetails\ProblemDetailsNotFoundHandler;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
+
+use const Webimpress\HttpMiddlewareCompatibility\HANDLER_METHOD;
 
 class ProblemDetailsNotFoundHandlerTest extends TestCase
 {
@@ -97,7 +97,7 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
         $response = $this->prophesize(ResponseInterface::class);
 
         $delegate = $this->prophesize(DelegateInterface::class);
-        $delegate->process($request->reveal())->will([$response, 'reveal']);
+        $delegate->{HANDLER_METHOD}($request->reveal())->will([$response, 'reveal']);
 
         $responseFactory = $this->prophesize(ProblemDetailsResponseFactory::class);
 

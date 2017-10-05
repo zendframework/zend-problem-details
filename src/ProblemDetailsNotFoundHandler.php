@@ -7,12 +7,14 @@
 
 namespace Zend\ProblemDetails;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface as ServerMiddlewareInterface;
 use Negotiation\Negotiator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
+use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface as ServerMiddlewareInterface;
 use Zend\Stratigility\Delegate\CallableDelegateDecorator;
+
+use const Webimpress\HttpMiddlewareCompatibility\HANDLER_METHOD;
 
 class ProblemDetailsNotFoundHandler implements ServerMiddlewareInterface
 {
@@ -37,7 +39,7 @@ class ProblemDetailsNotFoundHandler implements ServerMiddlewareInterface
     {
         // If we cannot provide a representation, act as a no-op.
         if (! $this->canActAsErrorHandler($request)) {
-            return $delegate->process($request);
+            return $delegate->{HANDLER_METHOD}($request);
         }
 
         return $this->responseFactory->createResponse(
