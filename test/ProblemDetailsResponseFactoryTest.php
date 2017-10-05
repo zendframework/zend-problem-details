@@ -7,18 +7,28 @@
 
 namespace ZendTest\ProblemDetails;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Zend\ProblemDetails\Exception\InvalidResponseBodyException;
 use Zend\ProblemDetails\Exception\ProblemDetailsException;
-use Zend\ProblemDetails\ProblemDetailsResponse;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ProblemDetailsResponseFactoryTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
+
+    /**
+     * @var ServerRequestInterface
+     */
+    private $request;
+
+    /**
+     * @var ProblemDetailsResponseFactory
+     */
+    private $factory;
 
     protected function setUp() : void
     {
@@ -118,6 +128,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
         $payload = $this->getPayloadFromResponse($response);
         $this->assertSame(400, $payload['status']);
+        $this->assertSame(400, $response->getStatusCode());
         $this->assertSame('Exception details', $payload['detail']);
         $this->assertSame('Invalid client request', $payload['title']);
         $this->assertSame('https://example.com/api/doc/invalid-client-request', $payload['type']);
@@ -175,5 +186,55 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $this->assertInternalType('array', $payload['exception']['stack']);
         $this->assertEquals(101010, $payload['exception']['stack'][0]['code']);
         $this->assertEquals('first', $payload['exception']['stack'][0]['message']);
+    }
+
+    public function testFragileDataInExceptionMessageShouldBeHiddenInResponseBodyInNoDebugMode()
+    {
+        $fragileMessage = 'Your SQL or password here';
+        $exception = new Exception($fragileMessage);
+
+        $response = $this->factory->createResponseFromThrowable($this->request->reveal(), $exception);
+
+        $this->assertNotContains($fragileMessage, (string) $response->getBody());
+        $this->assertContains($this->factory::DEFAULT_DETAIL_MESSAGE, (string) $response->getBody());
+    }
+
+    public function testExceptionCodeShouldBeIgnoredAnd500ServedInResponseBodyInNonDebugMode()
+    {
+        $exception = new Exception(null, 400);
+
+        $response = $this->factory->createResponseFromThrowable($this->request->reveal(), $exception);
+
+        $payload = $this->getPayloadFromResponse($response);
+
+        $this->assertSame(500, $payload['status']);
+        $this->assertSame(500, $response->getStatusCode());
+    }
+
+    public function testFragileDataInExceptionMessageShouldBeVisibleInResponseBodyInNonDebugModeWhenAllowToShowByFlag()
+    {
+        $fragileMessage = 'Your SQL or password here';
+        $exception = new Exception($fragileMessage);
+
+        $factory = new ProblemDetailsResponseFactory(false, null, null, null, true);
+
+        $response = $factory->createResponseFromThrowable($this->request->reveal(), $exception);
+
+        $payload = $this->getPayloadFromResponse($response);
+
+        $this->assertSame($fragileMessage, $payload['detail']);
+    }
+
+    public function testCustomDetailMessageShouldBeVisible()
+    {
+        $detailMessage = 'Custom detail message';
+
+        $factory = new ProblemDetailsResponseFactory(false, null, null, null, false, $detailMessage);
+
+        $response = $factory->createResponseFromThrowable($this->request->reveal(), new Exception());
+
+        $payload = $this->getPayloadFromResponse($response);
+
+        $this->assertSame($detailMessage, $payload['detail']);
     }
 }

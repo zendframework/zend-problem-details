@@ -56,6 +56,7 @@ class ProblemDetailsResponseFactoryFactoryTest extends TestCase
 
         $this->assertInstanceOf(ProblemDetailsResponseFactory::class, $factory);
         $this->assertAttributeSame(ProblemDetailsResponseFactory::INCLUDE_THROWABLE_DETAILS, 'isDebug', $factory);
+        $this->assertAttributeSame(true, 'exceptionDetailsInResponse', $factory);
     }
 
     public function testUsesJsonFlagsSettingFromConfigWhenPresent() : void

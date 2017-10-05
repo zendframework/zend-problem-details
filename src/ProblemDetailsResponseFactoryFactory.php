@@ -32,7 +32,8 @@ class ProblemDetailsResponseFactoryFactory
             $includeThrowableDetail,
             $jsonFlags,
             $responsePrototype,
-            $streamFactory
+            $streamFactory,
+            $includeThrowableDetail
         );
     }
 }

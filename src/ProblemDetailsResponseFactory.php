@@ -49,6 +49,12 @@ class ProblemDetailsResponseFactory
     const CONTENT_TYPE_XML = 'application/problem+xml';
 
     /**
+     * @var string Default detail message to use for exceptions when the
+     *     $exceptionDetailsInResponse flag is false.
+     */
+    const DEFAULT_DETAIL_MESSAGE = 'An unknown error occurred.';
+
+    /**
      * @var string[] Default problem detail titles based on status code
      */
     const DEFAULT_TITLE_MAP = [
@@ -167,17 +173,40 @@ class ProblemDetailsResponseFactory
      */
     private $response;
 
+    /**
+     * Flag to enable show exception details in detail field.
+     *
+     * Disabled by default for security reasons.
+     *
+     * @var bool
+     */
+    private $exceptionDetailsInResponse;
+
+    /**
+     * Default detail field value. Will be visible when
+     * $exceptionDetailsInResponse disabled.
+     *
+     * Empty string by default
+     *
+     * @var string
+     */
+    private $defaultDetailMessage;
+
     public function __construct(
         bool $isDebug = self::EXCLUDE_THROWABLE_DETAILS,
         int $jsonFlags = null,
         ResponseInterface $response = null,
-        callable $bodyFactory = null
+        callable $bodyFactory = null,
+        bool $exceptionDetailsInResponse = false,
+        string $defaultDetailMessage = self::DEFAULT_DETAIL_MESSAGE
     ) {
         $this->isDebug = $isDebug;
         $this->jsonFlags = $jsonFlags
             ?: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
         $this->response = $response ?: new Response();
         $this->bodyFactory = $bodyFactory ?: Closure::fromCallable([$this, 'generateStream']);
+        $this->exceptionDetailsInResponse = $exceptionDetailsInResponse;
+        $this->defaultDetailMessage = $defaultDetailMessage;
     }
 
     public function createResponse(
@@ -224,16 +253,25 @@ class ProblemDetailsResponseFactory
             );
         }
 
+        $detail = $this->isDebug || $this->exceptionDetailsInResponse ? $e->getMessage() : $this->defaultDetailMessage;
         $additionalDetails = $this->isDebug ? $this->createThrowableDetail($e) : [];
-        $code = is_int($e->getCode()) ? $e->getCode() : 0;
+        $code = $this->isDebug || $this->exceptionDetailsInResponse ? $this->getThrowableCode($e) : 500;
+
         return $this->createResponse(
             $request,
             $code,
-            $e->getMessage(),
+            $detail,
             '',
             '',
             $additionalDetails
         );
+    }
+
+    protected function getThrowableCode(Throwable $e) : int
+    {
+        $code = $e->getCode();
+
+        return is_int($code) ? $code : 0;
     }
 
     protected function generateJsonResponse(array $payload) : ResponseInterface
@@ -340,7 +378,7 @@ class ProblemDetailsResponseFactory
             ];
         }
 
-        if (count($previous) > 0) {
+        if (! empty($previous)) {
             $detail['stack'] = $previous;
         }
 

@@ -4,6 +4,45 @@ All notable changes to this project will be documented in this file, in reverse 
 
 Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
+## 0.5.0 - TBD
+
+### Added
+
+- In [#1](https://github.com/weierophinney/problem-details/pull/1),
+  `Zend\ProblemDetails\ProblemDetailsResponseFactory` was updated to attempt to
+  generate a secure-by-default and secure-in-production Problem Details response
+  when the response is generated from an exception; essentially, it now defaults
+  to NOT exposing this information, in order to prevent exposing internals of
+  the application in production.
+
+  To provide this, it adds two new, optional, constructor arguments:
+
+  - `bool $exceptionDetailsInResponse` is a flag detailing whether or not
+    details from an exception (except `ProblemDetailsException` custom data)
+    should be used in the Problem Details response; by default this is `false`
+  - `string $defaultDetailMessage` is a default message to use for the `detail`
+    key of the response in such situations; the default value is `An unknown
+    error occurred.`.
+
+  Additionally, `ProblemDetailsResponseFactoryFactory` was updated to re-use the
+  configuration `debug` setting for the `$exceptionDetailsInResponse` flag.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 0.4.0 - 2017-08-01
 
 ### Added
