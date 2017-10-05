@@ -8,7 +8,7 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
 ### Added
 
-- In [#1](https://github.com/weierophinney/problem-details/pull/1),
+- In [#1](https://github.com/zendframework/problem-details/pull/1),
   `Zend\ProblemDetails\ProblemDetailsResponseFactory` was updated to attempt to
   generate a secure-by-default and secure-in-production Problem Details response
   when the response is generated from an exception; essentially, it now defaults
@@ -26,6 +26,12 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
   Additionally, `ProblemDetailsResponseFactoryFactory` was updated to re-use the
   configuration `debug` setting for the `$exceptionDetailsInResponse` flag.
+
+- [#7](https://github.com/zendframework/problem-details/pull/7) adds a
+  `ProblemDetailsNotFoundHandler` class and associated factory. This can be used
+  in place of the default application `NotFoundHandler`, in addition to it, or
+  within specific routed pipelines in order to provide Problem Details 404
+  responses.
 
 ### Changed
 
