@@ -12,7 +12,7 @@ use JsonSerializable;
 /**
  * Defines an exception type for generating Problem Details.
  */
-interface ProblemDetailsExceptionInterface extends ExceptionInterface, JsonSerializable
+interface ProblemDetailsExceptionInterface extends JsonSerializable
 {
     public function getStatus() : int;
 
