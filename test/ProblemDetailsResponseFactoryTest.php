@@ -13,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Zend\ProblemDetails\Exception\InvalidResponseBodyException;
-use Zend\ProblemDetails\Exception\ProblemDetailsException;
+use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ProblemDetailsResponseFactoryTest extends TestCase
@@ -105,9 +105,9 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $this->assertArrayHasKey('exception', $payload);
     }
 
-    public function testCreateResponseFromThrowableWillPullDetailsFromProblemDetailsException() : void
+    public function testCreateResponseFromThrowableWillPullDetailsFromProblemDetailsExceptionInterface() : void
     {
-        $e = $this->prophesize(RuntimeException::class)->willImplement(ProblemDetailsException::class);
+        $e = $this->prophesize(RuntimeException::class)->willImplement(ProblemDetailsExceptionInterface::class);
         $e->getStatus()->willReturn(400);
         $e->getDetail()->willReturn('Exception details');
         $e->getTitle()->willReturn('Invalid client request');

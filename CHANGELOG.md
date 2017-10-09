@@ -33,9 +33,23 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
   within specific routed pipelines in order to provide Problem Details 404
   responses.
 
+- [#8](https://github.com/zendframework/problem-details/pull/8) adds
+  `Zend\Expressive\ProblemDetails\Exception\ExceptionInterface`, a marker
+  interface for exceptions provided by the package.
+
 ### Changed
 
-- Nothing.
+- [#8](https://github.com/zendframework/problem-details/pull/8) renames the
+  interface `ProblemDetailsException` to `ProblemDetailsExceptionInterface`.
+  This was done to make the naming consistent with other ZF packages.
+
+- [#8](https://github.com/zendframework/problem-details/pull/8) renames the
+  trait `CommonProblemDetailsException` to `CommonProblemDetailsExceptionTrait`.
+  This was done to make the naming consistent with other ZF packages.
+
+- [#8](https://github.com/zendframework/problem-details/pull/8) updates the
+  shipped `InvalidResponseBodyException` and `MissingResponseException` to
+  extend the new `ExceptionInterface`.
 
 ### Deprecated
 

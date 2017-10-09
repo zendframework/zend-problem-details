@@ -9,6 +9,6 @@ namespace Zend\ProblemDetails\Exception;
 
 use RuntimeException;
 
-class MissingResponseException extends RuntimeException
+class MissingResponseException extends RuntimeException implements ExceptionInterface
 {
 }

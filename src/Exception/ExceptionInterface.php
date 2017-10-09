@@ -7,8 +7,9 @@
 
 namespace Zend\ProblemDetails\Exception;
 
-use RuntimeException;
-
-class InvalidResponseBodyException extends RuntimeException implements ExceptionInterface
+/**
+ * Marker interface for package-specific exceptions
+ */
+interface ExceptionInterface
 {
 }

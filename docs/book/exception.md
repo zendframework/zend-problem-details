@@ -4,14 +4,14 @@ If you are developing an API, it may be useful to raise exceptions from your
 business domain that contain all the information necessary to report problem
 details.
 
-To facilitate this, we provide an interface, `ProblemDetailsException`:
+To facilitate this, we provide an interface, `ProblemDetailsExceptionInterface`:
 
 ```php
 namespace Zend\ProblemDetails\Exception;
 
 use JsonSerializable;
 
-interface ProblemDetailsException extends JsonSerializable
+interface ProblemDetailsExceptionInterface extends JsonSerializable
 {
     public function getStatus() : int;
 
@@ -33,7 +33,7 @@ these will pull the relevant details in order to create a Problem Details
 response.
 
 To facilitate creating such exception types, we also ship the trait
-`CommonProblemDetailsException`. This trait defines the following properties:
+`CommonProblemDetailsExceptionTrait`. This trait defines the following properties:
 
 - `$status`
 - `$detail`
@@ -50,12 +50,12 @@ transaction problem details, you might do so as follows:
 
 ```php
 use DomainException;
-use Zend\ProblemDetails\Exception\CommonProblemDetailsException;
-use Zend\ProblemDetails\Exception\ProblemDetailsException;
+use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
+use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
-class TransactionException extends DomainException implements ProblemDetailsException
+class TransactionException extends DomainException implements ProblemDetailsExceptionInterface
 {
-    use CommonProblemDetailsException;
+    use CommonProblemDetailsExceptionTrait;
 
     const STATUS = 403;
     const TYPE = 'https://example.com/problems/insufficient-funds';

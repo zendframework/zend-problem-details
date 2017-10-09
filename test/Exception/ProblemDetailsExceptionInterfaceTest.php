@@ -8,8 +8,8 @@
 namespace ZendTest\ProblemDetails\Exception;
 
 use PHPUnit\Framework\TestCase;
-use Zend\ProblemDetails\Exception\CommonProblemDetailsException;
-use Zend\ProblemDetails\Exception\ProblemDetailsException;
+use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
+use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
 class ProblemDetailsExceptionTest extends TestCase
 {
@@ -29,8 +29,8 @@ class ProblemDetailsExceptionTest extends TestCase
             $this->title,
             $this->type,
             $this->additional
-        ) implements ProblemDetailsException {
-            use CommonProblemDetailsException;
+        ) implements ProblemDetailsExceptionInterface {
+            use CommonProblemDetailsExceptionTrait;
 
             public function __construct(int $status, string $detail, string $title, string $type, array $additional)
             {

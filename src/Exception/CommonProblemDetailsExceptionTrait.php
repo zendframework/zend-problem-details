@@ -8,7 +8,7 @@
 namespace Zend\ProblemDetails\Exception;
 
 /**
- * Common functionality for ProblemDetailsException implementations.
+ * Common functionality for ProblemDetailsExceptionInterface implementations.
  *
  * Requires setting the following properties in the composing class:
  *
@@ -18,7 +18,7 @@ namespace Zend\ProblemDetails\Exception;
  * - type (string)
  * - additional (array)
  */
-trait CommonProblemDetailsException
+trait CommonProblemDetailsExceptionTrait
 {
     /**
      * @var int
