@@ -8,15 +8,17 @@
 namespace ZendTest\ProblemDetails;
 
 use ErrorException;
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
 use Zend\ProblemDetails\Exception\MissingResponseException;
 use Zend\ProblemDetails\ProblemDetailsMiddleware;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 use ZendTest\ProblemDetails\TestAsset;
+
+use const Webimpress\HttpMiddlewareCompatibility\HANDLER_METHOD;
 
 class ProblemDetailsMiddlewareTest extends TestCase
 {
@@ -45,7 +47,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
         $response = $this->prophesize(ResponseInterface::class);
         $delegate = $this->prophesize(DelegateInterface::class);
         $delegate
-            ->process(Argument::that([$this->request, 'reveal']))
+            ->{HANDLER_METHOD}(Argument::that([$this->request, 'reveal']))
             ->will([$response, 'reveal']);
 
 
@@ -64,7 +66,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
 
         $delegate = $this->prophesize(DelegateInterface::class);
         $delegate
-            ->process(Argument::that([$this->request, 'reveal']))
+            ->{HANDLER_METHOD}(Argument::that([$this->request, 'reveal']))
             ->willReturn('Unexpected');
 
         $expected = $this->prophesize(ResponseInterface::class)->reveal();
@@ -88,7 +90,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
 
         $delegate  = $this->prophesize(DelegateInterface::class);
         $delegate
-            ->process(Argument::that([$this->request, 'reveal']))
+            ->{HANDLER_METHOD}(Argument::that([$this->request, 'reveal']))
             ->willThrow($exception);
 
         $expected = $this->prophesize(ResponseInterface::class)->reveal();
@@ -110,7 +112,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
 
         $delegate = $this->prophesize(DelegateInterface::class);
         $delegate
-            ->process(Argument::that([$this->request, 'reveal']))
+            ->{HANDLER_METHOD}(Argument::that([$this->request, 'reveal']))
             ->will(function () {
                 trigger_error('Triggered error!', \E_USER_ERROR);
             });
@@ -136,7 +138,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
         $exception = new TestAsset\RuntimeException('Thrown!', 507);
         $delegate  = $this->prophesize(DelegateInterface::class);
         $delegate
-            ->process(Argument::that([$this->request, 'reveal']))
+            ->{HANDLER_METHOD}(Argument::that([$this->request, 'reveal']))
             ->willThrow($exception);
 
         $middleware = new ProblemDetailsMiddleware();

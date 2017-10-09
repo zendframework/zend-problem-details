@@ -35,10 +35,10 @@ As an example, the following catches domain excpetions and uses them to create
 problem details responses:
 
 ```php
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
+use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
+use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
@@ -91,10 +91,10 @@ an example, validation failure is an expected condition, but should likely
 result in problem details to the end user.
 
 ```php
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
+use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
+use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;

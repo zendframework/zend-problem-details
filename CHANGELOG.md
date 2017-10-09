@@ -37,6 +37,12 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
   `Zend\Expressive\ProblemDetails\Exception\ExceptionInterface`, a marker
   interface for exceptions provided by the package.
 
+- [#12](https://github.com/zendframework/zend-problem-details/pull/12) adds
+  support for http-interop/http-middleware 0.5.0 via a polyfill provided by the
+  package webimpress/http-middleware-compatibility. Essentially, this means you
+  can drop this package into an application targeting either the 0.4.1 or 0.5.0
+  versions of http-middleware, and it will "just work".
+
 ### Changed
 
 - [#8](https://github.com/zendframework/zend-problem-details/pull/8) renames the
