@@ -153,9 +153,9 @@ Let's say you have middleware that you know will only be used in a production
 context, and need to return problem details:
 
 ```php
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
+use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ApiMiddleware implements MiddlewareInterface
@@ -186,15 +186,15 @@ composes, and that service could raise an exception or other `Throwable`. For
 this, you can use the `createResponseFromThrowable()` method instead.
 
 ```php
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ApiMiddleware implements MiddlewareInterface
 {
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
     {
         try {
             // some code that may raise an exception or throwable
@@ -221,8 +221,8 @@ pass a configured `ProblemDetailsResponseFactory` instance to your middleware's
 constructor. As a more complete example:
 
 ```php
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
@@ -239,7 +239,7 @@ class ApiMiddleware implements MiddlewareInterface
         $this->problemDetailsFactory = $problemDetailsFactory;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
     {
         try {
             // some code that may raise an exception or throwable
