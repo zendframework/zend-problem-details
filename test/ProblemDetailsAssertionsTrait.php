@@ -78,6 +78,21 @@ trait ProblemDetailsAssertionsTrait
         $body = $response->getBody();
         $xml = simplexml_load_string((string) $body);
         $json = json_encode($xml);
-        return json_decode($json, true);
+        $payload = json_decode($json, true);
+
+        // Ensure ints and floats are properly represented
+        array_walk_recursive($payload, function (&$item) {
+            if ((string) (int) $item === $item) {
+                $item = (int) $item;
+                return;
+            }
+
+            if ((string) (float) $item === $item) {
+                $item = (float) $item;
+                return;
+            }
+        });
+
+        return $payload;
     }
 }
