@@ -242,7 +242,7 @@ class ProblemDetailsResponseFactory
         ServerRequestInterface $request,
         Throwable $e
     ) : ResponseInterface {
-        if ($e instanceof Exception\ProblemDetailsException) {
+        if ($e instanceof Exception\ProblemDetailsExceptionInterface) {
             return $this->createResponse(
                 $request,
                 $e->getStatus(),

@@ -16,7 +16,7 @@ Problem Details responses:
 
 - `ProblemDetailsResponseFactory` for generating problem details responses on
   the fly from either PHP primitives or exceptions/throwables.
-- `ProblemDetailsException` for creating exceptions with additional problem
+- `ProblemDetailsExceptionInterface` for creating exceptions with additional problem
   details that may be used when generating a response.
 - `ProblemDetailsMiddleware` that acts as error/exception handler middleware,
   casting and throwing PHP errors as `ErrorException` instances, and all caught
@@ -155,7 +155,7 @@ as the HTTP status if it falls in the 400 or 500 range (500 will be used
 otherwise).
 
 You can also create custom exceptions that provide details for the factory to
-consume by implementing `Zend\ProblemDetails\Exception\ProblemDetailsException`,
+consume by implementing `Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface`,
 which defines the following:
 
 ```php
@@ -163,7 +163,7 @@ namespace Zend\ProblemDetails\Exception;
 
 use JsonSerializable;
 
-interface ProblemDetailsException extends JsonSerializable
+interface ProblemDetailsExceptionInterface extends JsonSerializable
 {
     public function getStatus() : int;
     public function getType() : string;
@@ -174,7 +174,7 @@ interface ProblemDetailsException extends JsonSerializable
 }
 ```
 
-We also provide the trait `CommonProblemDetailsException`, which implements each
+We also provide the trait `CommonProblemDetailsExceptionTrait`, which implements each
 of the above, the `jsonSerialize()` method, and also defines the following
 instance properties:
 
@@ -211,12 +211,12 @@ By composing this trait, you can easily define custom exception types:
 namespace Api;
 
 use DomainException as PhpDomainException;
-use Zend\ProblemDetails\Exception\CommonProblemDetailsException;
-use Zend\ProblemDetails\Exception\ProblemDetailsException;
+use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
+use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
-class DomainException extends PhpDomainException implements ProblemDetailsException
+class DomainException extends PhpDomainException implements ProblemDetailsExceptionInterface
 {
-    use CommonProblemDetailsException;
+    use CommonProblemDetailsExceptionTrait;
 
     public static function create(string $message, array $details) : DomainException
     {
