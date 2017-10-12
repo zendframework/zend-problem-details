@@ -238,7 +238,6 @@ class ProblemDetailsResponseFactory
             $payload = array_merge($additional, $payload);
         }
 
-
         return $this->getResponseGenerator($request)($payload);
     }
 
