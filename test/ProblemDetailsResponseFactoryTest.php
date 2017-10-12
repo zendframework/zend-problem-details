@@ -105,6 +105,48 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $this->assertArrayHasKey('exception', $payload);
     }
 
+    /**
+     * @dataProvider acceptHeaders
+     */
+    public function testCreateResponseRemovesInvalidCharactersFromXmlKeyNames(string $header, string $expectedType) : void
+    {
+        $this->request->getHeaderLine('Accept')->willReturn($header);
+
+        $additional = [
+            'foo' => [
+                'A#-' => 'foo',
+                '-A-' => 'foo',
+                '#A-' => 'foo',
+            ],
+        ];
+
+        $response = $this->factory->createResponse(
+            $this->request->reveal(),
+            500,
+            'Unknown error occurred',
+            'Title',
+            'Type',
+            $additional
+        );
+
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertEquals($expectedType, $response->getHeaderLine('Content-Type'));
+
+        $payload = $this->getPayloadFromResponse($response);
+
+        if (stripos($expectedType, 'xml')) {
+            $expectedKeyNames = [
+                'A_-',
+                '_A-',
+                '_A-',
+            ];
+        } else {
+            $expectedKeyNames = array_keys($additional['foo']);
+        }
+        
+        $this->assertEquals(array_keys($payload['foo']), $expectedKeyNames);
+    }
+
     public function testCreateResponseFromThrowableWillPullDetailsFromProblemDetailsExceptionInterface() : void
     {
         $e = $this->prophesize(RuntimeException::class)->willImplement(ProblemDetailsExceptionInterface::class);

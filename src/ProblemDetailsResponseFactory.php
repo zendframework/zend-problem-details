@@ -283,12 +283,40 @@ class ProblemDetailsResponseFactory
         );
     }
 
+    /**
+     * Ensure all keys in this associative array are valid XML tag names by replacing invalid
+     * characters with an `_`.
+     */
+    private function cleanKeysForXml(array $input): array
+    {
+        $return = [];
+        foreach ($input as $key => $value) {
+            $startCharacterPattern =
+                '[A-Z]|_|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\x{2FF}]|[\x{370}-\x{37D}]|[\x{37F}-\x{1FFF}]|'
+                . '[\x{200C}-\x{200D}]|[\x{2070}-\x{218F}]|[\x{2C00}-\x{2FEF}]|[\x{3001}-\x{D7FF}]|[\x{F900}-\x{FDCF}]'
+                . '|[\x{FDF0}-\x{FFFD}]';
+            $characterPattern = $startCharacterPattern . '|\-|\.|[0-9]|\xB7|[\x{300}-\x{36F}]|[\x{203F}-\x{2040}]';
+
+            $key = preg_replace('/(?!'.$characterPattern.')./u', '_', $key);
+            $key = preg_replace('/^(?!'.$startCharacterPattern.')./u', '_', $key);
+
+            if (is_array($value)) {
+                $value = $this->cleanKeysForXml($value);
+            }
+            $return[$key] = $value;
+        }
+        return $return;
+    }
+
     protected function generateXmlResponse(array $payload) : ResponseInterface
     {
         // Ensure any objects are flattened to arrays first
         $content = json_decode(json_encode($payload), true);
 
-        $converter = new ArrayToXml($content, 'problem');
+        // ensure all keys are valid XML can be json_encoded
+        $cleanedContent = $this->cleanKeysForXml($content);
+
+        $converter = new ArrayToXml($cleanedContent, 'problem');
         $dom = $converter->toDom();
         $root = $dom->firstChild;
         $root->setAttribute('xmlns', 'urn:ietf:rfc:7807');
