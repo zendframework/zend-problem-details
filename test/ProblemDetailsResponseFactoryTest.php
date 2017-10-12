@@ -135,6 +135,35 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $this->assertSame('bar', $payload['foo']);
     }
 
+    /**
+     * @dataProvider acceptHeaders
+     */
+    public function testCreateResponseRemovesResourcesFromInputData(string $header, string $expectedType) : void
+    {
+        $this->request->getHeaderLine('Accept')->willReturn($header);
+
+        $fh = fopen(__FILE__, 'r');
+        $response = $this->factory->createResponse(
+            $this->request->reveal(),
+            500,
+            'Unknown error occurred',
+            'Title',
+            'Type',
+            [
+                'args' => [
+                    'resource' => $fh,
+                ]
+            ]
+        );
+        fclose($fh);
+
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertEquals($expectedType, $response->getHeaderLine('Content-Type'));
+
+        $this->assertNotEmpty((string)$response->getBody(), 'Body is missing');
+    }
+
+
     public function testFactoryRaisesExceptionIfBodyFactoryDoesNotReturnStream() : void
     {
         $this->request->getHeaderLine('Accept')->willReturn('application/json');
