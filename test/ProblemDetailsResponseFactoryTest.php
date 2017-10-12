@@ -163,7 +163,6 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $this->assertNotEmpty((string)$response->getBody(), 'Body is missing');
     }
 
-
     public function testFactoryRaisesExceptionIfBodyFactoryDoesNotReturnStream() : void
     {
         $this->request->getHeaderLine('Accept')->willReturn('application/json');
