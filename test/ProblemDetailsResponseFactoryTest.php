@@ -108,7 +108,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
     /**
      * @dataProvider acceptHeaders
      */
-    public function testCreateResponseRemovesInvalidCharactersFromXmlKeyNames(string $header, string $expectedType) : void
+    public function testCreateResponseRemovesInvalidCharactersFromXmlKeys(string $header, string $expectedType) : void
     {
         $this->request->getHeaderLine('Accept')->willReturn($header);
 
@@ -116,7 +116,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
             'foo' => [
                 'A#-' => 'foo',
                 '-A-' => 'foo',
-                '#A-' => 'foo',
+                '#B-' => 'foo',
             ],
         ];
 
@@ -138,12 +138,12 @@ class ProblemDetailsResponseFactoryTest extends TestCase
             $expectedKeyNames = [
                 'A_-',
                 '_A-',
-                '_A-',
+                '_B-',
             ];
         } else {
             $expectedKeyNames = array_keys($additional['foo']);
         }
-        
+
         $this->assertEquals(array_keys($payload['foo']), $expectedKeyNames);
     }
 
