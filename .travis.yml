@@ -56,4 +56,4 @@ after_script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then composer upload-coverage ; fi
 
 notifications:
-  email: true
+  email: false
