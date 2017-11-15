@@ -7,16 +7,13 @@
 
 namespace Zend\ProblemDetails;
 
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Negotiation\Negotiator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
-use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface as ServerMiddlewareInterface;
-use Zend\Stratigility\Delegate\CallableDelegateDecorator;
 
-use const Webimpress\HttpMiddlewareCompatibility\HANDLER_METHOD;
-
-class ProblemDetailsNotFoundHandler implements ServerMiddlewareInterface
+class ProblemDetailsNotFoundHandler implements MiddlewareInterface
 {
     /**
      * @var ProblemDetailsResponseFactory
@@ -35,11 +32,11 @@ class ProblemDetailsNotFoundHandler implements ServerMiddlewareInterface
     /**
      * Creates and returns a 404 response.
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate) : ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         // If we cannot provide a representation, act as a no-op.
         if (! $this->canActAsErrorHandler($request)) {
-            return $delegate->{HANDLER_METHOD}($request);
+            return $handler->handle($request);
         }
 
         return $this->responseFactory->createResponse(

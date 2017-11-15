@@ -153,14 +153,15 @@ Let's say you have middleware that you know will only be used in a production
 context, and need to return problem details:
 
 ```php
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
-use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ApiMiddleware implements MiddlewareInterface
 {
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         // discovered an error, so returning problem details:
         return (new ProblemDetailsResponseFactory())->createResponse(
@@ -188,13 +189,14 @@ this, you can use the `createResponseFromThrowable()` method instead.
 ```php
 use Interop\Http\Server\MiddlewareInterface;
 use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ApiMiddleware implements MiddlewareInterface
 {
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         try {
             // some code that may raise an exception or throwable
@@ -223,6 +225,7 @@ constructor. As a more complete example:
 ```php
 use Interop\Http\Server\MiddlewareInterface;
 use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
@@ -239,7 +242,7 @@ class ApiMiddleware implements MiddlewareInterface
         $this->problemDetailsFactory = $problemDetailsFactory;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         try {
             // some code that may raise an exception or throwable
