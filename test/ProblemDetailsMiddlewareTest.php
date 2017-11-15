@@ -8,11 +8,11 @@
 namespace ZendTest\ProblemDetails;
 
 use ErrorException;
+use Interop\Http\Server\RequestHandlerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Interop\Http\Server\RequestHandlerInterface;
 use Zend\ProblemDetails\ProblemDetailsMiddleware;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 use ZendTest\ProblemDetails\TestAsset;

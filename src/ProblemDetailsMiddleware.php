@@ -14,7 +14,6 @@ use Negotiation\Negotiator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
-use TypeError;
 
 /**
  * Middleware that ensures a Problem Details response is returned
