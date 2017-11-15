@@ -1,7 +1,6 @@
 {
     "name": "zendframework/zend-problem-details",
     "description": "Problem Details for PSR-7 HTTP APIs",
-    "type": "library",
     "license": "BSD-3-Clause",
     "keywords": [
         "api",
