@@ -16,9 +16,6 @@
         "slack": "https://zendframework-slack.herokuapp.com",
         "forum": "https://discourse.zendframework.com/c/questions/expressive"
     },
-    "config": {
-        "sort-packages": true
-    },
     "require": {
         "php": "^7.1",
         "ext-json": "*",
@@ -43,6 +40,9 @@
         "psr-4": {
             "ZendTest\\ProblemDetails\\": "test/"
         }
+    },
+    "config": {
+        "sort-packages": true
     },
     "extra": {
         "zf": {
