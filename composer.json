@@ -48,6 +48,9 @@
     "extra": {
         "zf": {
             "config-provider": "Zend\\ProblemDetails\\ConfigProvider"
+        },
+        "branch-alias": {
+            "dev-master": "1.0-dev"
         }
     },
     "scripts": {
