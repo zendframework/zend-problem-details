@@ -13,6 +13,7 @@
         "docs": "https://docs.zendframework.com/zend-problem-details/",
         "issues": "https://github.com/zendframework/zend-problem-details/issues",
         "source": "https://github.com/zendframework/zend-problem-details",
+        "rss": "https://github.com/zendframework/zend-problem-details/releases.atom",
         "slack": "https://zendframework-slack.herokuapp.com",
         "forum": "https://discourse.zendframework.com/c/questions/expressive"
     },
