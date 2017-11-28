@@ -10,8 +10,8 @@
 
     <title>Quick Start - Problem Details</title>
 
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw=" crossorigin="anonymous">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.6.3/css/font-awesome.min.css" integrity="sha256-AIodEDkC8V/bHBkfyxzolUMw57jeQ9CauwhVW6YJ9CA=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="../css/styles-482aa2add1.css">
 
     
@@ -36,8 +36,8 @@
 
             <!-- Main title -->
             <span class="navbar-brand">
-              <a class="logo-link" href="http://framework.zend.com" data-toggle="tooltip" data-placement="bottom" title="Zend Framework"><img src="../img/zf-logo-mark.svg" height="28" alt="Zend Framework" /></a>
-              <a href="..">Problem Details</a>
+                <a class="logo-link" href="https://framework.zend.com/" data-toggle="tooltip" data-placement="bottom" title="Go to the ZF homepage"><img src="../img/zf-logo-mark.svg" height="28" alt="Zend Framework" /></a>
+                <a href="..">Problem Details</a>
             </span>
         </div>
 
@@ -85,6 +85,12 @@
                             
 <li >
     <a href="../middleware/">Error Handling Middleware</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../not-found-handler/">Not Found Handler</a>
 </li>
 
                         
@@ -170,7 +176,7 @@ Problem Details responses:</p>
 <ul>
 <li><code>ProblemDetailsResponseFactory</code> for generating problem details responses on
   the fly from either PHP primitives or exceptions/throwables.</li>
-<li><code>ProblemDetailsException</code> for creating exceptions with additional problem
+<li><code>ProblemDetailsExceptionInterface</code> for creating exceptions with additional problem
   details that may be used when generating a response.</li>
 <li><code>ProblemDetailsMiddleware</code> that acts as error/exception handler middleware,
   casting and throwing PHP errors as <code>ErrorException</code> instances, and all caught
@@ -185,10 +191,10 @@ composes the <code>Zend\ProblemDetails\ProblemDetailsResponseFactory</code> imme
 inject that service in your middleware.</p>
 <p>As an example, the following catches domain excpetions and uses them to create
 problem details responses:</p>
-<pre class="codehilite"><code class="language-php">use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use Psr\Http\Message\ServerRequestInterface;
+<pre class="codehilite"><code class="language-php">use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
+use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
+use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
@@ -235,10 +241,10 @@ class DomainTransactionMiddlewareFactory
 <p>Another way to use the factory is to provide PHP primitives to the factory. As
 an example, validation failure is an expected condition, but should likely
 result in problem details to the end user.</p>
-<pre class="codehilite"><code class="language-php">use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use Psr\Http\Message\ServerRequestInterface;
+<pre class="codehilite"><code class="language-php">use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
+use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
+use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
@@ -295,13 +301,13 @@ the exception message as the Problem Details description, and the exception code
 as the HTTP status if it falls in the 400 or 500 range (500 will be used
 otherwise).</p>
 <p>You can also create custom exceptions that provide details for the factory to
-consume by implementing <code>Zend\ProblemDetails\Exception\ProblemDetailsException</code>,
+consume by implementing <code>Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface</code>,
 which defines the following:</p>
 <pre class="codehilite"><code class="language-php">namespace Zend\ProblemDetails\Exception;
 
 use JsonSerializable;
 
-interface ProblemDetailsException extends JsonSerializable
+interface ProblemDetailsExceptionInterface extends JsonSerializable
 {
     public function getStatus() : int;
     public function getType() : string;
@@ -311,7 +317,7 @@ interface ProblemDetailsException extends JsonSerializable
     public function toArray() : array;
 }</code></pre>
 
-<p>We also provide the trait <code>CommonProblemDetailsException</code>, which implements each
+<p>We also provide the trait <code>CommonProblemDetailsExceptionTrait</code>, which implements each
 of the above, the <code>jsonSerialize()</code> method, and also defines the following
 instance properties:</p>
 <pre class="codehilite"><code class="language-php">/**
@@ -343,12 +349,12 @@ private $additional = [];</code></pre>
 <pre class="codehilite"><code class="language-php">namespace Api;
 
 use DomainException as PhpDomainException;
-use Zend\ProblemDetails\Exception\CommonProblemDetailsException;
-use Zend\ProblemDetails\Exception\ProblemDetailsException;
+use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
+use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
-class DomainException extends PhpDomainException implements ProblemDetailsException
+class DomainException extends PhpDomainException implements ProblemDetailsExceptionInterface
 {
-    use CommonProblemDetailsException;
+    use CommonProblemDetailsExceptionTrait;
 
     public static function create(string $message, array $details) : DomainException
     {
@@ -399,6 +405,16 @@ it into your workflow in several ways.</p>
     DomainTransactionMiddleware::class,
 ]);</code></pre>
 
+<h3 id="not-found-handling">Not Found handling</h3>
+<p>When writing APIs you may also want 404 responses be in the accepted content-type.
+This package provides <code>ProblemDetailsNotFoundHandler</code> which will return a
+problem details <code>Response</code> with a <code>404</code> status if the request can accept either
+JSON or XML.</p>
+<p>To use this handler in Expressive add it into your pipeline immediate before the 
+default <code>NotFoundHandler</code>:</p>
+<pre class="codehilite"><code class="language-php">$app-&gt;pipe(\Zend\ProblemDetails\ProblemDetailsNotFoundHandler::class);
+$app-&gt;pipe(NotFoundHandler::class);</code></pre>
+
 <hr />
 
 
@@ -423,7 +439,7 @@ it into your workflow in several ways.</p>
             <div class="col-lg-3">
               <p>
                 <strong>Zend Framework</strong><br />
-                <a href="http://framework.zend.com/">framework.zend.com</a><br />
+                <a href="https://framework.zend.com/">framework.zend.com</a><br />
                 <a href="https://docs.zendframework.com">docs.zendframework.com</a><br />
                 <a href="https://packages.zendframework.com">packages.zendframework.com</a><br />
                 <a href="https://apigility.org">apigility.org</a><br />
@@ -444,14 +460,15 @@ it into your workflow in several ways.</p>
                 <h4>Copyright</h4>
                 <div class="hline-w"></div>
 
-                <p>&copy; 2006-2016 by <a href="http://www.zend.com">Zend</a>, a <a href="http://www.roguewave.com/">Rogue Wave Company</a>.</p>
+                <p>&copy; 2006-2017 by <a href="https://www.zend.com/">Zend</a>, a <a href="https://www.roguewave.com/">Rogue Wave Company</a>.</p>
             </div>
 
             <div class="col-lg-4">
                 <h4>Contacts</h4>
                 <div class="hline-w"></div>
                 <p>
-                    <a href="irc://irc.freenode.net/zftalk" class="btn-social btn-outline" alt="IRC" title="IRC"><i class="fa fa-comment"></i></a>
+                    <a href="https://discourse.zendframework.com" class="btn-social btn-outline" alt="Forum" title="Forum"><i class="fa fa-comments"></i></a>
+                    <a href="https://zendframework-slack.herokuapp.com" class="btn-social btn-outline" alt="Slack" title="Slack"><i class="fa fa-slack"></i></a>
                     <a href="https://github.com/zendframework" class="btn-social btn-outline" alt="Github" title="Github"><i class="fa fa-github"></i></a>
                     <a href="https://twitter.com/zfdevteam" class="btn-social btn-outline" alt="Twitter" title="Twitter"><i class="fa fa-twitter"></i></a>
                 </p>
@@ -460,11 +477,10 @@ it into your workflow in several ways.</p>
     </div>
 </div>
 
-
-    <script src="//cdn.jsdelivr.net/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-    <script src="//cdn.jsdelivr.net/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha256-KXn5puMvxCw+dAYznun+drMdG1IFl3agK0p/pqT9KAo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
     <script>var base_url = '..';</script>
-    <script src="../js/scripts-8b95ab2fc3.js"></script>
+    <script src="../js/scripts-0b6185f4a5.js"></script>
     <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
 
     <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
@@ -497,7 +513,7 @@ it into your workflow in several ways.</p>
     <div class="zf-components">
   <div class="zf-components-grid">
     <div class="zf-logo">
-      <a href="http://framework.zend.com" data-toggle="tooltip" data-placement="bottom" title="Go to the ZF homepage"><img src="../img/zf-logo-mark.svg" alt="Zend Framework" width="250" /></a>
+      <a href="https://framework.zend.com" data-toggle="tooltip" data-placement="bottom" title="Go to the ZF homepage"><img src="../img/zf-logo-mark.svg" alt="Zend Framework" width="250" /></a>
     </div>
 
     <div class="component-list"></div>

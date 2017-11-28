@@ -8,7 +8,7 @@
     <meta name="description" content="Problem Details for PSR-7 Applications">  
     <link rel="shortcut icon" href="../img/favicon.ico">
 
-    <title>Exceptions - Problem Details</title>
+    <title>Not Found Handler - Problem Details</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
@@ -77,8 +77,8 @@
 
                         
                             
-<li class="active">
-    <a href="./">Exceptions</a>
+<li >
+    <a href="../exception/">Exceptions</a>
 </li>
 
                         
@@ -89,8 +89,8 @@
 
                         
                             
-<li >
-    <a href="../not-found-handler/">Not Found Handler</a>
+<li class="active">
+    <a href="./">Not Found Handler</a>
 </li>
 
                         
@@ -134,20 +134,11 @@
         <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#problem-details-exceptions">Problem Details Exceptions</a></li>
+        <li class="main active"><a href="#not-found-handler">Not Found Handler</a></li>
         
     
     </ul>
 
-    
-    <ul class="pager hidden-print">
-      <li class="previous">
-        <a rel="prev" href="../response/"><i class="fa fa-arrow-left"></i> Previous</a>
-      </li>
-      <li class="next">
-        <a rel="next" href="../middleware/">Next <i class="fa fa-arrow-right"></i></a>
-      </li>
-    </ul>
     
 </div></div>
         <div class="col-md-9" role="main">
@@ -161,112 +152,24 @@
       
     
   
-  <li class="active">Exceptions</li>
+  <li class="active">Not Found Handler</li>
 </ol>
 
-<h1 id="problem-details-exceptions">Problem Details Exceptions</h1>
-<p>If you are developing an API, it may be useful to raise exceptions from your
-business domain that contain all the information necessary to report problem
-details.</p>
-<p>To facilitate this, we provide an interface, <code>ProblemDetailsExceptionInterface</code>:</p>
-<pre class="codehilite"><code class="language-php">namespace Zend\ProblemDetails\Exception;
-
-use JsonSerializable;
-
-interface ProblemDetailsExceptionInterface extends JsonSerializable
-{
-    public function getStatus() : int;
-
-    public function getType() : string;
-
-    public function getTitle() : string;
-
-    public function getDetail() : string;
-
-    public function getAdditionalData() : array;
-
-    public function toArray() : array;
-}</code></pre>
-
-<p>You may create exceptions that implement this interface. When such exceptions
-are passed to <code>ProblemDetailsResponseFactory::createResponseFromThrowable()</code>,
-these will pull the relevant details in order to create a Problem Details
-response.</p>
-<p>To facilitate creating such exception types, we also ship the trait
-<code>CommonProblemDetailsExceptionTrait</code>. This trait defines the following properties:</p>
-<ul>
-<li><code>$status</code></li>
-<li><code>$detail</code></li>
-<li><code>$title</code></li>
-<li><code>$type</code></li>
-<li><code>$additional</code></li>
-</ul>
-<p>and implements each of the methods of the interface. This allows you as a
-developer to create implementations with either constructors or named
-constructors for generating exception instances.</p>
-<p>As an example, if you wanted to create an exception type for providing
-transaction problem details, you might do so as follows:</p>
-<pre class="codehilite"><code class="language-php">use DomainException;
-use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
-use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
-
-class TransactionException extends DomainException implements ProblemDetailsExceptionInterface
-{
-    use CommonProblemDetailsExceptionTrait;
-
-    const STATUS = 403;
-    const TYPE = 'https://example.com/problems/insufficient-funds';
-    const TITLE = 'You have insufficient funds to complete the transaction.';
-
-    public static function create(int $needed, float $balance, string $account) : self
-    {
-        $e = new self(sprintf(
-            'Your transaction required %01.2f, but you only have %01.2f in your account',
-            $needed,
-            $balance
-        ));
-        $e-&gt;status = self::STATUS;
-        $e-&gt;type   = self::TYPE;
-        $e-&gt;title  = self::TITLE;
-        $e-&gt;additional = [
-            'account' =&gt; $account,
-            'balance' =&gt; $balance,
-        ];
-
-        return $e;
-    }
-}</code></pre>
-
-<p>You might then raise the exception as follows:</p>
-<pre class="codehilite"><code class="language-php">throw TransactionException::create($price, $balance, $accountUri);</code></pre>
-
-<p>And it might result in the following:</p>
-<pre class="codehilite"><code class="language-json">{
-    &quot;status&quot;: 403,
-    &quot;type&quot;: &quot;https://example.com/problems/insufficient-funds&quot;,
-    &quot;title&quot;: &quot;You have insufficient funds to complete the transaction.&quot;,
-    &quot;detail&quot;: &quot;Your transaction required 5.63, but you only have 1.37 in your account&quot;,
-    &quot;account&quot;: &quot;https://example.com/api/accounts/12345&quot;,
-    &quot;balance&quot;: 1.37
-}</code></pre>
-
-<p>The benefit to this approach is that you can easily provide domain-specific
-exceptions throughout your application that can, as a side-effect, be
-re-purposed immediately to provide problem details in your application.</p>
+<h1 id="not-found-handler">Not Found Handler</h1>
+<p>This library provides a Not Found handler so that returned 404 responses are in
+the problem details format.</p>
+<p>This handler will create a problem details <code>Response</code> with a <code>404</code> status code and
+a problem details body that will be rendered in either JSON or XML as required by
+the request's <code>Accept</code> header.</p>
+<p>This handler will only return a response if the request's accept header indicates
+that it will accept either JSON or XML.</p>
+<p>To use this handler in Expressive add it into your pipeline (usually <code>pipeline.php</code>)
+immediate before the default <code>NotFoundHandler</code>:</p>
+<pre class="codehilite"><code class="language-php">$app-&gt;pipe(\Zend\ProblemDetails\ProblemDetailsNotFoundHandler::class);
+$app-&gt;pipe(NotFoundHandler::class);</code></pre>
 
 <hr />
 
-
-<nav>
-  <ul class="pager hidden-print">
-    <li class="previous">
-      <a rel="prev" href="../response/"><i class="fa fa-arrow-left"></i> Previous</a>
-    </li>
-    <li class="next">
-      <a rel="next" href="../middleware/">Next <i class="fa fa-arrow-right"></i></a>
-    </li>
-  </ul>
-</nav>
 </div>
         
     </div>
