@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file, in reverse 
 
 Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
+## 0.5.1 - 2017-12-07
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#20](https://github.com/zendframework/zend-problem-details/pull/20) fixes an
+  issue with serialization when PHP resources are within the `$additional`
+  aspect of the payload. When these values are encountered, the response factory
+  now will instead return `Resource of type {resource type}`.
+
 ## 0.5.0 - 2017-10-09
 
 ### Added

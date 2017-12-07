@@ -229,6 +229,12 @@ class ProblemDetailsResponseFactory
         ];
 
         if ($additional) {
+            // ensure payload can be json_encoded
+            array_walk_recursive($additional, function (&$value) {
+                if (is_resource($value)) {
+                    $value = print_r($value, true) . ' of type ' . get_resource_type($value);
+                }
+            });
             $payload = array_merge($additional, $payload);
         }
 
