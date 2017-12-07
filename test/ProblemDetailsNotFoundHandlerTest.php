@@ -7,15 +7,13 @@
 
 namespace ZendTest\ProblemDetails;
 
+use Interop\Http\Server\RequestHandlerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
 use Zend\ProblemDetails\ProblemDetailsNotFoundHandler;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
-
-use const Webimpress\HttpMiddlewareCompatibility\HANDLER_METHOD;
 
 class ProblemDetailsNotFoundHandlerTest extends TestCase
 {
@@ -45,7 +43,7 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
 
         $returnedResponse = $notFoundHandler->process(
             $request->reveal(),
-            $this->prophesize(DelegateInterface::class)->reveal()
+            $this->prophesize(RequestHandlerInterface::class)->reveal()
         );
 
         $expectedBody = [
@@ -83,7 +81,7 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
 
         $this->assertSame(
             $response->reveal(),
-            $notFoundHandler->process($request->reveal(), $this->prophesize(DelegateInterface::class)->reveal())
+            $notFoundHandler->process($request->reveal(), $this->prophesize(RequestHandlerInterface::class)->reveal())
         );
     }
 
@@ -96,8 +94,8 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
 
         $response = $this->prophesize(ResponseInterface::class);
 
-        $delegate = $this->prophesize(DelegateInterface::class);
-        $delegate->{HANDLER_METHOD}($request->reveal())->will([$response, 'reveal']);
+        $handler = $this->prophesize(RequestHandlerInterface::class);
+        $handler->handle($request->reveal())->will([$response, 'reveal']);
 
         $responseFactory = $this->prophesize(ProblemDetailsResponseFactory::class);
 
@@ -105,7 +103,7 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
 
         $this->assertSame(
             $response->reveal(),
-            $notFoundHandler->process($request->reveal(), $delegate->reveal())
+            $notFoundHandler->process($request->reveal(), $handler->reveal())
         );
     }
 }
