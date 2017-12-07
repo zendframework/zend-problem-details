@@ -1,7 +1,6 @@
 {
     "name": "zendframework/zend-problem-details",
     "description": "Problem Details for PSR-7 HTTP APIs",
-    "type": "library",
     "license": "BSD-3-Clause",
     "keywords": [
         "api",
@@ -14,11 +13,9 @@
         "docs": "https://docs.zendframework.com/zend-problem-details/",
         "issues": "https://github.com/zendframework/zend-problem-details/issues",
         "source": "https://github.com/zendframework/zend-problem-details",
+        "rss": "https://github.com/zendframework/zend-problem-details/releases.atom",
         "slack": "https://zendframework-slack.herokuapp.com",
         "forum": "https://discourse.zendframework.com/c/questions/expressive"
-    },
-    "config": {
-        "sort-packages": true
     },
     "require": {
         "php": "^7.1",
@@ -45,9 +42,15 @@
             "ZendTest\\ProblemDetails\\": "test/"
         }
     },
+    "config": {
+        "sort-packages": true
+    },
     "extra": {
         "zf": {
             "config-provider": "Zend\\ProblemDetails\\ConfigProvider"
+        },
+        "branch-alias": {
+            "dev-master": "1.0-dev"
         }
     },
     "scripts": {
