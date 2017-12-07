@@ -5,7 +5,7 @@ Zend Framework offers three support channels:
 - For real-time questions, use our
   [Slack](https://zendframework-slack.herokuapp.com)
 - For detailed questions (e.g., those requiring examples) use our
-  [forums](https://discourse.zendframework.com/c/contributors)
+  [forums](https://discourse.zendframework.com/c/questions/expressive)
 - To report issues, use this repository's
   [issue tracker](https://github.com/zendframework/zend-problem-details/issues/new)
 
