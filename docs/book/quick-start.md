@@ -35,10 +35,10 @@ As an example, the following catches domain excpetions and uses them to create
 problem details responses:
 
 ```php
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
-use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
-use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
@@ -56,7 +56,7 @@ class DomainTransactionMiddleware implements MiddlewareInterface
         $this->problemDetailsFactory = $problemDetailsFactory;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
     {
         try {
             $result = $this->domainService->transaction($request->getParsedBody());
@@ -91,10 +91,10 @@ an example, validation failure is an expected condition, but should likely
 result in problem details to the end user.
 
 ```php
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
-use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
-use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
@@ -117,7 +117,7 @@ class DomainTransactionMiddleware implements MiddlewareInterface
         $this->problemDetailsFactory = $problemDetailsFactory;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
     {
         $this->inputFilter->setData($request->getParsedBody());
         if (! $this->inputFilter->isValid()) {
@@ -245,12 +245,10 @@ This package provides `ProblemDetailsMiddleware` for that situation. It composes
 a `ProblemDetailsResponseFactory`, and does the following:
 
 - If the request can not accept either JSON or XML responses, it simply
-  passes handling to the delegate.
+  passes handling to the request handler.
 - Otherwise, it creates a PHP error handler that converts PHP errors to
-  `ErrorException` instances, and then wraps processing of the delegate in a
-  try/catch block. If the delegate does not return a `ResponseInterface`, a
-  `ProblemDetails\Exception\MissingResponseException` is raised; otherwise, the
-  response is returned.
+  `ErrorException` instances, and then wraps processing of the request handler
+  in a try/catch block.
 - Any throwable or exception caught is passed to the
   `ProblemDetailsResponseFactory::createResponseFromThrowable()` method, and the
   response generated is returned.
