@@ -29,6 +29,10 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
   aspect of the payload. When these values are encountered, the response factory
   now will instead return `Resource of type {resource type}`.
 
+- [#21](https://github.com/zendframework/zend-problem-details/pull/21) provides
+  a defence for `$additional` data keys that would otherwise create malformed
+  XML tag names.
+
 ## 0.5.0 - 2017-10-09
 
 ### Added
