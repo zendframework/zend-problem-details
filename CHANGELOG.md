@@ -15,7 +15,10 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
 ### Changed
 
-- Nothing.
+- [#24](https://github.com/zendframework/zend-problem-details/pull/24)
+  updates all classes to use scalar and return type hints, including nullable
+  and void types. If you were extending classes within an earlier release, you
+  may need to update signatures of any methods you override.
 
 ### Deprecated
 
