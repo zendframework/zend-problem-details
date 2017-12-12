@@ -5,6 +5,8 @@
  * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace ZendTest\ProblemDetails;
 
 use Exception;
@@ -214,7 +216,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         });
 
         $this->expectException(InvalidResponseBodyException::class);
-        $factory->createResponse($this->request->reveal(), '500', 'This is an error');
+        $factory->createResponse($this->request->reveal(), 500, 'This is an error');
     }
 
     public function testFactoryGeneratesXmlResponseIfNegotiationFails() : void
@@ -271,7 +273,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
     public function testExceptionCodeShouldBeIgnoredAnd500ServedInResponseBodyInNonDebugMode()
     {
-        $exception = new Exception(null, 400);
+        $exception = new Exception('', 400);
 
         $response = $this->factory->createResponseFromThrowable($this->request->reveal(), $exception);
 
