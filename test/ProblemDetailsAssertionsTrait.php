@@ -5,6 +5,8 @@
  * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace ZendTest\ProblemDetails;
 
 use Psr\Http\Message\ResponseInterface;

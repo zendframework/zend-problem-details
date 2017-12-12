@@ -5,6 +5,8 @@
  * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\ProblemDetails\Exception;
 
 use JsonSerializable;
