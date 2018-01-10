@@ -24,6 +24,11 @@ use const Webimpress\HttpMiddlewareCompatibility\HANDLER_METHOD;
 class ProblemDetailsMiddleware implements MiddlewareInterface
 {
     /**
+     * @var callable[]
+     */
+    private $listeners = [];
+
+    /**
      * @var ProblemDetailsResponseFactory
      */
     private $responseFactory;
@@ -52,11 +57,36 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
             }
         } catch (Throwable $e) {
             $response = $this->responseFactory->createResponseFromThrowable($request, $e);
+            $this->triggerListeners($e, $request, $response);
         } finally {
             restore_error_handler();
         }
 
         return $response;
+    }
+
+    /**
+     * Attach an error listener.
+     *
+     * Each listener receives the following three arguments:
+     *
+     * - Throwable $error
+     * - ServerRequestInterface $request
+     * - ResponseInterface $response
+     *
+     * These instances are all immutable, and the return values of
+     * listeners are ignored; use listeners for reporting purposes
+     * only.
+     *
+     * @param callable $listener
+     */
+    public function attachListener(callable $listener)
+    {
+        if (\in_array($listener, $this->listeners, true)) {
+            return;
+        }
+
+        $this->listeners[] = $listener;
     }
 
     /**
@@ -97,5 +127,20 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
 
             throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
         };
+    }
+
+    /**
+     * Trigger all error listeners.
+     *
+     * @param Throwable $error
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return void
+     */
+    private function triggerListeners($error, ServerRequestInterface $request, ResponseInterface $response) : void
+    {
+        array_walk($this->listeners, function ($listener) use ($error, $request, $response) {
+            $listener($error, $request, $response);
+        });
     }
 }
