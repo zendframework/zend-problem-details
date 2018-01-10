@@ -136,6 +136,8 @@
     
         <li class="main active"><a href="#problem-details-middleware">Problem Details Middleware</a></li>
         
+            <li><a href="#listeners">Listeners</a></li>
+        
             <li><a href="#factory">Factory</a></li>
         
     
@@ -209,7 +211,43 @@ your application:</p>
 <p>This latter approach ensures that you are only providing problem details for
 specific API endpoints, which can be useful when you have a mix of APIs and
 traditional web content in your application.</p>
-<h3 id="factory">Factory</h3>
+<h2 id="listeners">Listeners</h2>
+<ul>
+<li>Since 0.5.2</li>
+</ul>
+<p>The <code>ProblemDetailsMiddleware</code> allows you to register <em>listeners</em> to trigger
+when it handles a <code>Throwable</code>. Listeners are PHP callables, and the middleware
+triggers them with the following arguments, in the following order:</p>
+<ul>
+<li><code>Throwable $error</code>: the throwable/exception caught by the middleware.</li>
+<li><code>ServerRequestInterface $request</code>: the request as provided to the
+  <code>ProblemDetailsMiddleware</code>.</li>
+<li><code>ResponseInterface $response</code>: the response the <code>ProblemDetailsMiddleware</code>
+  generated based on the <code>$error</code>.</li>
+</ul>
+<p>Note that each of these arguments are immutable; you cannot change the state in
+a way that that state will propagate meaningfully. As such, you should use
+listeners for reporting purposes only (e.g., logging).</p>
+<p>As an example:</p>
+<pre class="codehilite"><code class="language-php">// Where $logger is a PSR-3 logger implementation
+$listener = function (
+    Throwable $error,
+    ServerRequestInterface $request,
+    ResponseInterface $response
+) use ($logger) {
+    $logger-&gt;error('[{status}] {method} {uri}: {message}', [
+        'status'  =&gt; $response-&gt;getStatusCode(),
+        'method'  =&gt; $request-&gt;getMethod(),
+        'uri'     =&gt; (string) $request-&gt;getUri(),
+        'message' =&gt; $error-&gt;getMessage(),
+    ]);
+};</code></pre>
+
+<p>Attach listeners to the <code>ProblemDetailsMiddleware</code> instance using its
+<code>attachListener()</code> method:</p>
+<pre class="codehilite"><code class="language-php">$middleware-&gt;attachListener($listener);</code></pre>
+
+<h2 id="factory">Factory</h2>
 <p>The <code>ProblemDetailsMiddleware</code> ships with a corresponding PSR-11 compatible factory,
 <code>ProblemDetailsMiddlewareFactory</code>. This factory looks for a service named
 <code>Zend\ProblemDetails\ProblemDetailsResponseFactory</code>; if present, that value is used
@@ -217,6 +255,30 @@ to instantiate the middleware.</p>
 <p>For Expressive 2 users, this middleware should be registered automatically with
 your application on install, assuming you have the zend-component-installer
 plugin in place (it's shipped by default with the Expressive skeleton).</p>
+<h3 id="registering-listeners">Registering listeners</h3>
+<ul>
+<li>Since 0.5.2</li>
+</ul>
+<p>In order to register listeners, we recommend using a
+<a href="https://docs.zendframework.com/zend-expressive/features/container/delegator-factories/">delegator factory</a>
+on the <code>Zend\ProblemDetails\ProblemDetailsMiddleware</code> service.</p>
+<p>As an example:</p>
+<pre class="codehilite"><code class="language-php">class LoggerProblemDetailsListenerDelegator
+{
+    public function __construct(ContainerInterface $container, $serviceName, callable $callback)
+    {
+        $middleware = $callback();
+        $middleware-&gt;attachListener($container-&gt;get(LoggerProblemDetailsListener::class));
+        return $middleware;
+    }
+}</code></pre>
+
+<p>You would then register this as a delegator factory in your configuration:</p>
+<pre class="codehilite"><code class="language-php">'delegators' =&gt; [
+    ProblemDetailsMiddleware::class =&gt; [
+        LoggerProblemDetailsListenerDelegator::class,
+    ],
+],</code></pre>
 
 <hr />
 
