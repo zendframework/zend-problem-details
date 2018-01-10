@@ -125,4 +125,37 @@ class ProblemDetailsMiddlewareTest extends TestCase
         $this->expectExceptionCode(507);
         $middleware->process($this->request->reveal(), $handler->reveal());
     }
+
+    /**
+     * @dataProvider acceptHeaders
+     */
+    public function testErrorHandlingTriggersListeners(string $accept) : void
+    {
+        $this->request->getHeaderLine('Accept')->willReturn($accept);
+
+        $exception = new TestAsset\RuntimeException('Thrown!', 507);
+
+        $handler = $this->prophesize(RequestHandlerInterface::class);
+        $handler
+            ->handle(Argument::that([$this->request, 'reveal']))
+            ->willThrow($exception);
+
+        $expected = $this->prophesize(ResponseInterface::class)->reveal();
+        $this->responseFactory
+            ->createResponseFromThrowable($this->request->reveal(), $exception)
+            ->willReturn($expected);
+
+        $listener = function ($error, $request, $response) use ($exception, $expected) {
+            $this->assertSame($exception, $error, 'Listener did not receive same exception as was raised');
+            $this->assertSame($this->request->reveal(), $request, 'Listener did not receive same request');
+            $this->assertSame($expected, $response, 'Listener did not receive same response');
+        };
+        $listener2 = clone $listener;
+        $this->middleware->attachListener($listener);
+        $this->middleware->attachListener($listener2);
+
+        $result = $this->middleware->process($this->request->reveal(), $handler->reveal());
+
+        $this->assertSame($expected, $result);
+    }
 }
