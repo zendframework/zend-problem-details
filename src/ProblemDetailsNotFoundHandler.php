@@ -9,11 +9,11 @@ declare(strict_types=1);
 
 namespace Zend\ProblemDetails;
 
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
 use Negotiation\Negotiator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class ProblemDetailsNotFoundHandler implements MiddlewareInterface
 {
