@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
-## 1.0.0alpha1 - TBD
+## 1.0.0alpha1 - 2018-02-07
 
 ### Added
 
