@@ -8,10 +8,8 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
 ### Added
 
-- [#22](https://github.com/zendframework/zend-problem-details/pull/22)
-  adds PSR-15 `http-interop/http-server-middleware` support.
-  Current interfaces signature contains also PHP7 return type
-  `Psr\Http\Message\ResponseInterface`.
+- [#30](https://github.com/zendframework/zend-problem-details/pull/30)
+  adds PSR-15 support. 
 
 ### Changed
 
@@ -26,8 +24,10 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
 ### Removed
 
-- [#22](https://github.com/zendframework/zend-problem-details/pull/22)
-  removes abandoned `http-interop/http-middleware` support.
+- [#22](https://github.com/zendframework/zend-problem-details/pull/22) and
+  [#30](https://github.com/zendframework/zend-problem-details/pull/30)
+  remove support for both `http-interop/http-middleware` and
+  `http-interop/http-server-middleware`.
 
 - [#22](https://github.com/zendframework/zend-problem-details/pull/22)
   removes `MissingResponseException` as it cannot be thrown anymore,
