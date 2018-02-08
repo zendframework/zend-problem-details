@@ -76,7 +76,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
      *
      * @param callable $listener
      */
-    public function attachListener(callable $listener)
+    public function attachListener(callable $listener) : void
     {
         if (\in_array($listener, $this->listeners, true)) {
             return;

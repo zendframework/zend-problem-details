@@ -41,7 +41,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
         ];
     }
 
-    public function testSuccessfulDelegationReturnsDelegateResponse() : void
+    public function testSuccessfulDelegationReturnsHandlerResponse() : void
     {
         $response = $this->prophesize(ResponseInterface::class);
         $handler = $this->prophesize(RequestHandlerInterface::class);
@@ -59,7 +59,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
     /**
      * @dataProvider acceptHeaders
      */
-    public function testThrowableRaisedByDelegateResultsInProblemDetails(string $accept) : void
+    public function testThrowableRaisedByHandlerResultsInProblemDetails(string $accept) : void
     {
         $this->request->getHeaderLine('Accept')->willReturn($accept);
 
