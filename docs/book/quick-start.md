@@ -31,7 +31,7 @@ and have installed [zend-component-installer](https://docs.zendframework.com/zen
 composes the `Zend\ProblemDetails\ProblemDetailsResponseFactory` immediately, and
 inject that service in your middleware.
 
-As an example, the following catches domain excpetions and uses them to create
+As an example, the following catches domain exceptions and uses them to create
 problem details responses:
 
 ```php
@@ -286,7 +286,7 @@ This package provides `ProblemDetailsNotFoundHandler` which will return a
 problem details `Response` with a `404` status if the request can accept either
 JSON or XML.
 
-To use this handler in Expressive add it into your pipeline immediate before the 
+To use this handler in Expressive add it into your pipeline immediate before the
 default `NotFoundHandler`:
 
 ```php
