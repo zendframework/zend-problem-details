@@ -1,8 +1,8 @@
 # Problem Details
 
 This library addresses [RFC 7807: Problem Details for HTTP APIs](https://tools.ietf.org/html/rfc7807)
-for usage with [PSR-7 HTTP Messages](http://www.php-fig.org/psr/psr-7/) and
-[http-interop/http-middleware](https://github.com/http-interop/http-middleware).
+for usage with [PSR-7 HTTP Messages](https://www.php-fig.org/psr/psr-7/) and
+[PSR-15 HTTP Handlers](https://www.php-fig.org/psr/psr-15/).
 
 ## Problem Details for HTTP APIs
 
@@ -84,5 +84,5 @@ then be composed in middleware in order to create and return problem details
 responses.
 
 Additionally, the library provides middleware that acts as an error and
-exception handler and wrapping calls to a delegate, converting each into problem
+exception handler and wrapping calls to a request handler, converting each into problem
 details responses.

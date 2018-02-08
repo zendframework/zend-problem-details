@@ -153,10 +153,10 @@ Let's say you have middleware that you know will only be used in a production
 context, and need to return problem details:
 
 ```php
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ApiMiddleware implements MiddlewareInterface
@@ -187,10 +187,10 @@ composes, and that service could raise an exception or other `Throwable`. For
 this, you can use the `createResponseFromThrowable()` method instead.
 
 ```php
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
@@ -223,10 +223,10 @@ pass a configured `ProblemDetailsResponseFactory` instance to your middleware's
 constructor. As a more complete example:
 
 ```php
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
