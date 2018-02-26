@@ -50,6 +50,12 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
   modifies the constructor of `Zend\ProblemDetails\ProblemDetailsNotFoundHandler`;
   the `$responseFactory` argument is now required.
 
+- [#34](https://github.com/zendframework/zend-problem-details/pull/34) updates
+  the behavior when passing null as the `$jsonFlag` parameter to the
+  `Zend\ProblemDetails\ProblemDetailsResponseFactory` constructor; in such
+  situations, the default `json_encode()` flags will include `JSON_PRETTY_PRINT`
+  only when the `$isDebug` argument is boolean `true`.
+
 ### Deprecated
 
 - Nothing.
@@ -67,7 +73,7 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 ### Added
 
 - [#30](https://github.com/zendframework/zend-problem-details/pull/30)
-  adds PSR-15 support. 
+  adds PSR-15 support.
 
 ### Changed
 

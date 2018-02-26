@@ -146,7 +146,10 @@ class ProblemDetailsResponseFactory
     /**
      * JSON flags to use when generating JSON response payload.
      *
-     * Defaults to JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION
+     * On non-debug mode:
+     * defaults to JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION
+     * On debug mode:
+     * defaults to JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION
      *
      * @var int
      */
@@ -191,8 +194,13 @@ class ProblemDetailsResponseFactory
             return $responseFactory();
         };
         $this->isDebug = $isDebug;
-        $this->jsonFlags = $jsonFlags
-            ?: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
+        if (! $jsonFlags) {
+            $jsonFlags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
+            if ($isDebug) {
+                $jsonFlags = JSON_PRETTY_PRINT | $jsonFlags;
+            }
+        }
+        $this->jsonFlags = $jsonFlags;
         $this->exceptionDetailsInResponse = $exceptionDetailsInResponse;
         $this->defaultDetailMessage = $defaultDetailMessage;
     }
