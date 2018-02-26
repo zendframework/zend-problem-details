@@ -73,8 +73,6 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
      * These instances are all immutable, and the return values of
      * listeners are ignored; use listeners for reporting purposes
      * only.
-     *
-     * @param callable $listener
      */
     public function attachListener(callable $listener) : void
     {
@@ -102,8 +100,6 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
      * Creates and returns a callable error handler that raises exceptions.
      *
      * Only raises exceptions for errors that are within the error_reporting mask.
-     *
-     * @return callable
      */
     private function createErrorHandler() : callable
     {
@@ -127,14 +123,12 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
 
     /**
      * Trigger all error listeners.
-     *
-     * @param Throwable $error
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return void
      */
-    private function triggerListeners($error, ServerRequestInterface $request, ResponseInterface $response) : void
-    {
+    private function triggerListeners(
+        Throwable $error,
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ) : void {
         array_walk($this->listeners, function ($listener) use ($error, $request, $response) {
             $listener($error, $request, $response);
         });
