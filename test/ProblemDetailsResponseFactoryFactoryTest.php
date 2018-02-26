@@ -92,8 +92,8 @@ class ProblemDetailsResponseFactoryFactoryTest extends TestCase
         $this->container->get('config')->willReturn([
             'debug' => true,
         ]);
-        $this->container->has(ResponseInterface::class)->willReturn(false);
-        $this->container->has('Zend\ProblemDetails\StreamFactory')->willReturn(false);
+        $this->container->get(ResponseInterface::class)->willReturn(function () {
+        });
 
         $factoryFactory = new ProblemDetailsResponseFactoryFactory();
         $factory = $factoryFactory($this->container->reveal());
