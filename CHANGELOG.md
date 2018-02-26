@@ -4,6 +4,64 @@ All notable changes to this project will be documented in this file, in reverse 
 
 Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
+## 1.0.0alpha2 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#35](https://github.com/zendframework/zend-problem-details/pull/35)
+  modifies the constructor of `Zend\ProblemDetails\ProblemDetailsResponseFactory`
+  such that it now has the following signature:
+
+  ```php
+  public function __construct(
+      callable $responseFactory,
+      bool $isDebug = self::EXCLUDE_THROWABLE_DETAILS,
+      int $jsonFlags = null,
+      bool $exceptionDetailsInResponse = false,
+      string $defaultDetailMessage = self::DEFAULT_DETAIL_MESSAGE
+  )
+  ```
+
+  Note that the first argument is now a `$responseFactory`, is required, and
+  must be `callable`. The previous `$responsePrototype` and `$streamFactory`
+  arguments are now removed.
+
+  The `$responseFactory` will be invoked with no arguments, and MUST return a
+  PSR-7 ResponseInterface instance.
+
+- [#35](https://github.com/zendframework/zend-problem-details/pull/35) modifies
+  internals of `Zend\ProblemDetails\ProblemDetailsResponseFactoryFactory` as
+  follows:
+
+  - It no longer looks for a `Zend\ProblemDetails\StreamFactory` service.
+  - It now _requires_ the `Psr\Http\Message\ResponseInterface` service, and
+    expects it to resolve to a PHP callable capable of producing such an instance
+    (instead of a response instance directly).
+
+- [#35](https://github.com/zendframework/zend-problem-details/pull/35)
+  modifies the constructor of `Zend\ProblemDetails\ProblemDetailsMiddleware`;
+  the `$responseFactory` argument is now required.
+
+- [#35](https://github.com/zendframework/zend-problem-details/pull/35)
+  modifies the constructor of `Zend\ProblemDetails\ProblemDetailsNotFoundHandler`;
+  the `$responseFactory` argument is now required.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 1.0.0alpha1 - 2018-02-07
 
 ### Added

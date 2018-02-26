@@ -33,9 +33,9 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
      */
     private $responseFactory;
 
-    public function __construct(ProblemDetailsResponseFactory $responseFactory = null)
+    public function __construct(ProblemDetailsResponseFactory $responseFactory)
     {
-        $this->responseFactory = $responseFactory ?: new ProblemDetailsResponseFactory();
+        $this->responseFactory = $responseFactory;
     }
 
     /**

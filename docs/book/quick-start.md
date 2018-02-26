@@ -220,7 +220,7 @@ class DomainException extends PhpDomainException implements ProblemDetailsExcept
 {
     use CommonProblemDetailsExceptionTrait;
 
-    public static function create(string $message, array $details) : DomainException
+    public static function create(string $message, array $details) : self
     {
         $e = new self($message)
         $e->status = 417;

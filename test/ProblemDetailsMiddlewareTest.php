@@ -50,8 +50,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
             ->will([$response, 'reveal']);
 
 
-        $middleware = new ProblemDetailsMiddleware();
-        $result = $middleware->process($this->request->reveal(), $handler->reveal());
+        $result = $this->middleware->process($this->request->reveal(), $handler->reveal());
 
         $this->assertSame($response->reveal(), $result);
     }
@@ -118,12 +117,10 @@ class ProblemDetailsMiddlewareTest extends TestCase
             ->handle(Argument::that([$this->request, 'reveal']))
             ->willThrow($exception);
 
-        $middleware = new ProblemDetailsMiddleware();
-
         $this->expectException(TestAsset\RuntimeException::class);
         $this->expectExceptionMessage('Thrown!');
         $this->expectExceptionCode(507);
-        $middleware->process($this->request->reveal(), $handler->reveal());
+        $this->middleware->process($this->request->reveal(), $handler->reveal());
     }
 
     /**

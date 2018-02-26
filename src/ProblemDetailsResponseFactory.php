@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (https://www.zend.com)
+ * @copyright Copyright (c) 2017-2018 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
  */
 
@@ -17,8 +17,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Spatie\ArrayToXml\ArrayToXml;
 use Throwable;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
 
 /**
  * Create a Problem Details response.
@@ -135,18 +133,6 @@ class ProblemDetailsResponseFactory
     ];
 
     /**
-     * Factory for generating an empty response body.
-     *
-     * If none is provided, defaults to a closure that returns an empty
-     * zend-diactoros Stream instance using a php://temp stream.
-     *
-     * The factory MUST return a StreamInterface
-     *
-     * @var callable
-     */
-    private $bodyFactory;
-
-    /**
      * Whether or not to include debug details.
      *
      * Debug details are only included for responses created from throwables,
@@ -167,13 +153,12 @@ class ProblemDetailsResponseFactory
     private $jsonFlags;
 
     /**
-     * Response prototype to use when generating Problem Details responses.
+     * Factory to use to generate prototype response used when generating a
+     * problem details response.
      *
-     * Defaults to a zend-diactoros response if none is injected.
-     *
-     * @var ResponseInterface
+     * @var callable
      */
-    private $response;
+    private $responseFactory;
 
     /**
      * Flag to enable show exception details in detail field.
@@ -195,18 +180,19 @@ class ProblemDetailsResponseFactory
     private $defaultDetailMessage;
 
     public function __construct(
+        callable $responseFactory,
         bool $isDebug = self::EXCLUDE_THROWABLE_DETAILS,
         int $jsonFlags = null,
-        ResponseInterface $response = null,
-        callable $bodyFactory = null,
         bool $exceptionDetailsInResponse = false,
         string $defaultDetailMessage = self::DEFAULT_DETAIL_MESSAGE
     ) {
+        // Ensures type safety of the composed factory
+        $this->responseFactory = function () use ($responseFactory) : ResponseInterface {
+            return $responseFactory();
+        };
         $this->isDebug = $isDebug;
         $this->jsonFlags = $jsonFlags
             ?: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
-        $this->response = $response ?: new Response();
-        $this->bodyFactory = $bodyFactory ?: Closure::fromCallable([$this, 'generateStream']);
         $this->exceptionDetailsInResponse = $exceptionDetailsInResponse;
         $this->defaultDetailMessage = $defaultDetailMessage;
     }
@@ -336,30 +322,14 @@ class ProblemDetailsResponseFactory
         );
     }
 
-    /**
-     * @throws Exception\InvalidResponseBodyException
-     */
     protected function generateResponse(int $status, string $contentType, string $payload) : ResponseInterface
     {
-        $body = ($this->bodyFactory)();
-        if (! $body instanceof StreamInterface) {
-            throw new Exception\InvalidResponseBodyException(sprintf(
-                'The factory for generating a problem details response body stream did not return a %s',
-                StreamInterface::class
-            ));
-        }
+        $response = ($this->responseFactory)();
+        $response->getBody()->write($payload);
 
-        $body->write($payload);
-
-        return $this->response
+        return $response
             ->withStatus($status)
-            ->withHeader('Content-Type', $contentType)
-            ->withBody($body);
-    }
-
-    private function generateStream() : StreamInterface
-    {
-        return new Stream('php://temp', 'wb+');
+            ->withHeader('Content-Type', $contentType);
     }
 
     private function getResponseGenerator(ServerRequestInterface $request) : callable

@@ -15,8 +15,6 @@ class ProblemDetailsNotFoundHandlerFactory
 {
     public function __invoke(ContainerInterface $container) : ProblemDetailsNotFoundHandler
     {
-        return $container->has(ProblemDetailsResponseFactory::class)
-            ? new ProblemDetailsNotFoundHandler($container->get(ProblemDetailsResponseFactory::class))
-            : new ProblemDetailsNotFoundHandler();
+        return new ProblemDetailsNotFoundHandler($container->get(ProblemDetailsResponseFactory::class));
     }
 }

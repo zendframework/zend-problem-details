@@ -21,43 +21,17 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
 
+    public function setUp()
+    {
+        $this->responseFactory = $this->prophesize(ProblemDetailsResponseFactory::class);
+    }
+
     public function acceptHeaders() : array
     {
         return [
             'application/json' => ['application/json', 'application/problem+json'],
             'application/xml'  => ['application/xml', 'application/problem+xml'],
         ];
-    }
-
-    /**
-     * @dataProvider acceptHeaders
-     */
-    public function testReturnsResponseWith404StatusAndErrorMessageInBodyWithDefaultFactory(
-        string $acceptHeader,
-        string $expectedHeader
-    ) : void {
-        $request = $this->prophesize(ServerRequestInterface::class);
-        $request->getMethod()->willReturn('POST');
-        $request->getHeaderLine('Accept')->willReturn($acceptHeader);
-        $request->getUri()->willReturn('https://example.com/foo');
-
-        $notFoundHandler = new ProblemDetailsNotFoundHandler();
-
-        $returnedResponse = $notFoundHandler->process(
-            $request->reveal(),
-            $this->prophesize(RequestHandlerInterface::class)->reveal()
-        );
-
-        $expectedBody = [
-            'title' => 'Not Found',
-            'type' => 'https://httpstatus.es/404',
-            'status' => 404,
-            'detail' => 'Cannot POST https://example.com/foo!',
-        ];
-
-        $this->assertEquals($expectedBody, $this->getPayloadFromResponse($returnedResponse));
-        $this->assertSame(404, $returnedResponse->getStatusCode());
-        $this->assertSame($expectedHeader, $returnedResponse->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -72,14 +46,13 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
 
         $response = $this->prophesize(ResponseInterface::class);
 
-        $responseFactory = $this->prophesize(ProblemDetailsResponseFactory::class);
-        $responseFactory->createResponse(
+        $this->responseFactory->createResponse(
             Argument::that([$request, 'reveal']),
             404,
             'Cannot POST https://example.com/foo!'
         )->will([$response, 'reveal']);
 
-        $notFoundHandler = new ProblemDetailsNotFoundHandler($responseFactory->reveal());
+        $notFoundHandler = new ProblemDetailsNotFoundHandler($this->responseFactory->reveal());
 
         $this->assertSame(
             $response->reveal(),
@@ -99,9 +72,7 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
         $handler = $this->prophesize(RequestHandlerInterface::class);
         $handler->handle($request->reveal())->will([$response, 'reveal']);
 
-        $responseFactory = $this->prophesize(ProblemDetailsResponseFactory::class);
-
-        $notFoundHandler = new ProblemDetailsNotFoundHandler($responseFactory->reveal());
+        $notFoundHandler = new ProblemDetailsNotFoundHandler($this->responseFactory->reveal());
 
         $this->assertSame(
             $response->reveal(),
