@@ -116,8 +116,11 @@ where:
 - `int $jsonFlags` is an integer bitmask of [JSON encoding
   constants](http://php.net/manual/en/json.constants.php) to use with
   `json_encode()` when generating JSON problem details. If you pass a `null`
-  value, `JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE |
-  JSON_PRESERVE_ZERO_FRACTION` will be used.
+  value, and the `$isDebug` flag is true,
+  `JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION`
+  will be used; otherwise,
+  `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION`
+  will be used.
 - `bool $exceptionDetailsInResponse` is a flag indicating whether or not to
   include exception details (in particular, the message) when creating the
   problem details response. By default, for non-`ProblemDetailsExceptionInterface`
