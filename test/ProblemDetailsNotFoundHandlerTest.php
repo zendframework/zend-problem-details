@@ -87,7 +87,7 @@ class ProblemDetailsNotFoundHandlerTest extends TestCase
         );
     }
 
-    public function testDelegateIsCalledIfAcceptHeaderIsUnacceptable() : void
+    public function testHandlerIsCalledIfAcceptHeaderIsUnacceptable() : void
     {
         $request = $this->prophesize(ServerRequestInterface::class);
         $request->getMethod()->willReturn('POST');

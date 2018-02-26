@@ -31,13 +31,14 @@ and have installed [zend-component-installer](https://docs.zendframework.com/zen
 composes the `Zend\ProblemDetails\ProblemDetailsResponseFactory` immediately, and
 inject that service in your middleware.
 
-As an example, the following catches domain excpetions and uses them to create
+As an example, the following catches domain exceptions and uses them to create
 problem details responses:
 
 ```php
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
@@ -56,7 +57,7 @@ class DomainTransactionMiddleware implements MiddlewareInterface
         $this->problemDetailsFactory = $problemDetailsFactory;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         try {
             $result = $this->domainService->transaction($request->getParsedBody());
@@ -91,9 +92,10 @@ an example, validation failure is an expected condition, but should likely
 result in problem details to the end user.
 
 ```php
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\InputFilter\InputFilterInterface;
@@ -117,7 +119,7 @@ class DomainTransactionMiddleware implements MiddlewareInterface
         $this->problemDetailsFactory = $problemDetailsFactory;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         $this->inputFilter->setData($request->getParsedBody());
         if (! $this->inputFilter->isValid()) {
@@ -286,7 +288,7 @@ This package provides `ProblemDetailsNotFoundHandler` which will return a
 problem details `Response` with a `404` status if the request can accept either
 JSON or XML.
 
-To use this handler in Expressive add it into your pipeline immediate before the 
+To use this handler in Expressive add it into your pipeline immediate before the
 default `NotFoundHandler`:
 
 ```php

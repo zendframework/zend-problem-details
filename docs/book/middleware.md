@@ -14,11 +14,11 @@ This middleware does the following:
   zend-diactoros for response and response body generation, and defaulting to
   production settings.
 - Determines if the request accepts JSON or XML; if neither is accepted, it
-  simply passes execution to the delegate.
+  simply passes execution to the request handler.
 - Registers a PHP error handler using the current `error_reporting` mask, and
   throwing any errors handled as `ErrorException` instances.
 - Wraps a call to the `$handler` in a `try`/`catch` block; if nothing is
-  caught, and a response is returned, it returns the response immediately.
+  caught, it returns the response immediately.
 - For all caught throwables, it passes the throwable to
   `ProblemDetailsResponseFactory::createResponseFromThrowable()` to generate a
   Problem Details response.

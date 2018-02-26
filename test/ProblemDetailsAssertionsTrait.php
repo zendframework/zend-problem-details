@@ -11,9 +11,6 @@ namespace ZendTest\ProblemDetails;
 
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
-use Zend\ProblemDetails\ProblemDetailsJsonResponse;
-use Zend\ProblemDetails\ProblemDetailsResponse;
-use Zend\ProblemDetails\ProblemDetailsXmlResponse;
 
 trait ProblemDetailsAssertionsTrait
 {
