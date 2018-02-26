@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (https://www.zend.com)
+ * @copyright Copyright (c) 2017-2018 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
  */
 
@@ -22,19 +22,10 @@ class ProblemDetailsResponseFactoryFactory
         $problemDetailsConfig = $config['problem-details'] ?? [];
         $jsonFlags = $problemDetailsConfig['json_flags'] ?? null;
 
-        $responsePrototype = $container->has(ResponseInterface::class)
-            ? $container->get(ResponseInterface::class)
-            : null;
-
-        $streamFactory = $container->has('Zend\ProblemDetails\StreamFactory')
-            ? $container->get('Zend\ProblemDetails\StreamFactory')
-            : null;
-
         return new ProblemDetailsResponseFactory(
+            $container->get(ResponseInterface::class),
             $includeThrowableDetail,
             $jsonFlags,
-            $responsePrototype,
-            $streamFactory,
             $includeThrowableDetail
         );
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (https://www.zend.com)
+ * @copyright Copyright (c) 2017-2018 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
  */
 
@@ -10,9 +10,13 @@ declare(strict_types=1);
 namespace ZendTest\ProblemDetails;
 
 use Exception;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 use Zend\ProblemDetails\Exception\InvalidResponseBodyException;
 use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
@@ -22,20 +26,22 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;
 
-    /**
-     * @var ServerRequestInterface
-     */
+    /** @var ServerRequestInterface|ObjectProphecy */
     private $request;
 
-    /**
-     * @var ProblemDetailsResponseFactory
-     */
+    /** @var ResponseInterface|ObjectProphecy */
+    private $response;
+
+    /** @var ProblemDetailsResponseFactory */
     private $factory;
 
     protected function setUp() : void
     {
         $this->request = $this->prophesize(ServerRequestInterface::class);
-        $this->factory = new ProblemDetailsResponseFactory();
+        $this->response = $this->prophesize(ResponseInterface::class);
+        $this->factory = new ProblemDetailsResponseFactory(function () {
+            return $this->response->reveal();
+        });
     }
 
     public function acceptHeaders() : array
@@ -56,14 +62,20 @@ class ProblemDetailsResponseFactoryTest extends TestCase
     {
         $this->request->getHeaderLine('Accept')->willReturn($header);
 
+        $stream = $this->prophesize(StreamInterface::class);
+        $stream->write(Argument::type('string'))->shouldBeCalled();
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(500)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', $expectedType)->will([$this->response, 'reveal']);
+
         $response = $this->factory->createResponse(
             $this->request->reveal(),
             500,
             'Unknown error occurred'
         );
 
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals($expectedType, $response->getHeaderLine('Content-Type'));
+        $this->assertSame($this->response->reveal(), $response);
     }
 
     /**
@@ -73,14 +85,20 @@ class ProblemDetailsResponseFactoryTest extends TestCase
     {
         $this->request->getHeaderLine('Accept')->willReturn($header);
 
+        $stream = $this->prophesize(StreamInterface::class);
+        $stream->write(Argument::type('string'))->shouldBeCalled();
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(500)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', $expectedType)->will([$this->response, 'reveal']);
+
         $exception = new RuntimeException();
         $response = $this->factory->createResponseFromThrowable(
             $this->request->reveal(),
             $exception
         );
 
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals($expectedType, $response->getHeaderLine('Content-Type'));
+        $this->assertSame($this->response->reveal(), $response);
     }
 
     /**
@@ -92,7 +110,21 @@ class ProblemDetailsResponseFactoryTest extends TestCase
     ) : void {
         $this->request->getHeaderLine('Accept')->willReturn($header);
 
-        $factory = new ProblemDetailsResponseFactory(ProblemDetailsResponseFactory::INCLUDE_THROWABLE_DETAILS);
+        $stream = $this->prophesize(StreamInterface::class);
+        $this->prepareResponsePayloadAssertions($expectedType, $stream, function (array $payload) {
+            Assert::assertArrayHasKey('exception', $payload);
+        });
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(500)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', $expectedType)->will([$this->response, 'reveal']);
+
+        $factory = new ProblemDetailsResponseFactory(
+            function () {
+                return $this->response->reveal();
+            },
+            ProblemDetailsResponseFactory::INCLUDE_THROWABLE_DETAILS
+        );
 
         $exception = new RuntimeException();
         $response = $factory->createResponseFromThrowable(
@@ -100,11 +132,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
             $exception
         );
 
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals($expectedType, $response->getHeaderLine('Content-Type'));
-
-        $payload = $this->getPayloadFromResponse($response);
-        $this->assertArrayHasKey('exception', $payload);
+        $this->assertSame($this->response->reveal(), $response);
     }
 
     /**
@@ -122,20 +150,6 @@ class ProblemDetailsResponseFactoryTest extends TestCase
             ],
         ];
 
-        $response = $this->factory->createResponse(
-            $this->request->reveal(),
-            500,
-            'Unknown error occurred',
-            'Title',
-            'Type',
-            $additional
-        );
-
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals($expectedType, $response->getHeaderLine('Content-Type'));
-
-        $payload = $this->getPayloadFromResponse($response);
-
         if (stripos($expectedType, 'xml')) {
             $expectedKeyNames = [
                 'A_-',
@@ -146,7 +160,29 @@ class ProblemDetailsResponseFactoryTest extends TestCase
             $expectedKeyNames = array_keys($additional['foo']);
         }
 
-        $this->assertEquals(array_keys($payload['foo']), $expectedKeyNames);
+        $stream = $this->prophesize(StreamInterface::class);
+        $this->prepareResponsePayloadAssertions(
+            $expectedType,
+            $stream,
+            function (array $payload) use ($expectedKeyNames) {
+                Assert::assertEquals($expectedKeyNames, array_keys($payload['foo']));
+            }
+        );
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(500)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', $expectedType)->will([$this->response, 'reveal']);
+
+        $response = $this->factory->createResponse(
+            $this->request->reveal(),
+            500,
+            'Unknown error occurred',
+            'Title',
+            'Type',
+            $additional
+        );
+
+        $this->assertSame($this->response->reveal(), $response);
     }
 
     public function testCreateResponseFromThrowableWillPullDetailsFromProblemDetailsExceptionInterface() : void
@@ -160,23 +196,32 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
         $this->request->getHeaderLine('Accept')->willReturn('application/json');
 
-        $factory = new ProblemDetailsResponseFactory();
+        $stream = $this->prophesize(StreamInterface::class);
+        $this->preparePayloadForJsonResponse(
+            $stream,
+            function (array $payload) {
+                Assert::assertSame(400, $payload['status']);
+                Assert::assertSame('Exception details', $payload['detail']);
+                Assert::assertSame('Invalid client request', $payload['title']);
+                Assert::assertSame('https://example.com/api/doc/invalid-client-request', $payload['type']);
+                Assert::assertSame('bar', $payload['foo']);
+            }
+        );
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(400)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', 'application/problem+json')->will([$this->response, 'reveal']);
+
+        $factory = new ProblemDetailsResponseFactory(function () {
+            return $this->response->reveal();
+        });
 
         $response = $factory->createResponseFromThrowable(
             $this->request->reveal(),
             $e->reveal()
         );
 
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals('application/problem+json', $response->getHeaderLine('Content-Type'));
-
-        $payload = $this->getPayloadFromResponse($response);
-        $this->assertSame(400, $payload['status']);
-        $this->assertSame(400, $response->getStatusCode());
-        $this->assertSame('Exception details', $payload['detail']);
-        $this->assertSame('Invalid client request', $payload['title']);
-        $this->assertSame('https://example.com/api/doc/invalid-client-request', $payload['type']);
-        $this->assertSame('bar', $payload['foo']);
+        $this->assertSame($this->response->reveal(), $response);
     }
 
     /**
@@ -185,6 +230,18 @@ class ProblemDetailsResponseFactoryTest extends TestCase
     public function testCreateResponseRemovesResourcesFromInputData(string $header, string $expectedType) : void
     {
         $this->request->getHeaderLine('Accept')->willReturn($header);
+
+        $stream = $this->prophesize(StreamInterface::class);
+        $stream
+            ->write(Argument::that(function ($body) {
+                Assert::assertNotEmpty($body);
+                return $body;
+            }))
+            ->shouldBeCalled();
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(500)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', $expectedType)->will([$this->response, 'reveal']);
 
         $fh = fopen(__FILE__, 'r');
         $response = $this->factory->createResponse(
@@ -201,27 +258,21 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         );
         fclose($fh);
 
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals($expectedType, $response->getHeaderLine('Content-Type'));
-
-        $this->assertNotEmpty((string)$response->getBody(), 'Body is missing');
-    }
-
-    public function testFactoryRaisesExceptionIfBodyFactoryDoesNotReturnStream() : void
-    {
-        $this->request->getHeaderLine('Accept')->willReturn('application/json');
-
-        $factory = new ProblemDetailsResponseFactory(false, null, null, function () {
-            return null;
-        });
-
-        $this->expectException(InvalidResponseBodyException::class);
-        $factory->createResponse($this->request->reveal(), 500, 'This is an error');
+        $this->assertSame($this->response->reveal(), $response);
     }
 
     public function testFactoryGeneratesXmlResponseIfNegotiationFails() : void
     {
         $this->request->getHeaderLine('Accept')->willReturn('text/plain');
+
+        $stream = $this->prophesize(StreamInterface::class);
+        $stream
+            ->write(Argument::type('string'))
+            ->shouldBeCalled();
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(500)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', 'application/problem+xml')->will([$this->response, 'reveal']);
 
         $response = $this->factory->createResponse(
             $this->request->reveal(),
@@ -229,35 +280,47 @@ class ProblemDetailsResponseFactoryTest extends TestCase
             'Unknown error occurred'
         );
 
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals('application/problem+xml', $response->getHeaderLine('Content-Type'));
+        $this->assertSame($this->response->reveal(), $response);
     }
 
     public function testFactoryRendersPreviousExceptionsInDebugMode() : void
     {
         $this->request->getHeaderLine('Accept')->willReturn('application/json');
 
+        $stream = $this->prophesize(StreamInterface::class);
+        $this->preparePayloadForJsonResponse(
+            $stream,
+            function (array $payload) {
+                Assert::assertArrayHasKey('exception', $payload);
+                Assert::assertEquals(101011, $payload['exception']['code']);
+                Assert::assertEquals('second', $payload['exception']['message']);
+                Assert::assertArrayHasKey('stack', $payload['exception']);
+                Assert::assertInternalType('array', $payload['exception']['stack']);
+                Assert::assertEquals(101010, $payload['exception']['stack'][0]['code']);
+                Assert::assertEquals('first', $payload['exception']['stack'][0]['message']);
+            }
+        );
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(500)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', 'application/problem+json')->will([$this->response, 'reveal']);
+
         $first = new RuntimeException('first', 101010);
         $second = new RuntimeException('second', 101011, $first);
 
-        $factory = new ProblemDetailsResponseFactory(ProblemDetailsResponseFactory::INCLUDE_THROWABLE_DETAILS);
+        $factory = new ProblemDetailsResponseFactory(
+            function () {
+                return $this->response->reveal();
+            },
+            ProblemDetailsResponseFactory::INCLUDE_THROWABLE_DETAILS
+        );
 
         $response = $factory->createResponseFromThrowable(
             $this->request->reveal(),
             $second
         );
 
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals('application/problem+json', $response->getHeaderLine('Content-Type'));
-
-        $payload = $this->getPayloadFromResponse($response);
-        $this->assertArrayHasKey('exception', $payload);
-        $this->assertEquals(101011, $payload['exception']['code']);
-        $this->assertEquals('second', $payload['exception']['message']);
-        $this->assertArrayHasKey('stack', $payload['exception']);
-        $this->assertInternalType('array', $payload['exception']['stack']);
-        $this->assertEquals(101010, $payload['exception']['stack'][0]['code']);
-        $this->assertEquals('first', $payload['exception']['stack'][0]['message']);
+        $this->assertSame($this->response->reveal(), $response);
     }
 
     public function testFragileDataInExceptionMessageShouldBeHiddenInResponseBodyInNoDebugMode()
@@ -265,22 +328,43 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $fragileMessage = 'Your SQL or password here';
         $exception = new Exception($fragileMessage);
 
+        $stream = $this->prophesize(StreamInterface::class);
+        $stream
+            ->write(Argument::that(function ($body) use ($fragileMessage) {
+                Assert::assertNotContains($fragileMessage, $body);
+                Assert::assertContains(ProblemDetailsResponseFactory::DEFAULT_DETAIL_MESSAGE, $body);
+                return $body;
+            }))
+            ->shouldBeCalled();
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(500)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', 'application/problem+json')->will([$this->response, 'reveal']);
+
         $response = $this->factory->createResponseFromThrowable($this->request->reveal(), $exception);
 
-        $this->assertNotContains($fragileMessage, (string) $response->getBody());
-        $this->assertContains($this->factory::DEFAULT_DETAIL_MESSAGE, (string) $response->getBody());
+        $this->assertSame($this->response->reveal(), $response);
     }
 
     public function testExceptionCodeShouldBeIgnoredAnd500ServedInResponseBodyInNonDebugMode()
     {
         $exception = new Exception('', 400);
 
+        $stream = $this->prophesize(StreamInterface::class);
+        $this->preparePayloadForJsonResponse(
+            $stream,
+            function (array $payload) {
+                Assert::assertSame(500, $payload['status']);
+            }
+        );
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(500)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', 'application/problem+json')->will([$this->response, 'reveal']);
+
         $response = $this->factory->createResponseFromThrowable($this->request->reveal(), $exception);
 
-        $payload = $this->getPayloadFromResponse($response);
-
-        $this->assertSame(500, $payload['status']);
-        $this->assertSame(500, $response->getStatusCode());
+        $this->assertSame($this->response->reveal(), $response);
     }
 
     public function testFragileDataInExceptionMessageShouldBeVisibleInResponseBodyInNonDebugModeWhenAllowToShowByFlag()
@@ -288,25 +372,60 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $fragileMessage = 'Your SQL or password here';
         $exception = new Exception($fragileMessage);
 
-        $factory = new ProblemDetailsResponseFactory(false, null, null, null, true);
+        $stream = $this->prophesize(StreamInterface::class);
+        $this->preparePayloadForJsonResponse(
+            $stream,
+            function (array $payload) use ($fragileMessage) {
+                Assert::assertSame($fragileMessage, $payload['detail']);
+            }
+        );
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(500)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', 'application/problem+json')->will([$this->response, 'reveal']);
+
+        $factory = new ProblemDetailsResponseFactory(
+            function () {
+                return $this->response->reveal();
+            },
+            false,
+            null,
+            true
+        );
 
         $response = $factory->createResponseFromThrowable($this->request->reveal(), $exception);
 
-        $payload = $this->getPayloadFromResponse($response);
-
-        $this->assertSame($fragileMessage, $payload['detail']);
+        $this->assertSame($this->response->reveal(), $response);
     }
 
     public function testCustomDetailMessageShouldBeVisible()
     {
         $detailMessage = 'Custom detail message';
 
-        $factory = new ProblemDetailsResponseFactory(false, null, null, null, false, $detailMessage);
+        $stream = $this->prophesize(StreamInterface::class);
+        $this->preparePayloadForJsonResponse(
+            $stream,
+            function (array $payload) use ($detailMessage) {
+                Assert::assertSame($detailMessage, $payload['detail']);
+            }
+        );
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(500)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', 'application/problem+json')->will([$this->response, 'reveal']);
+
+        $factory = new ProblemDetailsResponseFactory(
+            function () {
+                return $this->response->reveal();
+            },
+            false,
+            null,
+            false,
+            $detailMessage
+        );
 
         $response = $factory->createResponseFromThrowable($this->request->reveal(), new Exception());
 
-        $payload = $this->getPayloadFromResponse($response);
-
-        $this->assertSame($detailMessage, $payload['detail']);
+        $this->assertSame($this->response->reveal(), $response);
     }
 }
