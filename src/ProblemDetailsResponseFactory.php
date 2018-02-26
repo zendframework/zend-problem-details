@@ -197,7 +197,7 @@ class ProblemDetailsResponseFactory
     public function __construct(
         bool $isDebug = self::EXCLUDE_THROWABLE_DETAILS,
         int $jsonFlags = null,
-        ResponseInterface $response = null,
+        callable $responseFactory = null,
         callable $bodyFactory = null,
         bool $exceptionDetailsInResponse = false,
         string $defaultDetailMessage = self::DEFAULT_DETAIL_MESSAGE
@@ -205,7 +205,11 @@ class ProblemDetailsResponseFactory
         $this->isDebug = $isDebug;
         $this->jsonFlags = $jsonFlags
             ?: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
-        $this->response = $response ?: new Response();
+        if ($responseFactory !== null) {
+            $this->response = $responseFactory();
+        } else {
+            $this->response = new Response();
+        }
         $this->bodyFactory = $bodyFactory ?: Closure::fromCallable([$this, 'generateStream']);
         $this->exceptionDetailsInResponse = $exceptionDetailsInResponse;
         $this->defaultDetailMessage = $defaultDetailMessage;
