@@ -146,7 +146,8 @@ class ProblemDetailsResponseFactory
     /**
      * JSON flags to use when generating JSON response payload.
      *
-     * Defaults to JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION
+     * Defaults to JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION on non-debug mode
+     * and JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION on debug mode
      *
      * @var int
      */

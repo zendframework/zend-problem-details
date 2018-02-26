@@ -77,13 +77,32 @@ class ProblemDetailsResponseFactoryFactoryTest extends TestCase
         $this->assertInstanceOf(ProblemDetailsResponseFactory::class, $factory);
         $this->assertAttributeSame(ProblemDetailsResponseFactory::EXCLUDE_THROWABLE_DETAILS, 'isDebug', $factory);
         $this->assertAttributeSame(
-            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION,
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION,
             'jsonFlags',
             $factory
         );
 
         $this->assertAttributeInstanceOf(Closure::class, 'responseFactory', $factory);
         $this->assertResponseFactoryReturns($response, $factory);
+    }
+
+    public function testUsesPrettyPrintFlagOnEnabledDebugMode() : void
+    {
+        $this->container->has('config')->willReturn(true);
+        $this->container->get('config')->willReturn([
+            'debug' => true,
+        ]);
+        $this->container->has(ResponseInterface::class)->willReturn(false);
+        $this->container->has('Zend\ProblemDetails\StreamFactory')->willReturn(false);
+
+        $factoryFactory = new ProblemDetailsResponseFactoryFactory();
+        $factory = $factoryFactory($this->container->reveal());
+
+        $this->assertAttributeSame(
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION,
+            'jsonFlags',
+            $factory
+        );
     }
 
     public function testUsesDebugSettingFromConfigWhenPresent() : void
