@@ -191,8 +191,13 @@ class ProblemDetailsResponseFactory
             return $responseFactory();
         };
         $this->isDebug = $isDebug;
-        $this->jsonFlags = $jsonFlags
-            ?: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
+        if (! $jsonFlags) {
+            $jsonFlags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
+            if ($isDebug) {
+                $jsonFlags = JSON_PRETTY_PRINT | $jsonFlags;
+            }
+        }
+        $this->jsonFlags = $jsonFlags;
         $this->exceptionDetailsInResponse = $exceptionDetailsInResponse;
         $this->defaultDetailMessage = $defaultDetailMessage;
     }
