@@ -101,6 +101,31 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
 - Nothing.
 
+## 0.5.3 - 2018-03-12
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#32](https://github.com/zendframework/zend-problem-details/pull/32) updates
+  the `ProblemDetailsResponseFactoryFactory` to allow the `ResponseInterface`
+  service to either return an instance, or a factory capable of generating an
+  instance.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 0.5.2 - 2018-01-10
 
 ### Added
