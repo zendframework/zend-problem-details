@@ -90,6 +90,25 @@ class ProblemDetailsResponseFactoryFactoryTest extends TestCase
         $this->assertAttributeSame($response, 'response', $factory);
     }
 
+    public function testUsesResponseServiceAsFactoryFromContainerWhenPresent() : void
+    {
+        $response = $this->prophesize(ResponseInterface::class)->reveal();
+        $responseFactory = function () use ($response) {
+            return $response;
+        };
+
+        $this->container->has('config')->willReturn(false);
+        $this->container->has(ResponseInterface::class)->willReturn(true);
+        $this->container->get(ResponseInterface::class)->willReturn($responseFactory);
+        $this->container->has('Zend\ProblemDetails\StreamFactory')->willReturn(false);
+
+        $factoryFactory = new ProblemDetailsResponseFactoryFactory();
+        $factory = $factoryFactory($this->container->reveal());
+
+        $this->assertInstanceOf(ProblemDetailsResponseFactory::class, $factory);
+        $this->assertAttributeSame($response, 'response', $factory);
+    }
+
     public function testUsesStreamFactoryServiceFromContainerWhenPresent() : void
     {
         // @codingStandardsIgnoreStart

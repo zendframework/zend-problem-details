@@ -20,9 +20,7 @@ class ProblemDetailsResponseFactoryFactory
         $problemDetailsConfig = $config['problem-details'] ?? [];
         $jsonFlags = $problemDetailsConfig['json_flags'] ?? null;
 
-        $responsePrototype = $container->has(ResponseInterface::class)
-            ? $container->get(ResponseInterface::class)
-            : null;
+        $responsePrototype = $this->getResponsePrototype($container);
 
         $streamFactory = $container->has('Zend\ProblemDetails\StreamFactory')
             ? $container->get('Zend\ProblemDetails\StreamFactory')
@@ -35,5 +33,18 @@ class ProblemDetailsResponseFactoryFactory
             $streamFactory,
             $includeThrowableDetail
         );
+    }
+
+    /**
+     * @return null|ResponseInterface
+     */
+    private function getResponsePrototype(ContainerInterface $container)
+    {
+        if (! $container->has(ResponseInterface::class)) {
+            return null;
+        }
+
+        $response = $container->get(ResponseInterface::class);
+        return is_callable($response) ? $response() : $response;
     }
 }
