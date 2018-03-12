@@ -3,7 +3,7 @@
         {
             "location": "/",
             "text": "Problem Details for PSR-7 Applications\n\n\n\n\n\n\nThis library provides a factory for generating Problem Details\nresponses, error handling middleware for automatically generating Problem\nDetails responses from errors and exceptions, and custom exception types for\n\nPSR-7\n applications.\n\n\nInstallation\n\n\nRun the following to install this library:\n\n\n$ composer require zendframework/zend-problem-details\n\n\n\nDocumentation\n\n\nDocumentation is \nin the doc tree\n, and can be compiled using \nmkdocs\n:\n\n\n$ mkdocs build\n\n\n\nYou may also \nbrowse the documentation online\n.",
-            "title": "Home"
+            "title": "Problem Details for PSR-7 Applications"
         },
         {
             "location": "/#problem-details-for-psr-7-applications",
