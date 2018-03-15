@@ -18,7 +18,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
-use Zend\ProblemDetails\Exception\InvalidResponseBodyException;
 use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 

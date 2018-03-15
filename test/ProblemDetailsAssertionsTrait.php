@@ -12,7 +12,6 @@ namespace ZendTest\ProblemDetails;
 use PHPUnit\Framework\Assert;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Throwable;
 

@@ -21,7 +21,6 @@ use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 use function trigger_error;
 
 use const E_USER_ERROR;
-use ZendTest\ProblemDetails\TestAsset;
 
 class ProblemDetailsMiddlewareTest extends TestCase
 {
