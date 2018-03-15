@@ -4,13 +4,19 @@ All notable changes to this project will be documented in this file, in reverse 
 
 Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
-## 1.0.0alpha2 - 2018-02-26
+## 1.0.0 - 2018-03-15
 
 ### Added
 
-- Nothing.
+- [#30](https://github.com/zendframework/zend-problem-details/pull/30)
+  adds PSR-15 support.
 
 ### Changed
+
+- [#24](https://github.com/zendframework/zend-problem-details/pull/24)
+  updates all classes to use scalar and return type hints, including nullable
+  and void types. If you were extending classes within an earlier release, you
+  may need to update signatures of any methods you override.
 
 - [#35](https://github.com/zendframework/zend-problem-details/pull/35)
   modifies the constructor of `Zend\ProblemDetails\ProblemDetailsResponseFactory`
@@ -55,32 +61,6 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
   `Zend\ProblemDetails\ProblemDetailsResponseFactory` constructor; in such
   situations, the default `json_encode()` flags will include `JSON_PRETTY_PRINT`
   only when the `$isDebug` argument is boolean `true`.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 1.0.0alpha1 - 2018-02-07
-
-### Added
-
-- [#30](https://github.com/zendframework/zend-problem-details/pull/30)
-  adds PSR-15 support.
-
-### Changed
-
-- [#24](https://github.com/zendframework/zend-problem-details/pull/24)
-  updates all classes to use scalar and return type hints, including nullable
-  and void types. If you were extending classes within an earlier release, you
-  may need to update signatures of any methods you override.
 
 ### Deprecated
 
