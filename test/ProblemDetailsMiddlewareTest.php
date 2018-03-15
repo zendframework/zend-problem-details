@@ -17,7 +17,10 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Zend\ProblemDetails\ProblemDetailsMiddleware;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
-use ZendTest\ProblemDetails\TestAsset;
+
+use function trigger_error;
+
+use const E_USER_ERROR;
 
 class ProblemDetailsMiddlewareTest extends TestCase
 {
@@ -90,14 +93,14 @@ class ProblemDetailsMiddlewareTest extends TestCase
         $handler
             ->handle(Argument::that([$this->request, 'reveal']))
             ->will(function () {
-                trigger_error('Triggered error!', \E_USER_ERROR);
+                trigger_error('Triggered error!', E_USER_ERROR);
             });
 
         $expected = $this->prophesize(ResponseInterface::class)->reveal();
         $this->responseFactory
             ->createResponseFromThrowable($this->request->reveal(), Argument::that(function ($e) {
                 $this->assertInstanceOf(ErrorException::class, $e);
-                $this->assertEquals(\E_USER_ERROR, $e->getSeverity());
+                $this->assertEquals(E_USER_ERROR, $e->getSeverity());
                 $this->assertEquals('Triggered error!', $e->getMessage());
                 return true;
             }))

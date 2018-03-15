@@ -21,6 +21,11 @@ use TypeError;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 use Zend\ProblemDetails\ProblemDetailsResponseFactoryFactory;
 
+use const JSON_PRESERVE_ZERO_FRACTION;
+use const JSON_PRETTY_PRINT;
+use const JSON_UNESCAPED_SLASHES;
+use const JSON_UNESCAPED_UNICODE;
+
 class ProblemDetailsResponseFactoryFactoryTest extends TestCase
 {
     protected function setUp() : void

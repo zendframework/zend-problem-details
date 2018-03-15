@@ -13,6 +13,9 @@ use PHPUnit\Framework\TestCase;
 use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
+use function json_decode;
+use function json_encode;
+
 class ProblemDetailsExceptionTest extends TestCase
 {
     protected $status = 403;
