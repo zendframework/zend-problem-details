@@ -22,6 +22,11 @@ use Zend\ProblemDetails\Exception\InvalidResponseBodyException;
 use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
+use function array_keys;
+use function fclose;
+use function fopen;
+use function stripos;
+
 class ProblemDetailsResponseFactoryTest extends TestCase
 {
     use ProblemDetailsAssertionsTrait;

@@ -18,6 +18,25 @@ use Psr\Http\Message\StreamInterface;
 use Spatie\ArrayToXml\ArrayToXml;
 use Throwable;
 
+use function array_merge;
+use function array_walk_recursive;
+use function get_class;
+use function get_resource_type;
+use function is_array;
+use function is_int;
+use function is_resource;
+use function json_decode;
+use function json_encode;
+use function preg_replace;
+use function print_r;
+use function sprintf;
+use function strpos;
+
+use const JSON_PRESERVE_ZERO_FRACTION;
+use const JSON_PRETTY_PRINT;
+use const JSON_UNESCAPED_SLASHES;
+use const JSON_UNESCAPED_UNICODE;
+
 /**
  * Create a Problem Details response.
  *

@@ -16,6 +16,14 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Throwable;
 
+use function array_walk_recursive;
+use function get_class;
+use function json_decode;
+use function json_encode;
+use function simplexml_load_string;
+use function sprintf;
+use function var_export;
+
 trait ProblemDetailsAssertionsTrait
 {
     public function assertProblemDetails(array $expected, array $details) : void

@@ -17,6 +17,12 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 
+use function array_walk;
+use function error_reporting;
+use function in_array;
+use function restore_error_handler;
+use function set_error_handler;
+
 /**
  * Middleware that ensures a Problem Details response is returned
  * for all errors and Exceptions/Throwables.
@@ -76,7 +82,7 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
      */
     public function attachListener(callable $listener) : void
     {
-        if (\in_array($listener, $this->listeners, true)) {
+        if (in_array($listener, $this->listeners, true)) {
             return;
         }
 

@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Zend\ProblemDetails\Exception;
 
+use function array_merge;
+
 /**
  * Common functionality for ProblemDetailsExceptionInterface implementations.
  *
