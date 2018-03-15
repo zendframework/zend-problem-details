@@ -9,18 +9,13 @@ For this purpose, this library provides `ProblemDetailsMiddleware`.
 
 This middleware does the following:
 
-- Composes a `ProblemDetailsResponseFactory`; if none is passed during
-  instantiation, one is created with no arguments, defaulting to usage of
-  zend-diactoros for response and response body generation, and defaulting to
-  production settings.
+- Composes a `ProblemDetailsResponseFactory`.
 - Determines if the request accepts JSON or XML; if neither is accepted, it
-  simply passes execution to the delegate.
+  simply passes execution to the request handler.
 - Registers a PHP error handler using the current `error_reporting` mask, and
   throwing any errors handled as `ErrorException` instances.
-- Wraps a call to the `$delegate` in a `try`/`catch` block; if nothing is
-  caught, and a response is returned, it returns the response immediately. If a
-  response is _not_ returned, it raises a
-  `ProblemDetails\Exception\MissingResponseException`.
+- Wraps a call to the `$handler` in a `try`/`catch` block; if nothing is
+  caught, it returns the response immediately.
 - For all caught throwables, it passes the throwable to
   `ProblemDetailsResponseFactory::createResponseFromThrowable()` to generate a
   Problem Details response.
@@ -101,11 +96,11 @@ $middleware->attachListener($listener);
 ## Factory
 
 The `ProblemDetailsMiddleware` ships with a corresponding PSR-11 compatible factory,
-`ProblemDetailsMiddlewareFactory`. This factory looks for a service named
-`Zend\ProblemDetails\ProblemDetailsResponseFactory`; if present, that value is used
-to instantiate the middleware.
+`ProblemDetailsMiddlewareFactory`. This factory uses the service named
+`Zend\ProblemDetails\ProblemDetailsResponseFactory` to instantiate the
+middleware.
 
-For Expressive 2 users, this middleware should be registered automatically with
+For Expressive 2+ users, this middleware should be registered automatically with
 your application on install, assuming you have the zend-component-installer
 plugin in place (it's shipped by default with the Expressive skeleton).
 

@@ -1,14 +1,17 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2017-2018 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace ZendTest\ProblemDetails;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 use Zend\ProblemDetails\ProblemDetailsNotFoundHandler;
 use Zend\ProblemDetails\ProblemDetailsNotFoundHandlerFactory;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
@@ -21,25 +24,18 @@ class ProblemDetailsNotFoundHandlerFactoryTest extends TestCase
         $this->factory = new ProblemDetailsNotFoundHandlerFactory();
     }
 
-    public function testCreatesNotFoundHandlerWithoutResponseFactoryIfServiceDoesNotExist() : void
+    public function testRaisesExceptionWhenProblemDetailsResponseFactoryServiceIsNotAvailable()
     {
-        $this->container->has(ProblemDetailsResponseFactory::class)->willReturn(false);
-        $this->container->get(ProblemDetailsResponseFactory::class)->shouldNotBeCalled();
+        $e = new RuntimeException();
+        $this->container->get(ProblemDetailsResponseFactory::class)->willThrow($e);
 
-        $notFoundHandler = ($this->factory)($this->container->reveal());
-
-        $this->assertInstanceOf(ProblemDetailsNotFoundHandler::class, $notFoundHandler);
-        $this->assertAttributeInstanceOf(
-            ProblemDetailsResponseFactory::class,
-            'responseFactory',
-            $notFoundHandler
-        );
+        $this->expectException(RuntimeException::class);
+        $this->factory->__invoke($this->container->reveal());
     }
 
     public function testCreatesNotFoundHandlerUsingResponseFactoryService() : void
     {
         $responseFactory = $this->prophesize(ProblemDetailsResponseFactory::class)->reveal();
-        $this->container->has(ProblemDetailsResponseFactory::class)->willReturn(true);
         $this->container->get(ProblemDetailsResponseFactory::class)->willReturn($responseFactory);
 
         $notFoundHandler = ($this->factory)($this->container->reveal());

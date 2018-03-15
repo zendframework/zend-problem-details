@@ -1,17 +1,27 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2017-2018 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace ZendTest\ProblemDetails;
 
-use Psr\Http\Message\ResponseInterface;
+use PHPUnit\Framework\Assert;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Message\StreamInterface;
 use Throwable;
-use Zend\ProblemDetails\ProblemDetailsJsonResponse;
-use Zend\ProblemDetails\ProblemDetailsResponse;
-use Zend\ProblemDetails\ProblemDetailsXmlResponse;
+
+use function array_walk_recursive;
+use function get_class;
+use function json_decode;
+use function json_encode;
+use function simplexml_load_string;
+use function sprintf;
+use function var_export;
 
 trait ProblemDetailsAssertionsTrait
 {
@@ -53,30 +63,58 @@ trait ProblemDetailsAssertionsTrait
         $this->assertInternalType('array', $details['trace']);
     }
 
-    public function getPayloadFromResponse(ResponseInterface $response) : array
-    {
-        $contentType = $response->getHeaderLine('Content-Type');
-
+    /**
+     * @param StreamInterface|ObjectProphecy $stream
+     */
+    public function prepareResponsePayloadAssertions(
+        string $contentType,
+        ObjectProphecy $stream,
+        callable $assertion
+    ) : void {
         if ('application/problem+json' === $contentType) {
-            return $this->getPayloadFromJsonResponse($response);
+            $this->preparePayloadForJsonResponse($stream, $assertion);
+            return;
         }
 
         if ('application/problem+xml' === $contentType) {
-            return $this->getPayloadFromXmlResponse($response);
+            $this->preparePayloadForXmlResponse($stream, $assertion);
+            return;
         }
     }
 
-    public function getPayloadFromJsonResponse(ResponseInterface $response) : array
+    /**
+     * @param StreamInterface|ObjectProphecy $stream
+     */
+    public function preparePayloadForJsonResponse(ObjectProphecy $stream, callable $assertion) : void
     {
-        $body = $response->getBody();
-        $json = (string) $body;
-        return json_decode($json, true);
+        $stream
+            ->write(Argument::that(function ($body) use ($assertion) {
+                Assert::assertInternalType('string', $body);
+                $data = json_decode($body, true);
+                $assertion($data);
+                return $body;
+            }))
+            ->shouldBeCalled();
     }
 
-    public function getPayloadFromXmlResponse(ResponseInterface $response) : array
+    /**
+     * @param StreamInterface|ObjectProphecy $stream
+     */
+    public function preparePayloadForXmlResponse(ObjectProphecy $stream, callable $assertion) : void
     {
-        $body = $response->getBody();
-        $xml = simplexml_load_string((string) $body);
+        $stream
+            ->write(Argument::that(function ($body) use ($assertion) {
+                Assert::assertInternalType('string', $body);
+                $data = $this->deserializeXmlPayload($body);
+                $assertion($data);
+                return $body;
+            }))
+            ->shouldBeCalled();
+    }
+
+    public function deserializeXmlPayload(string $xml) : array
+    {
+        $xml = simplexml_load_string($xml);
         $json = json_encode($xml);
         $payload = json_decode($json, true);
 

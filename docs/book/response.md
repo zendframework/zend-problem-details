@@ -7,9 +7,14 @@ details response.
 ## ProblemDetailsResponseFactory
 
 This library provides a factory named `Zend\ProblemDetails\ProblemDetailsResponseFactory`.
-It defines two static methods, `createResponse()` and `createResponseFromThrowable()`.
-Each accepts the PSR-7 `ServerRequestInterface` instance as its first argument,
-and then additional arguments in order to create the response itself:
+
+The factory has one _required_ argument: a _response factory_ capable of
+producing an mepty PSR-7 `ResponseInterface`. This may be an PHP callable.
+
+The class defines two static methods, `createResponse()` and
+`createResponseFromThrowable()`.  Each accepts a PSR-7
+`ServerRequestInterface` instance as its first argument, and then additional
+arguments in order to create the response itself:
 
 For `createResponse()`, the signature is:
 
@@ -93,31 +98,39 @@ signature:
 use Psr\Http\Message\ResponseInterface;
 
 public function __construct(
-    bool $isDebug = ProblemDetailsResponseFactory::EXCLUDE_THROWABLE_DETAILS,
+    callable $responseFactory,
+    bool $isDebug = self::EXCLUDE_THROWABLE_DETAILS,
     int $jsonFlags = null,
-    ResponseInterface $response = null,
-    callable $bodyFactory = null
+    bool $exceptionDetailsInResponse = false,
+    string $defaultDetailMessage = self::DEFAULT_DETAIL_MESSAGE
 ) {
 ```
 
 where:
 
+- `callable $responseFactory` is a PHP callable that can produce a PSR-7
+  `ResponseInterface`. The factory will be invoked with no arguments.
 - `bool $isDebug` is a flag indicating whether or not the factory should operate
   in debug mode; the default is not to. You may use the class constants
   `INCLUDE_THROWABLE_DETAILS` or `EXCLUDE_THROWABLE_DETAILS` if desired.
 - `int $jsonFlags` is an integer bitmask of [JSON encoding
   constants](http://php.net/manual/en/json.constants.php) to use with
   `json_encode()` when generating JSON problem details. If you pass a `null`
-  value, `JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE |
-  JSON_PRESERVE_ZERO_FRACTION` will be used.
-- `ResponseInterface $response` is a PSR-7 response instance to use as the base
-  for any generated response.
-- `callable $bodyFactory` is a PHP callable that will return a PSR-7
-  `StreamInterface` instance. Since some stream implementations are mutable (for
-  instance, those backed by a resource), a factory is necessary in order to
-  ensure a new instance is returned. If you provide such a factory, the stream
-  must be writable. The default will return a zend-diactoros `Stream` instance
-  backed by a PHP temp stream in `wb+` mode.
+  value, and the `$isDebug` flag is true,
+  `JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION`
+  will be used; otherwise,
+  `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION`
+  will be used.
+- `bool $exceptionDetailsInResponse` is a flag indicating whether or not to
+  include exception details (in particular, the message) when creating the
+  problem details response. By default, for non-`ProblemDetailsExceptionInterface`
+  exceptions, we will not display the message unless this flag is toggled to
+  `true`.
+- `string $defaultDetailMessage` is a string value to use when the
+  `$exceptionDetailsInResponse` flag is `false`, and a
+  non-`ProblemDetailsExceptionInterface` exception is encountered. By default,
+  this is set to the constant `ProblemDetailsResponseFactory::DEFAULT_DETAIL_MESSAGE`,
+  which evaluates to 'An unknown error occurred.'
 
 ## ProblemDetailsResponseFactoryFactory
 
@@ -125,19 +138,17 @@ This package also provides a factory for generating the
 `ProblemDetailsResponseFactory` for usage within dependency injection containers:
 `Zend\ProblemDetails\ProblemDetailsResponseFactoryFactory`. It does the following:
 
+- Pulls the `Psr\Http\Message\ResponseInterface` service to provide as the
+  `$responseFactory` parameter.
 - If a `config` service is present:
     - If the service contains a `debug` key with a boolean value, that value is
       provided as the `$isDebug` parameter.
     - If the service contains a `problem-details` key with an array value
       containing a `json_flags` key, and that value is an integer, that value is
       provided as the `$jsonFlags` parameter.
-- If a `Psr\Http\Message\ResponseInterface` service is present, that service
-  will be provided as the `$response` parameter.
-- If a `ProblemDetails\StreamFactory` service is present, that service will be
-  provided as the `$bodyFactory` parameter.
 
-If any of the above are not present, a `null` value will be passed, allowing the
-default value to be used.
+If any of the above config values are not present, a `null` value will be
+passed, allowing the default value to be used.
 
 If you are using [Expressive](https://docs.zendframework.com/zend-expressive/)
 and have installed [zend-component-installer](https://docs.zendframework.com/zend-component-installer)
@@ -145,25 +156,40 @@ in your application, the above factory will be wired already to the
 `Zend\ProblemDetails\ProblemDetailsResponseFactory` service via the provided
 `Zend\ProblemDetails\ConfigProvider` class.
 
+> ### Response Factory
+>
+> You will need to provide a `Psr\Http\Message\ResponseInterface` service that
+> resolves to a PHP callable capable of returning an instance of that type.
+>
+> If you are using Expressive 3.0.0alpha8 or later, this service is provided via
+> the zend-expressive package itself.
+
 ## Examples
 
 ### Returning a Problem Details response
 
-Let's say you have middleware that you know will only be used in a production
-context, and need to return problem details:
+Let's say you have middleware that needs to return problem details:
 
 ```php
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
-use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ApiMiddleware implements MiddlewareInterface
 {
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    private $problemDetailsFactory;
+
+    public function __construct(ProblemDetailsResponseFactory $problemDetailsFactory)
+    {
+        $this->problemDetailsFactory = $problemDetailsFactory;
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         // discovered an error, so returning problem details:
-        return (new ProblemDetailsResponseFactory())->createResponse(
+        return $this->problemDetailsFactory->createResponse(
             $request,
             403,
             'You do not have valid credentials to access ' . $request->getUri()->getPath(),
@@ -186,20 +212,28 @@ composes, and that service could raise an exception or other `Throwable`. For
 this, you can use the `createResponseFromThrowable()` method instead.
 
 ```php
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class ApiMiddleware implements MiddlewareInterface
 {
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    private $problemDetailsFactory;
+
+    public function __construct(ProblemDetailsResponseFactory $problemDetailsFactory)
+    {
+        $this->problemDetailsFactory = $problemDetailsFactory;
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         try {
             // some code that may raise an exception or throwable
         } catch (Throwable $e) {
-            return (new ProblemDetailsResponseFactory())
+            return $this->problemDetailsFactory
                 ->createResponseFromThrowable($request, $e);
         }
     }
@@ -213,43 +247,10 @@ mediatype. Any other mediatype will generate an XML response.
 By default, `createResponseFromThrowable()` will only use the exception message, and
 potentially the exception code (if it falls in the 400 or 500 range). If you
 want to include full exception details &mdash; line, file, backtrace, previous
-exceptions &mdash; you must pass a boolean `true` as the first argument to the
+exceptions &mdash; you must pass a boolean `true` as the second argument to the
 constructor. In most cases, you should only do this in your development or testing
-environment; as such, you would need to provide a flag to your middleware to use
-when invoking the `createResponseFromThrowable()` method, or, more correctly,
-pass a configured `ProblemDetailsResponseFactory` instance to your middleware's
-constructor. As a more complete example:
-
-```php
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Throwable;
-use Zend\ProblemDetails\ProblemDetailsResponseFactory;
-
-class ApiMiddleware implements MiddlewareInterface
-{
-    private $problemDetailsFactory;
-
-    public function __construct(
-        /* other arguments*/
-        ProblemDetailsResponseFactory $problemDetailsFactory)
-    {
-        // ...
-        $this->problemDetailsFactory = $problemDetailsFactory;
-    }
-
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
-    {
-        try {
-            // some code that may raise an exception or throwable
-        } catch (Throwable $e) {
-            return $this->problemDetailsFactory
-                ->createResponseFromThrowable($request, $e);
-        }
-    }
-}
-```
+environment; as such, you would need to provide a configuration flag for the
+`ProblemDetailsResponseFactoryFactory` to use.
 
 ### Creating Custom Response Types
 

@@ -4,6 +4,83 @@ All notable changes to this project will be documented in this file, in reverse 
 
 Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
+## 1.0.0 - 2018-03-15
+
+### Added
+
+- [#30](https://github.com/zendframework/zend-problem-details/pull/30)
+  adds PSR-15 support.
+
+### Changed
+
+- [#24](https://github.com/zendframework/zend-problem-details/pull/24)
+  updates all classes to use scalar and return type hints, including nullable
+  and void types. If you were extending classes within an earlier release, you
+  may need to update signatures of any methods you override.
+
+- [#35](https://github.com/zendframework/zend-problem-details/pull/35)
+  modifies the constructor of `Zend\ProblemDetails\ProblemDetailsResponseFactory`
+  such that it now has the following signature:
+
+  ```php
+  public function __construct(
+      callable $responseFactory,
+      bool $isDebug = self::EXCLUDE_THROWABLE_DETAILS,
+      int $jsonFlags = null,
+      bool $exceptionDetailsInResponse = false,
+      string $defaultDetailMessage = self::DEFAULT_DETAIL_MESSAGE
+  )
+  ```
+
+  Note that the first argument is now a `$responseFactory`, is required, and
+  must be `callable`. The previous `$responsePrototype` and `$streamFactory`
+  arguments are now removed.
+
+  The `$responseFactory` will be invoked with no arguments, and MUST return a
+  PSR-7 ResponseInterface instance.
+
+- [#35](https://github.com/zendframework/zend-problem-details/pull/35) modifies
+  internals of `Zend\ProblemDetails\ProblemDetailsResponseFactoryFactory` as
+  follows:
+
+  - It no longer looks for a `Zend\ProblemDetails\StreamFactory` service.
+  - It now _requires_ the `Psr\Http\Message\ResponseInterface` service, and
+    expects it to resolve to a PHP callable capable of producing such an instance
+    (instead of a response instance directly).
+
+- [#35](https://github.com/zendframework/zend-problem-details/pull/35)
+  modifies the constructor of `Zend\ProblemDetails\ProblemDetailsMiddleware`;
+  the `$responseFactory` argument is now required.
+
+- [#35](https://github.com/zendframework/zend-problem-details/pull/35)
+  modifies the constructor of `Zend\ProblemDetails\ProblemDetailsNotFoundHandler`;
+  the `$responseFactory` argument is now required.
+
+- [#34](https://github.com/zendframework/zend-problem-details/pull/34) updates
+  the behavior when passing null as the `$jsonFlag` parameter to the
+  `Zend\ProblemDetails\ProblemDetailsResponseFactory` constructor; in such
+  situations, the default `json_encode()` flags will include `JSON_PRETTY_PRINT`
+  only when the `$isDebug` argument is boolean `true`.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#22](https://github.com/zendframework/zend-problem-details/pull/22) and
+  [#30](https://github.com/zendframework/zend-problem-details/pull/30)
+  remove support for both `http-interop/http-middleware` and
+  `http-interop/http-server-middleware`.
+
+- [#22](https://github.com/zendframework/zend-problem-details/pull/22)
+  removes `MissingResponseException` as it cannot be thrown anymore,
+  because interfaces have PHP7 return type and `TypeError` will be thrown.
+
+### Fixed
+
+- Nothing.
+
 ## 0.5.3 - 2018-03-12
 
 ### Added

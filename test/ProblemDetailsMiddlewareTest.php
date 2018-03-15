@@ -1,9 +1,11 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace ZendTest\ProblemDetails;
 
@@ -12,13 +14,13 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
-use Zend\ProblemDetails\Exception\MissingResponseException;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\ProblemDetails\ProblemDetailsMiddleware;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
-use ZendTest\ProblemDetails\TestAsset;
 
-use const Webimpress\HttpMiddlewareCompatibility\HANDLER_METHOD;
+use function trigger_error;
+
+use const E_USER_ERROR;
 
 class ProblemDetailsMiddlewareTest extends TestCase
 {
@@ -42,17 +44,16 @@ class ProblemDetailsMiddlewareTest extends TestCase
         ];
     }
 
-    public function testSuccessfulDelegationReturnsDelegateResponse() : void
+    public function testSuccessfulDelegationReturnsHandlerResponse() : void
     {
         $response = $this->prophesize(ResponseInterface::class);
-        $delegate = $this->prophesize(DelegateInterface::class);
-        $delegate
-            ->{HANDLER_METHOD}(Argument::that([$this->request, 'reveal']))
+        $handler = $this->prophesize(RequestHandlerInterface::class);
+        $handler
+            ->handle(Argument::that([$this->request, 'reveal']))
             ->will([$response, 'reveal']);
 
 
-        $middleware = new ProblemDetailsMiddleware();
-        $result = $middleware->process($this->request->reveal(), $delegate->reveal());
+        $result = $this->middleware->process($this->request->reveal(), $handler->reveal());
 
         $this->assertSame($response->reveal(), $result);
     }
@@ -60,37 +61,15 @@ class ProblemDetailsMiddlewareTest extends TestCase
     /**
      * @dataProvider acceptHeaders
      */
-    public function testDelegateNotReturningResponseResultsInProblemDetails(string $accept) : void
-    {
-        $this->request->getHeaderLine('Accept')->willReturn($accept);
-
-        $delegate = $this->prophesize(DelegateInterface::class);
-        $delegate
-            ->{HANDLER_METHOD}(Argument::that([$this->request, 'reveal']))
-            ->willReturn('Unexpected');
-
-        $expected = $this->prophesize(ResponseInterface::class)->reveal();
-        $this->responseFactory
-            ->createResponseFromThrowable($this->request->reveal(), Argument::type(MissingResponseException::class))
-            ->willReturn($expected);
-
-        $result = $this->middleware->process($this->request->reveal(), $delegate->reveal());
-
-        $this->assertSame($expected, $result);
-    }
-
-    /**
-     * @dataProvider acceptHeaders
-     */
-    public function testThrowableRaisedByDelegateResultsInProblemDetails(string $accept) : void
+    public function testThrowableRaisedByHandlerResultsInProblemDetails(string $accept) : void
     {
         $this->request->getHeaderLine('Accept')->willReturn($accept);
 
         $exception = new TestAsset\RuntimeException('Thrown!', 507);
 
-        $delegate  = $this->prophesize(DelegateInterface::class);
-        $delegate
-            ->{HANDLER_METHOD}(Argument::that([$this->request, 'reveal']))
+        $handler  = $this->prophesize(RequestHandlerInterface::class);
+        $handler
+            ->handle(Argument::that([$this->request, 'reveal']))
             ->willThrow($exception);
 
         $expected = $this->prophesize(ResponseInterface::class)->reveal();
@@ -98,7 +77,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
             ->createResponseFromThrowable($this->request->reveal(), $exception)
             ->willReturn($expected);
 
-        $result = $this->middleware->process($this->request->reveal(), $delegate->reveal());
+        $result = $this->middleware->process($this->request->reveal(), $handler->reveal());
 
         $this->assertSame($expected, $result);
     }
@@ -110,24 +89,24 @@ class ProblemDetailsMiddlewareTest extends TestCase
     {
         $this->request->getHeaderLine('Accept')->willReturn($accept);
 
-        $delegate = $this->prophesize(DelegateInterface::class);
-        $delegate
-            ->{HANDLER_METHOD}(Argument::that([$this->request, 'reveal']))
+        $handler = $this->prophesize(RequestHandlerInterface::class);
+        $handler
+            ->handle(Argument::that([$this->request, 'reveal']))
             ->will(function () {
-                trigger_error('Triggered error!', \E_USER_ERROR);
+                trigger_error('Triggered error!', E_USER_ERROR);
             });
 
         $expected = $this->prophesize(ResponseInterface::class)->reveal();
         $this->responseFactory
             ->createResponseFromThrowable($this->request->reveal(), Argument::that(function ($e) {
                 $this->assertInstanceOf(ErrorException::class, $e);
-                $this->assertEquals(\E_USER_ERROR, $e->getSeverity());
+                $this->assertEquals(E_USER_ERROR, $e->getSeverity());
                 $this->assertEquals('Triggered error!', $e->getMessage());
                 return true;
             }))
             ->willReturn($expected);
 
-        $result = $this->middleware->process($this->request->reveal(), $delegate->reveal());
+        $result = $this->middleware->process($this->request->reveal(), $handler->reveal());
 
         $this->assertSame($expected, $result);
     }
@@ -136,17 +115,15 @@ class ProblemDetailsMiddlewareTest extends TestCase
     {
         $this->request->getHeaderLine('Accept')->willReturn('text/html');
         $exception = new TestAsset\RuntimeException('Thrown!', 507);
-        $delegate  = $this->prophesize(DelegateInterface::class);
-        $delegate
-            ->{HANDLER_METHOD}(Argument::that([$this->request, 'reveal']))
+        $handler  = $this->prophesize(RequestHandlerInterface::class);
+        $handler
+            ->handle(Argument::that([$this->request, 'reveal']))
             ->willThrow($exception);
-
-        $middleware = new ProblemDetailsMiddleware();
 
         $this->expectException(TestAsset\RuntimeException::class);
         $this->expectExceptionMessage('Thrown!');
         $this->expectExceptionCode(507);
-        $middleware->process($this->request->reveal(), $delegate->reveal());
+        $this->middleware->process($this->request->reveal(), $handler->reveal());
     }
 
     /**
@@ -158,9 +135,9 @@ class ProblemDetailsMiddlewareTest extends TestCase
 
         $exception = new TestAsset\RuntimeException('Thrown!', 507);
 
-        $delegate  = $this->prophesize(DelegateInterface::class);
-        $delegate
-            ->{HANDLER_METHOD}(Argument::that([$this->request, 'reveal']))
+        $handler = $this->prophesize(RequestHandlerInterface::class);
+        $handler
+            ->handle(Argument::that([$this->request, 'reveal']))
             ->willThrow($exception);
 
         $expected = $this->prophesize(ResponseInterface::class)->reveal();
@@ -177,7 +154,7 @@ class ProblemDetailsMiddlewareTest extends TestCase
         $this->middleware->attachListener($listener);
         $this->middleware->attachListener($listener2);
 
-        $result = $this->middleware->process($this->request->reveal(), $delegate->reveal());
+        $result = $this->middleware->process($this->request->reveal(), $handler->reveal());
 
         $this->assertSame($expected, $result);
     }

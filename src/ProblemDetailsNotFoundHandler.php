@@ -1,22 +1,23 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\ProblemDetails;
 
 use Negotiation\Negotiator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
-use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface as ServerMiddlewareInterface;
-use Zend\Stratigility\Delegate\CallableDelegateDecorator;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-use const Webimpress\HttpMiddlewareCompatibility\HANDLER_METHOD;
+use function sprintf;
 
-class ProblemDetailsNotFoundHandler implements ServerMiddlewareInterface
+class ProblemDetailsNotFoundHandler implements MiddlewareInterface
 {
     /**
      * @var ProblemDetailsResponseFactory
@@ -24,22 +25,22 @@ class ProblemDetailsNotFoundHandler implements ServerMiddlewareInterface
     private $responseFactory;
 
     /**
-     * @param null|ProblemDetailsResponseFactory $responseFactory Factory to create a response to
+     * @param ProblemDetailsResponseFactory $responseFactory Factory to create a response to
      *     update and return when returning an 404 response.
      */
-    public function __construct(ProblemDetailsResponseFactory $responseFactory = null)
+    public function __construct(ProblemDetailsResponseFactory $responseFactory)
     {
-        $this->responseFactory = $responseFactory ?: new ProblemDetailsResponseFactory();
+        $this->responseFactory = $responseFactory;
     }
 
     /**
      * Creates and returns a 404 response.
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate) : ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         // If we cannot provide a representation, act as a no-op.
         if (! $this->canActAsErrorHandler($request)) {
-            return $delegate->{HANDLER_METHOD}($request);
+            return $handler->handle($request);
         }
 
         return $this->responseFactory->createResponse(

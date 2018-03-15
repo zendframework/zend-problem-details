@@ -1,9 +1,11 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-problem-details for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-problem-details/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\ProblemDetails;
 
@@ -11,11 +13,15 @@ use ErrorException;
 use Negotiation\Negotiator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
-use Webimpress\HttpMiddlewareCompatibility\HandlerInterface as DelegateInterface;
-use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface;
 
-use const Webimpress\HttpMiddlewareCompatibility\HANDLER_METHOD;
+use function array_walk;
+use function error_reporting;
+use function in_array;
+use function restore_error_handler;
+use function set_error_handler;
 
 /**
  * Middleware that ensures a Problem Details response is returned
@@ -33,28 +39,24 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
      */
     private $responseFactory;
 
-    public function __construct(ProblemDetailsResponseFactory $responseFactory = null)
+    public function __construct(ProblemDetailsResponseFactory $responseFactory)
     {
-        $this->responseFactory = $responseFactory ?: new ProblemDetailsResponseFactory();
+        $this->responseFactory = $responseFactory;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         // If we cannot provide a representation, act as a no-op.
         if (! $this->canActAsErrorHandler($request)) {
-            return $delegate->{HANDLER_METHOD}($request);
+            return $handler->handle($request);
         }
 
         try {
             set_error_handler($this->createErrorHandler());
-            $response = $delegate->{HANDLER_METHOD}($request);
-
-            if (! $response instanceof ResponseInterface) {
-                throw new Exception\MissingResponseException('Application did not return a response');
-            }
+            $response = $handler->handle($request);
         } catch (Throwable $e) {
             $response = $this->responseFactory->createResponseFromThrowable($request, $e);
             $this->triggerListeners($e, $request, $response);
@@ -77,12 +79,10 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
      * These instances are all immutable, and the return values of
      * listeners are ignored; use listeners for reporting purposes
      * only.
-     *
-     * @param callable $listener
      */
-    public function attachListener(callable $listener)
+    public function attachListener(callable $listener) : void
     {
-        if (\in_array($listener, $this->listeners, true)) {
+        if (in_array($listener, $this->listeners, true)) {
             return;
         }
 
@@ -106,8 +106,6 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
      * Creates and returns a callable error handler that raises exceptions.
      *
      * Only raises exceptions for errors that are within the error_reporting mask.
-     *
-     * @return callable
      */
     private function createErrorHandler() : callable
     {
@@ -131,14 +129,12 @@ class ProblemDetailsMiddleware implements MiddlewareInterface
 
     /**
      * Trigger all error listeners.
-     *
-     * @param Throwable $error
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return void
      */
-    private function triggerListeners($error, ServerRequestInterface $request, ResponseInterface $response) : void
-    {
+    private function triggerListeners(
+        Throwable $error,
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ) : void {
         array_walk($this->listeners, function ($listener) use ($error, $request, $response) {
             $listener($error, $request, $response);
         });
