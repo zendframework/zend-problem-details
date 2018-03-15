@@ -185,8 +185,8 @@
 
 <h1 id="problem-details">Problem Details</h1>
 <p>This library addresses <a href="https://tools.ietf.org/html/rfc7807">RFC 7807: Problem Details for HTTP APIs</a>
-for usage with <a href="http://www.php-fig.org/psr/psr-7/">PSR-7 HTTP Messages</a> and
-<a href="https://github.com/http-interop/http-middleware">http-interop/http-middleware</a>.</p>
+for usage with <a href="https://www.php-fig.org/psr/psr-7/">PSR-7 HTTP Messages</a> and
+<a href="https://www.php-fig.org/psr/psr-15/">PSR-15 HTTP Handlers</a>.</p>
 <h2 id="problem-details-for-http-apis">Problem Details for HTTP APIs</h2>
 <p>When developing APIs, it is good practice to:</p>
 <ul>
@@ -255,7 +255,7 @@ representation to return, defaulting to the XML representation. This factory may
 then be composed in middleware in order to create and return problem details
 responses.</p>
 <p>Additionally, the library provides middleware that acts as an error and
-exception handler and wrapping calls to a delegate, converting each into problem
+exception handler and wrapping calls to a request handler, converting each into problem
 details responses.</p>
 
 <hr />
