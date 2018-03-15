@@ -31,7 +31,7 @@ and have installed [zend-component-installer](https://docs.zendframework.com/zen
 composes the `Zend\ProblemDetails\ProblemDetailsResponseFactory` immediately, and
 inject that service in your middleware.
 
-As an example, the following catches domain excpetions and uses them to create
+As an example, the following catches domain exceptions and uses them to create
 problem details responses:
 
 ```php
