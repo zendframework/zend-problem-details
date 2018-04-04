@@ -59,23 +59,23 @@ class ProblemDetailsResponseFactory
     /**
      * @var string Content-Type header for JSON responses
      */
-    const CONTENT_TYPE_JSON = 'application/problem+json';
+    public const CONTENT_TYPE_JSON = 'application/problem+json';
 
     /**
      * @var string Content-Type header for XML responses
      */
-    const CONTENT_TYPE_XML = 'application/problem+xml';
+    public const CONTENT_TYPE_XML = 'application/problem+xml';
 
     /**
      * @var string Default detail message to use for exceptions when the
      *     $exceptionDetailsInResponse flag is false.
      */
-    const DEFAULT_DETAIL_MESSAGE = 'An unknown error occurred.';
+    public const DEFAULT_DETAIL_MESSAGE = 'An unknown error occurred.';
 
     /**
      * @var string[] Default problem detail titles based on status code
      */
-    const DEFAULT_TITLE_MAP = [
+    public const DEFAULT_TITLE_MAP = [
         // 4×× Client Error
         StatusCode::STATUS_BAD_REQUEST                        => 'Bad Request',
         StatusCode::STATUS_UNAUTHORIZED                       => 'Unauthorized',
@@ -129,7 +129,7 @@ class ProblemDetailsResponseFactory
      *
      * @var bool
      */
-    const EXCLUDE_THROWABLE_DETAILS = false;
+    public const EXCLUDE_THROWABLE_DETAILS = false;
 
     /**
      * Constant value to indicate throwable details (backtrace, previous
@@ -138,12 +138,12 @@ class ProblemDetailsResponseFactory
      *
      * @var bool
      */
-    const INCLUDE_THROWABLE_DETAILS = true;
+    public const INCLUDE_THROWABLE_DETAILS = true;
 
     /**
      * @var string[] Accept header types to match.
      */
-    const NEGOTIATION_PRIORITIES = [
+    public const NEGOTIATION_PRIORITIES = [
         'application/json',
         'application/*+json',
         'application/xml',
