@@ -24,7 +24,8 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
 ### Fixed
 
-- Nothing.
+- [#39](https://github.com/zendframework/zend-problem-details/pull/39)
+  adds the `public` visibility modifier to all constants.
 
 ## 1.0.0 - 2018-03-15
 
