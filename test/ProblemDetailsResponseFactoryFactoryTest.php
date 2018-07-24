@@ -104,12 +104,7 @@ class ProblemDetailsResponseFactoryFactoryTest extends TestCase
         $factoryFactory = new ProblemDetailsResponseFactoryFactory();
         $factory = $factoryFactory($this->container->reveal());
 
-        $this->assertAttributeSame(
-            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION
-            | JSON_PARTIAL_OUTPUT_ON_ERROR,
-            'jsonFlags',
-            $factory
-        );
+        $this->assertSame(JSON_PRETTY_PRINT, Assert::readAttribute($factory, 'jsonFlags') & JSON_PRETTY_PRINT);
     }
 
     public function testUsesDebugSettingFromConfigWhenPresent() : void
