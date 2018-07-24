@@ -26,6 +26,8 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
 - [#39](https://github.com/zendframework/zend-problem-details/pull/39)
   adds the `public` visibility modifier to all constants.
+- [#41](https://github.com/zendframework/zend-problem-details/pull/41)
+  prevent crashing when ApiProblem tried to encode malformed UTF-8 sequences to JSON
 
 ## 1.0.0 - 2018-03-15
 
