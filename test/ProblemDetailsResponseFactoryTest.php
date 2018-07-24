@@ -444,7 +444,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $e->getType()->willReturn('https://example.com/api/doc/invalid-client-request');
         $e->getAdditionalData()->willReturn([
             'malformed-utf8' => self::UTF_8_INVALID_2_OCTET_SEQUENCE,
-            ]);
+        ]);
 
         $this->request->getHeaderLine('Accept')->willReturn('application/json');
 

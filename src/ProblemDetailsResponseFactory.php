@@ -16,6 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Spatie\ArrayToXml\ArrayToXml;
 use Throwable;
+
 use function array_merge;
 use function array_walk_recursive;
 use function get_class;
@@ -29,11 +30,12 @@ use function preg_replace;
 use function print_r;
 use function sprintf;
 use function strpos;
+
+use const JSON_PARTIAL_OUTPUT_ON_ERROR;
 use const JSON_PRESERVE_ZERO_FRACTION;
 use const JSON_PRETTY_PRINT;
 use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
-use const JSON_PARTIAL_OUTPUT_ON_ERROR;
 
 /**
  * Create a Problem Details response.
@@ -215,7 +217,9 @@ class ProblemDetailsResponseFactory
         };
         $this->isDebug = $isDebug;
         if (! $jsonFlags) {
-            $jsonFlags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION
+            $jsonFlags = JSON_UNESCAPED_SLASHES
+                | JSON_UNESCAPED_UNICODE
+                | JSON_PRESERVE_ZERO_FRACTION
                 | JSON_PARTIAL_OUTPUT_ON_ERROR;
             if ($isDebug) {
                 $jsonFlags = JSON_PRETTY_PRINT | $jsonFlags;
