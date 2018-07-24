@@ -39,6 +39,8 @@ class ProblemDetailsResponseFactoryTest extends TestCase
     /** @var ProblemDetailsResponseFactory */
     private $factory;
 
+    private const UTF_8_INVALID_2_OCTET_SEQUENCE = "\xc3\x28";
+
     protected function setUp() : void
     {
         $this->request = $this->prophesize(ServerRequestInterface::class);
@@ -429,6 +431,43 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         );
 
         $response = $factory->createResponseFromThrowable($this->request->reveal(), new Exception());
+
+        $this->assertSame($this->response->reveal(), $response);
+    }
+
+    public function testRenderWithMalformedUtf8Sequences(): void
+    {
+        $e = $this->prophesize(RuntimeException::class)->willImplement(ProblemDetailsExceptionInterface::class);
+        $e->getStatus()->willReturn(400);
+        $e->getDetail()->willReturn('Exception details');
+        $e->getTitle()->willReturn('Invalid client request');
+        $e->getType()->willReturn('https://example.com/api/doc/invalid-client-request');
+        $e->getAdditionalData()->willReturn([
+            'malformed-utf8' => self::UTF_8_INVALID_2_OCTET_SEQUENCE,
+            ]);
+
+        $this->request->getHeaderLine('Accept')->willReturn('application/json');
+
+        $stream = $this->prophesize(StreamInterface::class);
+        $this->preparePayloadForJsonResponse(
+            $stream,
+            function (array $payload) {
+                Assert::arrayHasKey('malformed-utf8', $payload);
+            }
+        );
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $this->response->withStatus(400)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', 'application/problem+json')->will([$this->response, 'reveal']);
+
+        $factory = new ProblemDetailsResponseFactory(function () {
+            return $this->response->reveal();
+        });
+
+        $response = $factory->createResponseFromThrowable(
+            $this->request->reveal(),
+            $e->reveal()
+        );
 
         $this->assertSame($this->response->reveal(), $response);
     }
