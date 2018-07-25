@@ -31,6 +31,7 @@ use function print_r;
 use function sprintf;
 use function strpos;
 
+use const JSON_PARTIAL_OUTPUT_ON_ERROR;
 use const JSON_PRESERVE_ZERO_FRACTION;
 use const JSON_PRETTY_PRINT;
 use const JSON_UNESCAPED_SLASHES;
@@ -166,8 +167,11 @@ class ProblemDetailsResponseFactory
      *
      * On non-debug mode:
      * defaults to JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION
+     * | JSON_PARTIAL_OUTPUT_ON_ERROR
+     *
      * On debug mode:
      * defaults to JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION
+     * | JSON_PARTIAL_OUTPUT_ON_ERROR
      *
      * @var int
      */
@@ -213,7 +217,10 @@ class ProblemDetailsResponseFactory
         };
         $this->isDebug = $isDebug;
         if (! $jsonFlags) {
-            $jsonFlags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
+            $jsonFlags = JSON_UNESCAPED_SLASHES
+                | JSON_UNESCAPED_UNICODE
+                | JSON_PRESERVE_ZERO_FRACTION
+                | JSON_PARTIAL_OUTPUT_ON_ERROR;
             if ($isDebug) {
                 $jsonFlags = JSON_PRETTY_PRINT | $jsonFlags;
             }
