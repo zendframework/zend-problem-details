@@ -26,7 +26,7 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
 - Nothing.
 
-## 1.0.1 - TBD
+## 1.0.1 - 2018-07-25
 
 ### Added
 
@@ -46,8 +46,11 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
 ### Fixed
 
-- [#39](https://github.com/zendframework/zend-problem-details/pull/39)
-  adds the `public` visibility modifier to all constants.
+- [#39](https://github.com/zendframework/zend-problem-details/pull/39) adds the `public` visibility modifier to all constants.
+
+- [#41](https://github.com/zendframework/zend-problem-details/pull/41) prevents crashes when the `ProblemDetailsResponseFactory` attempts to
+  encode malformed UTF-8 sequences to JSON by ensuring the
+  `JSON_PARTIAL_OUTPUT_ON_ERROR` flag is enabled.
 
 ## 1.0.0 - 2018-03-15
 
