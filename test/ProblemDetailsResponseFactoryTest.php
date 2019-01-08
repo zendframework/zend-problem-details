@@ -153,8 +153,8 @@ class ProblemDetailsResponseFactoryTest extends TestCase
                 'A#-' => 'foo',
                 '-A-' => 'foo',
                 '#B-' => 'foo',
-                "A\n-" => 'foo',
-                chr(10).'A-' => 'foo',
+                "C\n-" => 'foo',
+                chr(10).'C-' => 'foo',
             ],
         ];
 
@@ -163,8 +163,8 @@ class ProblemDetailsResponseFactoryTest extends TestCase
                 'A_-',
                 '_A-',
                 '_B-',
-                'A_-',
-                '_A-',
+                'C_-',
+                '_C-',
             ];
         } else {
             $expectedKeyNames = array_keys($additional['foo']);
