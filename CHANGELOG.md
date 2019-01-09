@@ -26,6 +26,28 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
 - Nothing.
 
+## 1.0.3 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 1.0.2 - 2019-01-09
 
 ### Added
