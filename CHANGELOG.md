@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
-## 1.0.2 - TBD
+## 1.0.2 - 2019-01-09
 
 ### Added
 
@@ -24,7 +24,8 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
 ### Fixed
 
-- Nothing.
+- [#46](https://github.com/zendframework/zend-problem-details/pull/46) adds code to ensure newlines are stripped when creating key names for XML
+  payloads.
 
 ## 1.0.1 - 2018-07-25
 
