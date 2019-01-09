@@ -150,11 +150,11 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
         $additional = [
             'foo' => [
-                'A#-' => 'foo',
-                '-A-' => 'foo',
-                '#B-' => 'foo',
-                "C\n-" => 'foo',
-                chr(10).'C-' => 'foo',
+                'A#-'          => 'foo',
+                '-A-'          => 'foo',
+                '#B-'          => 'foo',
+                "C\n-"         => 'foo',
+                chr(10) . 'C-' => 'foo',
             ],
         ];
 
