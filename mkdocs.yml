@@ -1,7 +1,7 @@
 docs_dir: docs/book
 site_dir: docs/html
 pages:
-    - index.md
+    - Home: index.md
     - Introduction: intro.md
     - "Quick Start": quick-start.md
     - Reference:
@@ -9,7 +9,6 @@ pages:
         - "Exceptions": exception.md
         - "Error Handling Middleware": middleware.md
         - "Not Found Handler": not-found-handler.md
-site_name: Problem Details
-site_description: 'Problem Details for PSR-7 Applications'
+site_name: zend-problem-details
+site_description: 'PSR-7 Problem Details for HTTP API responses and middleware'
 repo_url: 'https://github.com/zendframework/zend-problem-details'
-copyright: 'Copyright (c) 2017 <a href="http://www.zend.com/">Zend Technologies USA Inc.</a>'
