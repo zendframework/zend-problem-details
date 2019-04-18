@@ -7,11 +7,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Problem Details for PSR-7 Applications">  
-    <link rel="shortcut icon" href="../img/favicon.ico">
+    <link rel="shortcut icon" href="//img/favicon.ico">
 
-    <title>Exceptions - Problem Details - Zend Framework Docs</title>
+    <title>Problem Details - Zend Framework Docs</title>
 
-    <link rel="stylesheet" href="../css/styles-f3b53f5ceb.css">
+    <link rel="stylesheet" href="//css/styles-f3b53f5ceb.css">
 </head>
 <body id="page-top">
 
@@ -31,7 +31,7 @@
             
             <span class="navbar-brand">
                 <a class="logo-link" href="https://framework.zend.com/" data-tooltip data-placement="bottom" title="Go to the ZF homepage">
-                    <img src="../img/zend-framework-logo.svg" height="28" alt="Zend Framework">
+                    <img src="//img/zend-framework-logo.svg" height="28" alt="Zend Framework">
                 </a>
             </span>
         </div>
@@ -66,7 +66,7 @@
                     
     <div class="subnavigation hidden-print">
         <h4 class="subnavigation__title">
-            <a href="..">Problem Details</a>
+            <a href="/.">Problem Details</a>
         </h4>
 
         <h5 class="subnavigation__subtitle">Table of Contents</h5>
@@ -75,19 +75,19 @@
             
                 
                     <li class="subnavigation__list-item ">
-                        <a href=".." class="subnavigation__link">Problem Details for PSR-7 Applications</a>
+                        <a href="/." class="subnavigation__link">Problem Details for PSR-7 Applications</a>
                     </li>
                 
             
                 
                     <li class="subnavigation__list-item ">
-                        <a href="../intro/" class="subnavigation__link">Introduction</a>
+                        <a href="/intro/" class="subnavigation__link">Introduction</a>
                     </li>
                 
             
                 
                     <li class="subnavigation__list-item ">
-                        <a href="../quick-start/" class="subnavigation__link">Quick Start</a>
+                        <a href="/quick-start/" class="subnavigation__link">Quick Start</a>
                     </li>
                 
             
@@ -98,25 +98,25 @@
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../response/" class="subnavigation__link">Generating Responses</a>
-    </li>
-
-                            
-                                
-    <li class="subnavigation__list-item subnavigation__list-item--active">
-        <a href="./" class="subnavigation__link">Exceptions</a>
+        <a href="/response/" class="subnavigation__link">Generating Responses</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../middleware/" class="subnavigation__link">Error Handling Middleware</a>
+        <a href="/exception/" class="subnavigation__link">Exceptions</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../not-found-handler/" class="subnavigation__link">Not Found Handler</a>
+        <a href="/middleware/" class="subnavigation__link">Error Handling Middleware</a>
+    </li>
+
+                            
+                                
+    <li class="subnavigation__list-item ">
+        <a href="/not-found-handler/" class="subnavigation__link">Not Found Handler</a>
     </li>
 
                             
@@ -193,165 +193,18 @@
             <div class="col-md-9 col-xs-12 content" role="main">
             <!-- content:begin -->
                 
-                    <ol class="breadcrumb" role="navigation" aria-label="breadcrumbs navigation">
-    <li><a href="https://framework.zend.com/">Home</a></li>
 
-    
-        <li><a href="https://docs.zendframework.com/">Documentation</a></li>
+<h1 class="content__title">404</h1>
+<blockquote>
+    <h3>Something went wrong!</h3>
+    <p>
+        We're sorry, but the page you are looking for does not exist.
+    </p>
+</blockquote>
 
-        
-            <li><a href="..">Problem Details</a></li>
-
-            
-                
-                    <li>Reference</li>
-                
-            
-
-            <li class="active">Exceptions</li>
-        
-    
-</ol>
+<a href="/" class="btn btn-default" role="button">Go to homepage</a>
 
 
-    
-        <h2 class="chapter__headline">Reference</h2>
-    
-
-    
-    
-
-    
-    
-
-
-    <h1 id="problem-details-exceptions">Problem Details Exceptions</h1>
-<p>If you are developing an API, it may be useful to raise exceptions from your
-business domain that contain all the information necessary to report problem
-details.</p>
-<p>To facilitate this, we provide an interface, <code>ProblemDetailsExceptionInterface</code>:</p>
-<pre class="codehilite"><code class="language-php">namespace Zend\ProblemDetails\Exception;
-
-use JsonSerializable;
-
-interface ProblemDetailsExceptionInterface extends JsonSerializable
-{
-    public function getStatus() : int;
-
-    public function getType() : string;
-
-    public function getTitle() : string;
-
-    public function getDetail() : string;
-
-    public function getAdditionalData() : array;
-
-    public function toArray() : array;
-}</code></pre>
-
-<p>You may create exceptions that implement this interface. When such exceptions
-are passed to <code>ProblemDetailsResponseFactory::createResponseFromThrowable()</code>,
-these will pull the relevant details in order to create a Problem Details
-response.</p>
-<p>To facilitate creating such exception types, we also ship the trait
-<code>CommonProblemDetailsExceptionTrait</code>. This trait defines the following properties:</p>
-<ul>
-<li><code>$status</code></li>
-<li><code>$detail</code></li>
-<li><code>$title</code></li>
-<li><code>$type</code></li>
-<li><code>$additional</code></li>
-</ul>
-<p>and implements each of the methods of the interface. This allows you as a
-developer to create implementations with either constructors or named
-constructors for generating exception instances.</p>
-<p>As an example, if you wanted to create an exception type for providing
-transaction problem details, you might do so as follows:</p>
-<pre class="codehilite"><code class="language-php">use DomainException;
-use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
-use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
-
-class TransactionException extends DomainException implements ProblemDetailsExceptionInterface
-{
-    use CommonProblemDetailsExceptionTrait;
-
-    const STATUS = 403;
-    const TYPE = 'https://example.com/problems/insufficient-funds';
-    const TITLE = 'You have insufficient funds to complete the transaction.';
-
-    public static function create(int $needed, float $balance, string $account) : self
-    {
-        $e = new self(sprintf(
-            'Your transaction required %01.2f, but you only have %01.2f in your account',
-            $needed,
-            $balance
-        ));
-        $e-&gt;status = self::STATUS;
-        $e-&gt;type   = self::TYPE;
-        $e-&gt;title  = self::TITLE;
-        $e-&gt;additional = [
-            'account' =&gt; $account,
-            'balance' =&gt; $balance,
-        ];
-
-        return $e;
-    }
-}</code></pre>
-
-<p>You might then raise the exception as follows:</p>
-<pre class="codehilite"><code class="language-php">throw TransactionException::create($price, $balance, $accountUri);</code></pre>
-
-<p>And it might result in the following:</p>
-<pre class="codehilite"><code class="language-json">{
-    "status": 403,
-    "type": "https://example.com/problems/insufficient-funds",
-    "title": "You have insufficient funds to complete the transaction.",
-    "detail": "Your transaction required 5.63, but you only have 1.37 in your account",
-    "account": "https://example.com/api/accounts/12345",
-    "balance": 1.37
-}</code></pre>
-
-<p>The benefit to this approach is that you can easily provide domain-specific
-exceptions throughout your application that can, as a side-effect, be
-re-purposed immediately to provide problem details in your application.</p>
-
-
-
-    <nav>
-    <ul class="page-nav hidden-print">
-
-        
-        <li class="page-nav__item">
-            
-                <a rel="prev" class="page-nav__link page-nav__link--prev" href="../response/">
-                    <i class="fa fa-chevron-left"></i> Previous
-                </a>
-            
-        </li>
-
-        
-        <li class="page-nav__item">
-            
-                <a rel="next" class="page-nav__link page-nav__link--next" href="../middleware/">
-                    Next <i class="fa fa-chevron-right"></i>
-                </a>
-            
-        </li>
-    </ul>
-</nav>
-
-
-
-    <div class="help-wanted">
-        <p>
-            Found a mistake or want to contribute to the documentation?
-            <a href="https://github.com/zendframework/zend-problem-details/edit/master/docs/book/exception.md" target="_blank" class="help-wanted__link">
-                Edit this page on GitHub!
-            </a>
-        </p>
-    </div>
-
-                
             <!-- content:end -->
             </div>
             <div class="col-md-3 col-xs-12 sidebar">
@@ -367,7 +220,7 @@ re-purposed immediately to provide problem details in your application.</p>
                     
     <div class="subnavigation hidden-print">
         <h4 class="subnavigation__title">
-            <a href="..">Problem Details</a>
+            <a href="/.">Problem Details</a>
         </h4>
 
         <h5 class="subnavigation__subtitle">Table of Contents</h5>
@@ -376,19 +229,19 @@ re-purposed immediately to provide problem details in your application.</p>
             
                 
                     <li class="subnavigation__list-item ">
-                        <a href=".." class="subnavigation__link">Problem Details for PSR-7 Applications</a>
+                        <a href="/." class="subnavigation__link">Problem Details for PSR-7 Applications</a>
                     </li>
                 
             
                 
                     <li class="subnavigation__list-item ">
-                        <a href="../intro/" class="subnavigation__link">Introduction</a>
+                        <a href="/intro/" class="subnavigation__link">Introduction</a>
                     </li>
                 
             
                 
                     <li class="subnavigation__list-item ">
-                        <a href="../quick-start/" class="subnavigation__link">Quick Start</a>
+                        <a href="/quick-start/" class="subnavigation__link">Quick Start</a>
                     </li>
                 
             
@@ -399,25 +252,25 @@ re-purposed immediately to provide problem details in your application.</p>
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../response/" class="subnavigation__link">Generating Responses</a>
-    </li>
-
-                            
-                                
-    <li class="subnavigation__list-item subnavigation__list-item--active">
-        <a href="./" class="subnavigation__link">Exceptions</a>
+        <a href="/response/" class="subnavigation__link">Generating Responses</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../middleware/" class="subnavigation__link">Error Handling Middleware</a>
+        <a href="/exception/" class="subnavigation__link">Exceptions</a>
     </li>
 
                             
                                 
     <li class="subnavigation__list-item ">
-        <a href="../not-found-handler/" class="subnavigation__link">Not Found Handler</a>
+        <a href="/middleware/" class="subnavigation__link">Error Handling Middleware</a>
+    </li>
+
+                            
+                                
+    <li class="subnavigation__list-item ">
+        <a href="/not-found-handler/" class="subnavigation__link">Not Found Handler</a>
     </li>
 
                             
@@ -496,11 +349,11 @@ re-purposed immediately to provide problem details in your application.</p>
 </footer>
 
     <script>
-        var base_url = '..',
+        var base_url = '/',
             siteName = 'Problem Details';
     </script>
-    <script src="../js/scripts-8d7ae56abf.js"></script>
-        <script src="../search/main.js"></script>
+    <script src="//js/scripts-8d7ae56abf.js"></script>
+        <script src="/search/main.js"></script>
 
     
     <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
