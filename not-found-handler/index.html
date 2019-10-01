@@ -280,8 +280,8 @@ the request's <code>Accept</code> header.</p>
 that it will accept either JSON or XML.</p>
 <p>To use this handler in Expressive add it into your pipeline (usually <code>pipeline.php</code>)
 immediate before the default <code>NotFoundHandler</code>:</p>
-<pre class="codehilite"><code class="language-php">$app-&gt;pipe(\Zend\ProblemDetails\ProblemDetailsNotFoundHandler::class);
-$app-&gt;pipe(NotFoundHandler::class);</code></pre>
+<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe(\Zend\ProblemDetails\ProblemDetailsNotFoundHandler::class);
+$app-&gt;pipe(NotFoundHandler::class);</code></pre></p>
 
 
 
@@ -311,7 +311,7 @@ $app-&gt;pipe(NotFoundHandler::class);</code></pre>
     <div class="help-wanted">
         <p>
             Found a mistake or want to contribute to the documentation?
-            <a href="https://github.com/zendframework/zend-problem-details/edit/master/docs/not-found-handler.md" target="_blank" class="help-wanted__link">
+            <a href="https://github.com/zendframework/zend-problem-details/edit/master/docs/book/not-found-handler.md" target="_blank" class="help-wanted__link">
                 Edit this page on GitHub!
             </a>
         </p>

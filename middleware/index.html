@@ -309,17 +309,14 @@ generation of problem details for exceptions and PHP errors.</p>
 <p>As an example, using Expressive, you could compose it as an error handler within
 your application pipeline, having it handle <em>all</em> errors and exceptions from
 your application:</p>
-<pre class="codehilite"><code class="language-php">$app-&gt;pipe(ProblemDetailsMiddleware::class);</code></pre>
-
+<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe(ProblemDetailsMiddleware::class);</code></pre></p>
 <p>Or for a subpath of your application:</p>
-<pre class="codehilite"><code class="language-php">$app-&gt;pipe('/api', ProblemDetailsMiddleware::class);</code></pre>
-
+<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe('/api', ProblemDetailsMiddleware::class);</code></pre></p>
 <p>Alternately, you could pipe it within a routed-middleware pipeline:</p>
-<pre class="codehilite"><code class="language-php">$app-&gt;get('/api/books', [
+<p> <pre class=codehilite><code class=language-php>$app-&gt;get('/api/books', [
     ProblemDetailsMiddleware::class,
     BooksList::class,
-], 'books');</code></pre>
-
+], 'books');</code></pre></p>
 <p>This latter approach ensures that you are only providing problem details for
 specific API endpoints, which can be useful when you have a mix of APIs and
 traditional web content in your application.</p>
@@ -341,7 +338,7 @@ triggers them with the following arguments, in the following order:</p>
 a way that that state will propagate meaningfully. As such, you should use
 listeners for reporting purposes only (e.g., logging).</p>
 <p>As an example:</p>
-<pre class="codehilite"><code class="language-php">// Where $logger is a PSR-3 logger implementation
+<p> <pre class=codehilite><code class=language-php>// Where $logger is a PSR-3 logger implementation
 $listener = function (
     Throwable $error,
     ServerRequestInterface $request,
@@ -353,12 +350,10 @@ $listener = function (
         'uri'     =&gt; (string) $request-&gt;getUri(),
         'message' =&gt; $error-&gt;getMessage(),
     ]);
-};</code></pre>
-
+};</code></pre></p>
 <p>Attach listeners to the <code>ProblemDetailsMiddleware</code> instance using its
 <code>attachListener()</code> method:</p>
-<pre class="codehilite"><code class="language-php">$middleware-&gt;attachListener($listener);</code></pre>
-
+<p> <pre class=codehilite><code class=language-php>$middleware-&gt;attachListener($listener);</code></pre></p>
 <h2 id="factory">Factory</h2>
 <p>The <code>ProblemDetailsMiddleware</code> ships with a corresponding PSR-11 compatible factory,
 <code>ProblemDetailsMiddlewareFactory</code>. This factory uses the service named
@@ -367,7 +362,7 @@ middleware.</p>
 <p>For Expressive 2+ users, this middleware should be registered automatically with
 your application on install, assuming you have the zend-component-installer
 plugin in place (it's shipped by default with the Expressive skeleton).</p>
-<h3 id="registering-listeners">Registering listeners</h3>
+<h3>Registering listeners</h3>
 <ul>
 <li>Since 0.5.2</li>
 </ul>
@@ -375,7 +370,7 @@ plugin in place (it's shipped by default with the Expressive skeleton).</p>
 <a href="https://docs.zendframework.com/zend-expressive/features/container/delegator-factories/">delegator factory</a>
 on the <code>Zend\ProblemDetails\ProblemDetailsMiddleware</code> service.</p>
 <p>As an example:</p>
-<pre class="codehilite"><code class="language-php">class LoggerProblemDetailsListenerDelegator
+<p> <pre class=codehilite><code class=language-php>class LoggerProblemDetailsListenerDelegator
 {
     public function __construct(ContainerInterface $container, $serviceName, callable $callback)
     {
@@ -383,14 +378,13 @@ on the <code>Zend\ProblemDetails\ProblemDetailsMiddleware</code> service.</p>
         $middleware-&gt;attachListener($container-&gt;get(LoggerProblemDetailsListener::class));
         return $middleware;
     }
-}</code></pre>
-
+}</code></pre></p>
 <p>You would then register this as a delegator factory in your configuration:</p>
-<pre class="codehilite"><code class="language-php">'delegators' =&gt; [
+<p> <pre class=codehilite><code class=language-php>'delegators' =&gt; [
     ProblemDetailsMiddleware::class =&gt; [
         LoggerProblemDetailsListenerDelegator::class,
     ],
-],</code></pre>
+],</code></pre></p>
 
 
 
@@ -424,7 +418,7 @@ on the <code>Zend\ProblemDetails\ProblemDetailsMiddleware</code> service.</p>
     <div class="help-wanted">
         <p>
             Found a mistake or want to contribute to the documentation?
-            <a href="https://github.com/zendframework/zend-problem-details/edit/master/docs/middleware.md" target="_blank" class="help-wanted__link">
+            <a href="https://github.com/zendframework/zend-problem-details/edit/master/docs/book/middleware.md" target="_blank" class="help-wanted__link">
                 Edit this page on GitHub!
             </a>
         </p>

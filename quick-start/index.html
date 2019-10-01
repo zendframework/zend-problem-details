@@ -280,8 +280,7 @@
 <h2 id="installation">Installation</h2>
 <p>To install this package in your application, use
 <a href="https://getcomposer.org">Composer</a>:</p>
-<pre class="codehilite"><code class="language-bash">$ composer require zendframework/zend-problem-details</code></pre>
-
+<p> <pre class=codehilite><code class=language-bash>$ composer require zendframework/zend-problem-details</code></pre></p>
 <h2 id="usage">Usage</h2>
 <p>This package provides three primary mechanisms for creating and returning
 Problem Details responses:</p>
@@ -295,7 +294,7 @@ Problem Details responses:</p>
   exceptions as problem details responses using the
   <code>ProblemDetailsResponseFactory</code>.</li>
 </ul>
-<h3 id="problemdetailsresponsefactory">ProblemDetailsResponseFactory</h3>
+<h3>ProblemDetailsResponseFactory</h3>
 <p>If you are using <a href="https://docs.zendframework.com/zend-expressive/">Expressive</a>
 and have installed <a href="https://docs.zendframework.com/zend-component-installer">zend-component-installer</a>
 (which is installed by default in v2.0 and above), you can write middleware that
@@ -303,7 +302,7 @@ composes the <code>Zend\ProblemDetails\ProblemDetailsResponseFactory</code> imme
 inject that service in your middleware.</p>
 <p>As an example, the following catches domain exceptions and uses them to create
 problem details responses:</p>
-<pre class="codehilite"><code class="language-php">use Psr\Http\Message\ResponseInterface;
+<p> <pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -334,10 +333,9 @@ class DomainTransactionMiddleware implements MiddlewareInterface
             return $this-&gt;problemDetailsFactory-&gt;createResponseFromThrowable($request, $e);
         }
     }
-}</code></pre>
-
+}</code></pre></p>
 <p>The factory for the above might look like:</p>
-<pre class="codehilite"><code class="language-php">use Psr\Container\ContainerInterface;
+<p> <pre class=codehilite><code class=language-php>use Psr\Container\ContainerInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class DomainTransactionMiddlewareFactory
@@ -349,12 +347,11 @@ class DomainTransactionMiddlewareFactory
             $container-&gt;get(ProblemDetailsResponseFactory::class)
         );
     }
-}</code></pre>
-
+}</code></pre></p>
 <p>Another way to use the factory is to provide PHP primitives to the factory. As
 an example, validation failure is an expected condition, but should likely
 result in problem details to the end user.</p>
-<pre class="codehilite"><code class="language-php">use Psr\Http\Message\ResponseInterface;
+<p> <pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -403,12 +400,11 @@ class DomainTransactionMiddleware implements MiddlewareInterface
             return $this-&gt;problemDetailsFactory-&gt;createResponseFromThrowable($request, $e);
         }
     }
-}</code></pre>
-
+}</code></pre></p>
 <p>The above modifies the original example to add validation and, on failed
 validation, return a custom response that includes the validation failure
 messages.</p>
-<h3 id="custom-exceptions">Custom Exceptions</h3>
+<h3>Custom Exceptions</h3>
 <p>In the above examples, we have a <code>DomainException</code> that is used to create a
 Problem Details response. By default, in production mode, the factory will use
 the exception message as the Problem Details description, and the exception code
@@ -417,7 +413,7 @@ otherwise).</p>
 <p>You can also create custom exceptions that provide details for the factory to
 consume by implementing <code>Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface</code>,
 which defines the following:</p>
-<pre class="codehilite"><code class="language-php">namespace Zend\ProblemDetails\Exception;
+<p> <pre class=codehilite><code class=language-php>namespace Zend\ProblemDetails\Exception;
 
 use JsonSerializable;
 
@@ -429,12 +425,11 @@ interface ProblemDetailsExceptionInterface extends JsonSerializable
     public function getDetail() : string;
     public function getAdditionalData() : array;
     public function toArray() : array;
-}</code></pre>
-
+}</code></pre></p>
 <p>We also provide the trait <code>CommonProblemDetailsExceptionTrait</code>, which implements each
 of the above, the <code>jsonSerialize()</code> method, and also defines the following
 instance properties:</p>
-<pre class="codehilite"><code class="language-php">/**
+<p> <pre class=codehilite><code class=language-php>/**
  * @var int
  */
 private $status;
@@ -457,10 +452,9 @@ private $type;
 /**
  * @var array
  */
-private $additional = [];</code></pre>
-
+private $additional = [];</code></pre></p>
 <p>By composing this trait, you can easily define custom exception types:</p>
-<pre class="codehilite"><code class="language-php">namespace Api;
+<p> <pre class=codehilite><code class=language-php>namespace Api;
 
 use DomainException as PhpDomainException;
 use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
@@ -480,11 +474,10 @@ class DomainException extends PhpDomainException implements ProblemDetailsExcept
         $e-&gt;additional['transaction'] = $details;
         return $e;
     }
-}</code></pre>
-
+}</code></pre></p>
 <p>The data present in the generated exception will then be used by the
 <code>ProblemDetailsResponseFactory</code> to generate full Problem Details.</p>
-<h3 id="error-handling">Error handling</h3>
+<h3>Error handling</h3>
 <p>When writing APIs, you may not want to handle every error or exception manually,
 or may not be aware of problems in your code that might lead to them. In such
 cases, having error handling middleware that can generate problem details can be
@@ -505,27 +498,24 @@ a <code>ProblemDetailsResponseFactory</code>, and does the following:</p>
 ensures the <code>ProblemDetailsResponseFactory</code> is composed. As such, you can wire
 it into your workflow in several ways.</p>
 <p>First, you can have it intercept every request:</p>
-<pre class="codehilite"><code class="language-php">$app-&gt;pipe(ProblemDetailsMiddleware::class);</code></pre>
-
+<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe(ProblemDetailsMiddleware::class);</code></pre></p>
 <p>With Expressive, you can also segregate this to a subpath:</p>
-<pre class="codehilite"><code class="language-php">$app-&gt;pipe('/api', ProblemDetailsMiddleware::class);</code></pre>
-
+<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe('/api', ProblemDetailsMiddleware::class);</code></pre></p>
 <p>Finally, you can include it in a route-specific pipeline:</p>
-<pre class="codehilite"><code class="language-php">$app-&gt;post('/api/domain/transaction', [
+<p> <pre class=codehilite><code class=language-php>$app-&gt;post('/api/domain/transaction', [
     ProblemDetailsMiddleware::class,
     BodyParamsMiddleware::class,
     DomainTransactionMiddleware::class,
-]);</code></pre>
-
-<h3 id="not-found-handling">Not Found handling</h3>
+]);</code></pre></p>
+<h3>Not Found handling</h3>
 <p>When writing APIs you may also want 404 responses be in the accepted content-type.
 This package provides <code>ProblemDetailsNotFoundHandler</code> which will return a
 problem details <code>Response</code> with a <code>404</code> status if the request can accept either
 JSON or XML.</p>
 <p>To use this handler in Expressive add it into your pipeline immediate before the
 default <code>NotFoundHandler</code>:</p>
-<pre class="codehilite"><code class="language-php">$app-&gt;pipe(\Zend\ProblemDetails\ProblemDetailsNotFoundHandler::class);
-$app-&gt;pipe(NotFoundHandler::class);</code></pre>
+<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe(\Zend\ProblemDetails\ProblemDetailsNotFoundHandler::class);
+$app-&gt;pipe(NotFoundHandler::class);</code></pre></p>
 
 
 
@@ -559,7 +549,7 @@ $app-&gt;pipe(NotFoundHandler::class);</code></pre>
     <div class="help-wanted">
         <p>
             Found a mistake or want to contribute to the documentation?
-            <a href="https://github.com/zendframework/zend-problem-details/edit/master/docs/quick-start.md" target="_blank" class="help-wanted__link">
+            <a href="https://github.com/zendframework/zend-problem-details/edit/master/docs/book/quick-start.md" target="_blank" class="help-wanted__link">
                 Edit this page on GitHub!
             </a>
         </p>
