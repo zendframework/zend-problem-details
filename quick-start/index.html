@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PSR-7 Problem Details for HTTP API responses and middleware">  
+    <link rel="canonical" href="https://docs.zendframework.com/zend-problem-details/quick-start/">
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
+    <title>Quick Start - zend-problem-details - Zend Framework Docs</title>
+
+    <link rel="stylesheet" href="../css/styles-5cfabd53ee.css">
+</head>
+<body id="page-top">
+
+    
+    <div class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+
+            
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            
+            <span class="navbar-brand">
+                <a class="logo-link" href="https://framework.zend.com/" data-tooltip data-placement="bottom" title="Go to the ZF homepage">
+                    <img src="../img/zend-framework-logo.svg" height="28" alt="Zend Framework">
+                </a>
+            </span>
+        </div>
+
+        <div class="navbar-collapse collapse">
+
+            
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="https://framework.zend.com/about">About</a>
+                </li>
+                <li>
+                    <a href="https://framework.zend.com/downloads">Install</a>
+                </li>
+                <li class="active">
+                    <a href="https://docs.zendframework.com">Documentation</a>
+                </li>
+                <li>
+                    <a href="https://www.zend.com/en/services/training">Training</a>
+                </li>
+                <li>
+                    <a href="https://framework.zend.com/blog">Blog</a>
+                </li>
+                <li>
+                    <a href="https://framework.zend.com/participate">Participate</a>
+                </li>
+            </ul>
+
+            
+            
+                <div class="nav navbar-nav navbar-collapse visible-xs-block ">
+                    
+    <div class="subnavigation hidden-print">
+        <h4 class="subnavigation__title">
+            <a href="..">zend-problem-details</a>
+        </h4>
+
+        <h5 class="subnavigation__subtitle">Table of Contents</h5>
+
+        <ul class="subnavigation__list">
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../intro/" class="subnavigation__link">Introduction</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item subnavigation__list-item--active">
+                                <a href="./" class="subnavigation__link">Quick Start</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item">
+                                <span class="subnavigation__headline">Reference</span>
+                                <ul class="subnavigation__list">
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../response/" class="subnavigation__link">Generating Responses</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../exception/" class="subnavigation__link">Exceptions</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../middleware/" class="subnavigation__link">Error Handling Middleware</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../not-found-handler/" class="subnavigation__link">Not Found Handler</a>
+    </li>
+
+                                    
+                                </ul>
+                            </li>
+                        
+                    
+                
+            
+        </ul>
+    </div>
+
+                </div>
+            
+
+            
+            <div class="nav navbar-nav navbar-collapse visible-xs-block">
+                <div class="component-selector">
+    <h4 class="component-selector__title">Components</h4>
+    <h5 class="component-selector__subtitle">Find documentation…</h5>
+    <select class="form-control component-selector__control">
+        <option value="/">Overview</option>
+        <optgroup label="Components"></optgroup>
+    </select>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+    <header class="header">
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="col-xs-8">
+                <h1 class="header__title">
+                    Documentation
+
+                    
+                        <small class="header__subtitle">zend-problem-details</small>
+                    
+                </h1>
+            </div>
+
+            
+            <div class="col-xs-4 text-right">
+                
+                    
+
+                    <a href="#" class="header__link header__link--search" data-toggle="modal" data-target="#mkdocs_search_modal" title="Open search">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                    <a href="https://github.com/zendframework/zend-problem-details/" class="header__link header__link--github" title="Go to repository of zend-problem-details">
+                        <i class="fa fa-github"></i> GitHub
+                    </a>
+                
+            </div>
+        </div>
+    </div>
+</header>
+
+    
+    <div class="laminas-announcement">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                Zend Framework transitions to the Linux Foundation. <a href="https://getlaminas.org">Learn More.</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9 col-xs-12 content" role="main">
+            <!-- content:begin -->
+                
+                    <ol class="breadcrumb" role="navigation" aria-label="breadcrumbs navigation">
+    <li><a href="https://framework.zend.com/">Home</a></li>
+
+    
+        <li><a href="https://docs.zendframework.com/">Documentation</a></li>
+
+        
+            <li><a href="..">zend-problem-details</a></li>
+
+            
+
+            <li class="active">Quick Start</li>
+        
+    
+</ol>
+
+
+
+
+
+
+    
+    
+
+    <div>
+        
+    
+
+    
+    
+        <div class="toc">
+            <h6 class="toc__headline">In This Article</h6>
+            <ul class="toc__list">
+                
+                    <li class="toc__entry">
+                        <a href="#installation" class="toc__link">Installation</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#usage" class="toc__link">Usage</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
+    </div>
+
+    <h1 id="quick-start">Quick Start</h1>
+<h2 id="installation">Installation</h2>
+<p>To install this package in your application, use
+<a href="https://getcomposer.org">Composer</a>:</p>
+<p> <pre class=codehilite><code class=language-bash>$ composer require zendframework/zend-problem-details</code></pre></p>
+<h2 id="usage">Usage</h2>
+<p>This package provides three primary mechanisms for creating and returning
+Problem Details responses:</p>
+<ul>
+<li><code>ProblemDetailsResponseFactory</code> for generating problem details responses on
+  the fly from either PHP primitives or exceptions/throwables.</li>
+<li><code>ProblemDetailsExceptionInterface</code> for creating exceptions with additional problem
+  details that may be used when generating a response.</li>
+<li><code>ProblemDetailsMiddleware</code> that acts as error/exception handler middleware,
+  casting and throwing PHP errors as <code>ErrorException</code> instances, and all caught
+  exceptions as problem details responses using the
+  <code>ProblemDetailsResponseFactory</code>.</li>
+</ul>
+<h3>ProblemDetailsResponseFactory</h3>
+<p>If you are using <a href="https://docs.zendframework.com/zend-expressive/">Expressive</a>
+and have installed <a href="https://docs.zendframework.com/zend-component-installer">zend-component-installer</a>
+(which is installed by default in v2.0 and above), you can write middleware that
+composes the <code>Zend\ProblemDetails\ProblemDetailsResponseFactory</code> immediately, and
+inject that service in your middleware.</p>
+<p>As an example, the following catches domain exceptions and uses them to create
+problem details responses:</p>
+<p> <pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
+use Zend\Diactoros\Response\JsonResponse;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
+
+class DomainTransactionMiddleware implements MiddlewareInterface
+{
+    private $domainService;
+
+    private $problemDetailsFactory;
+
+    public function __construct(
+        DomainService $service,
+        ProblemDetailsResponseFactory $problemDetailsFactory
+    ) {
+        $this-&gt;domainService = $service;
+        $this-&gt;problemDetailsFactory = $problemDetailsFactory;
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
+    {
+        try {
+            $result = $this-&gt;domainService-&gt;transaction($request-&gt;getParsedBody());
+            return new JsonResponse($result);
+        } catch (DomainException $e) {
+            return $this-&gt;problemDetailsFactory-&gt;createResponseFromThrowable($request, $e);
+        }
+    }
+}</code></pre></p>
+<p>The factory for the above might look like:</p>
+<p> <pre class=codehilite><code class=language-php>use Psr\Container\ContainerInterface;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
+
+class DomainTransactionMiddlewareFactory
+{
+    public function __invoke(ContainerInterface $container)
+    {
+        return new DomainTransactionMiddleware(
+            $container-&gt;get(DomainService::class),
+            $container-&gt;get(ProblemDetailsResponseFactory::class)
+        );
+    }
+}</code></pre></p>
+<p>Another way to use the factory is to provide PHP primitives to the factory. As
+an example, validation failure is an expected condition, but should likely
+result in problem details to the end user.</p>
+<p> <pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
+use Zend\Diactoros\Response\JsonResponse;
+use Zend\InputFilter\InputFilterInterface;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
+
+class DomainTransactionMiddleware implements MiddlewareInterface
+{
+    private $domainService;
+
+    private $inputFilter;
+
+    private $problemDetailsFactory;
+
+    public function __construct(
+        DomainService $service,
+        InputFilterInterface $inputFilter,
+        ProblemDetailsResponseFactory $problemDetailsFactory
+    ) {
+        $this-&gt;domainService = $service;
+        $this-&gt;inputFilter = $inputFilter;
+        $this-&gt;problemDetailsFactory = $problemDetailsFactory;
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
+    {
+        $this-&gt;inputFilter-&gt;setData($request-&gt;getParsedBody());
+        if (! $this-&gt;inputFilter-&gt;isValid()) {
+            return $this-&gt;problemDetailsFactory-&gt;createResponse(
+                $request,
+                422,
+                'Domain transaction request failed validation',
+                '',
+                '',
+                ['messages' =&gt; $this-&gt;inputFilter-&gt;getMessages()]
+            );
+        }
+
+        try {
+            $result =
+            $this-&gt;domainService-&gt;transaction($this-&gt;inputFilter-&gt;getValues());
+            return new JsonResponse($result);
+        } catch (DomainException $e) {
+            return $this-&gt;problemDetailsFactory-&gt;createResponseFromThrowable($request, $e);
+        }
+    }
+}</code></pre></p>
+<p>The above modifies the original example to add validation and, on failed
+validation, return a custom response that includes the validation failure
+messages.</p>
+<h3>Custom Exceptions</h3>
+<p>In the above examples, we have a <code>DomainException</code> that is used to create a
+Problem Details response. By default, in production mode, the factory will use
+the exception message as the Problem Details description, and the exception code
+as the HTTP status if it falls in the 400 or 500 range (500 will be used
+otherwise).</p>
+<p>You can also create custom exceptions that provide details for the factory to
+consume by implementing <code>Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface</code>,
+which defines the following:</p>
+<p> <pre class=codehilite><code class=language-php>namespace Zend\ProblemDetails\Exception;
+
+use JsonSerializable;
+
+interface ProblemDetailsExceptionInterface extends JsonSerializable
+{
+    public function getStatus() : int;
+    public function getType() : string;
+    public function getTitle() : string;
+    public function getDetail() : string;
+    public function getAdditionalData() : array;
+    public function toArray() : array;
+}</code></pre></p>
+<p>We also provide the trait <code>CommonProblemDetailsExceptionTrait</code>, which implements each
+of the above, the <code>jsonSerialize()</code> method, and also defines the following
+instance properties:</p>
+<p> <pre class=codehilite><code class=language-php>/**
+ * @var int
+ */
+private $status;
+
+/**
+ * @var string
+ */
+private $detail;
+
+/**
+ * @var string
+ */
+private $title;
+
+/**
+ * @var string
+ */
+private $type;
+
+/**
+ * @var array
+ */
+private $additional = [];</code></pre></p>
+<p>By composing this trait, you can easily define custom exception types:</p>
+<p> <pre class=codehilite><code class=language-php>namespace Api;
+
+use DomainException as PhpDomainException;
+use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
+use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
+
+class DomainException extends PhpDomainException implements ProblemDetailsExceptionInterface
+{
+    use CommonProblemDetailsExceptionTrait;
+
+    public static function create(string $message, array $details) : self
+    {
+        $e = new self($message)
+        $e-&gt;status = 417;
+        $e-&gt;detail = $message;
+        $e-&gt;type = 'https://example.com/api/doc/domain-exception';
+        $e-&gt;title = 'Domain transaction failed';
+        $e-&gt;additional['transaction'] = $details;
+        return $e;
+    }
+}</code></pre></p>
+<p>The data present in the generated exception will then be used by the
+<code>ProblemDetailsResponseFactory</code> to generate full Problem Details.</p>
+<h3>Error handling</h3>
+<p>When writing APIs, you may not want to handle every error or exception manually,
+or may not be aware of problems in your code that might lead to them. In such
+cases, having error handling middleware that can generate problem details can be
+handy.</p>
+<p>This package provides <code>ProblemDetailsMiddleware</code> for that situation. It composes
+a <code>ProblemDetailsResponseFactory</code>, and does the following:</p>
+<ul>
+<li>If the request can not accept either JSON or XML responses, it simply
+  passes handling to the request handler.</li>
+<li>Otherwise, it creates a PHP error handler that converts PHP errors to
+  <code>ErrorException</code> instances, and then wraps processing of the request handler
+  in a try/catch block.</li>
+<li>Any throwable or exception caught is passed to the
+  <code>ProblemDetailsResponseFactory::createResponseFromThrowable()</code> method, and the
+  response generated is returned.</li>
+</ul>
+<p>When using Expressive, the middleware service is already wired to a factory that
+ensures the <code>ProblemDetailsResponseFactory</code> is composed. As such, you can wire
+it into your workflow in several ways.</p>
+<p>First, you can have it intercept every request:</p>
+<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe(ProblemDetailsMiddleware::class);</code></pre></p>
+<p>With Expressive, you can also segregate this to a subpath:</p>
+<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe('/api', ProblemDetailsMiddleware::class);</code></pre></p>
+<p>Finally, you can include it in a route-specific pipeline:</p>
+<p> <pre class=codehilite><code class=language-php>$app-&gt;post('/api/domain/transaction', [
+    ProblemDetailsMiddleware::class,
+    BodyParamsMiddleware::class,
+    DomainTransactionMiddleware::class,
+]);</code></pre></p>
+<h3>Not Found handling</h3>
+<p>When writing APIs you may also want 404 responses be in the accepted content-type.
+This package provides <code>ProblemDetailsNotFoundHandler</code> which will return a
+problem details <code>Response</code> with a <code>404</code> status if the request can accept either
+JSON or XML.</p>
+<p>To use this handler in Expressive add it into your pipeline immediate before the
+default <code>NotFoundHandler</code>:</p>
+<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe(\Zend\ProblemDetails\ProblemDetailsNotFoundHandler::class);
+$app-&gt;pipe(NotFoundHandler::class);</code></pre></p>
+
+
+
+
+    <nav>
+    <ul class="page-nav hidden-print">
+
+        
+        <li class="page-nav__item">
+            
+                <a rel="prev" class="page-nav__link page-nav__link--prev" href="../intro/">
+                    <i class="fa fa-chevron-left"></i> Previous
+                </a>
+            
+        </li>
+
+        
+        <li class="page-nav__item">
+            
+                <a rel="next" class="page-nav__link page-nav__link--next" href="../response/">
+                    Next <i class="fa fa-chevron-right"></i>
+                </a>
+            
+        </li>
+    </ul>
+</nav>
+
+
+
+
+    <div class="help-wanted">
+        <p>
+            Found a mistake or want to contribute to the documentation?
+            <a href="https://github.com/zendframework/zend-problem-details/edit/master/docs/book/quick-start.md" target="_blank" class="help-wanted__link">
+                Edit this page on GitHub!
+            </a>
+        </p>
+    </div>
+
+                
+            <!-- content:end -->
+            </div>
+            <div class="col-md-3 col-xs-12 sidebar">
+                
+                    <div class="component-selector">
+    <h4 class="component-selector__title">Components</h4>
+    <h5 class="component-selector__subtitle">Find documentation…</h5>
+    <select class="form-control component-selector__control">
+        <option value="/">Overview</option>
+        <optgroup label="Components"></optgroup>
+    </select>
+</div>
+                    
+    <div class="subnavigation hidden-print">
+        <h4 class="subnavigation__title">
+            <a href="..">zend-problem-details</a>
+        </h4>
+
+        <h5 class="subnavigation__subtitle">Table of Contents</h5>
+
+        <ul class="subnavigation__list">
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../intro/" class="subnavigation__link">Introduction</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item subnavigation__list-item--active">
+                                <a href="./" class="subnavigation__link">Quick Start</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item">
+                                <span class="subnavigation__headline">Reference</span>
+                                <ul class="subnavigation__list">
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../response/" class="subnavigation__link">Generating Responses</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../exception/" class="subnavigation__link">Exceptions</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../middleware/" class="subnavigation__link">Error Handling Middleware</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../not-found-handler/" class="subnavigation__link">Not Found Handler</a>
+    </li>
+
+                                    
+                                </ul>
+                            </li>
+                        
+                    
+                
+            
+        </ul>
+    </div>
+
+                
+            </div>
+        </div>
+    </div>
+
+    
+    <footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+                <h5>Zend Framework</h5>
+                <ul>
+                    <li><a href="https://framework.zend.com/">framework.zend.com</a></li>
+                    <li><a href="https://docs.zendframework.com">docs.zendframework.com</a></li>
+                    <li><a href="https://packages.zendframework.com">packages.zendframework.com</a></li>
+                    <li><a href="https://apigility.org">apigility.org</a></li>
+                    <li><a href="https://getexpressive.org/">getexpressive.org</a></li>
+                </ul>
+            </div>
+        </div>
+
+        
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <a class="footer__button" href="#page-top"><i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+            </div>
+        </div>
+
+        <div class="row">
+
+            
+            <div class="col-md-9">
+                <h4 class="footer__headline">Copyright</h4>
+                <p>&copy; 2006-2019 by <a href="https://www.zend.com/">Zend</a>, a <a href="https://www.roguewave.com/">Rogue Wave Company</a>.</p>
+            </div>
+
+            
+            <div class="col-md-3">
+                <h4 class="footer__headline">Support</h4>
+                <ul class="support__list">
+                    <li class="support__list-item">
+                        <a href="https://discourse.zendframework.com" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
+                    </li>
+                    <li class="support__list-item">
+                        <a href="https://zendframework-slack.herokuapp.com" class="support__link" title="Chat"><i class="fa fa-slack"></i></a>
+                    </li>
+                    <li class="support__list-item">
+                        <a href="https://github.com/zendframework" class="support__link" title="Github"><i class="fa fa-github"></i></a>
+                    </li>
+                    <li class="support__list-item">
+                        <a href="https://twitter.com/zfdevteam" class="support__link" title="Twitter"><i class="fa fa-twitter"></i></a>
+                    </li>
+                    <li class="support__list-item">
+                        <a href="https://tinyletter.com/mwopzend" class="support__link" title="Newsletter"><i class="fa fa-envelope"></i></a>
+                    </li>
+                    <li class="support__list-item">
+                        <a href="https://framework.zend.com/blog/feed-rss.xml" class="support__link" title="Blog feed"><i class="fa fa-rss"></i></a>
+                    </li>
+                    <li class="support__list-item">
+                        <a href="https://framework.zend.com/security/feed" class="support__link" title="Security feed"><i class="fa fa-rss-square"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script>
+        var base_url = '..',
+            siteName = 'zend-problem-details';
+    </script>
+    <script src="../js/scripts-8d7ae56abf.js"></script>
+        <script src="../search/main.js"></script>
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        From here you can search these documents. Enter your search terms below.
+                    </p>
+                    <form role="form">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                        </div>
+                    </form>
+                    <div id="mkdocs-search-results"></div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+
+
+</html>

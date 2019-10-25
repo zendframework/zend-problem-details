@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PSR-7 Problem Details for HTTP API responses and middleware">  
+    <link rel="canonical" href="https://docs.zendframework.com/zend-problem-details/intro/">
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
+    <title>Introduction - zend-problem-details - Zend Framework Docs</title>
+
+    <link rel="stylesheet" href="../css/styles-5cfabd53ee.css">
+</head>
+<body id="page-top">
+
+    
+    <div class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+
+            
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            
+            <span class="navbar-brand">
+                <a class="logo-link" href="https://framework.zend.com/" data-tooltip data-placement="bottom" title="Go to the ZF homepage">
+                    <img src="../img/zend-framework-logo.svg" height="28" alt="Zend Framework">
+                </a>
+            </span>
+        </div>
+
+        <div class="navbar-collapse collapse">
+
+            
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="https://framework.zend.com/about">About</a>
+                </li>
+                <li>
+                    <a href="https://framework.zend.com/downloads">Install</a>
+                </li>
+                <li class="active">
+                    <a href="https://docs.zendframework.com">Documentation</a>
+                </li>
+                <li>
+                    <a href="https://www.zend.com/en/services/training">Training</a>
+                </li>
+                <li>
+                    <a href="https://framework.zend.com/blog">Blog</a>
+                </li>
+                <li>
+                    <a href="https://framework.zend.com/participate">Participate</a>
+                </li>
+            </ul>
+
+            
+            
+                <div class="nav navbar-nav navbar-collapse visible-xs-block ">
+                    
+    <div class="subnavigation hidden-print">
+        <h4 class="subnavigation__title">
+            <a href="..">zend-problem-details</a>
+        </h4>
+
+        <h5 class="subnavigation__subtitle">Table of Contents</h5>
+
+        <ul class="subnavigation__list">
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item subnavigation__list-item--active">
+                                <a href="./" class="subnavigation__link">Introduction</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../quick-start/" class="subnavigation__link">Quick Start</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item">
+                                <span class="subnavigation__headline">Reference</span>
+                                <ul class="subnavigation__list">
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../response/" class="subnavigation__link">Generating Responses</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../exception/" class="subnavigation__link">Exceptions</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../middleware/" class="subnavigation__link">Error Handling Middleware</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../not-found-handler/" class="subnavigation__link">Not Found Handler</a>
+    </li>
+
+                                    
+                                </ul>
+                            </li>
+                        
+                    
+                
+            
+        </ul>
+    </div>
+
+                </div>
+            
+
+            
+            <div class="nav navbar-nav navbar-collapse visible-xs-block">
+                <div class="component-selector">
+    <h4 class="component-selector__title">Components</h4>
+    <h5 class="component-selector__subtitle">Find documentation…</h5>
+    <select class="form-control component-selector__control">
+        <option value="/">Overview</option>
+        <optgroup label="Components"></optgroup>
+    </select>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+    <header class="header">
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="col-xs-8">
+                <h1 class="header__title">
+                    Documentation
+
+                    
+                        <small class="header__subtitle">zend-problem-details</small>
+                    
+                </h1>
+            </div>
+
+            
+            <div class="col-xs-4 text-right">
+                
+                    
+
+                    <a href="#" class="header__link header__link--search" data-toggle="modal" data-target="#mkdocs_search_modal" title="Open search">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                    <a href="https://github.com/zendframework/zend-problem-details/" class="header__link header__link--github" title="Go to repository of zend-problem-details">
+                        <i class="fa fa-github"></i> GitHub
+                    </a>
+                
+            </div>
+        </div>
+    </div>
+</header>
+
+    
+    <div class="laminas-announcement">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                Zend Framework transitions to the Linux Foundation. <a href="https://getlaminas.org">Learn More.</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9 col-xs-12 content" role="main">
+            <!-- content:begin -->
+                
+                    <ol class="breadcrumb" role="navigation" aria-label="breadcrumbs navigation">
+    <li><a href="https://framework.zend.com/">Home</a></li>
+
+    
+        <li><a href="https://docs.zendframework.com/">Documentation</a></li>
+
+        
+            <li><a href="..">zend-problem-details</a></li>
+
+            
+
+            <li class="active">Introduction</li>
+        
+    
+</ol>
+
+
+
+
+
+
+    
+    
+
+    <div>
+        
+    
+
+    
+    
+        <div class="toc">
+            <h6 class="toc__headline">In This Article</h6>
+            <ul class="toc__list">
+                
+                    <li class="toc__entry">
+                        <a href="#problem-details-for-http-apis" class="toc__link">Problem Details for HTTP APIs</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#custom-errors" class="toc__link">Custom errors</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#problemdetails" class="toc__link">ProblemDetails</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
+    </div>
+
+    <h1 id="problem-details">Problem Details</h1>
+<p>This library addresses <a href="https://tools.ietf.org/html/rfc7807">RFC 7807: Problem Details for HTTP APIs</a>
+for usage with <a href="https://www.php-fig.org/psr/psr-7/">PSR-7 HTTP Messages</a> and
+<a href="https://www.php-fig.org/psr/psr-15/">PSR-15 HTTP Handlers</a>.</p>
+<h2 id="problem-details-for-http-apis">Problem Details for HTTP APIs</h2>
+<p>When developing APIs, it is good practice to:</p>
+<ul>
+<li>Use HTTP status codes to help convey error status.</li>
+<li>Provide sufficient error detail to clients.</li>
+</ul>
+<p>Unfortunately, unless you are using a documented
+<a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC</a> format such as
+XML-RPC, JSON-RPC, or SOAP, <em>how</em> to return error details is not dictated, and
+many API developers end up creating their own formats. Most standardized
+RPC formats do not use the HTTP status code to convey an error, only the
+payload, and, in fact, most clients of such services will fail if a non-200
+status is returned.</p>
+<p>RFC 7807 provides a standard format for returning problem details from HTTP
+APIs. In particular, it specifies the following:</p>
+<ul>
+<li>Error responses MUST use standard HTTP status codes in the 400 or 500 range to
+  detail the general category of error.</li>
+<li>Error responses will be of the <code>Content-Type</code> <code>application/problem</code>,
+  appending a serialization format of either <code>json</code> or <code>xml</code>:
+  <code>application/problem+json</code>, <code>application/problem+xml</code>.</li>
+<li>Error responses will have each of the following keys:</li>
+<li><code>detail</code>, a human-readable description of the specific error.</li>
+<li><code>type</code>, a unique URI for the general error type, generally pointing to
+    human-readable documentation of that given type.</li>
+<li><code>title</code>, a short, human-readable title for the general error type; the title
+    should not change for given <code>type</code>s.</li>
+<li><code>status</code>, conveying the HTTP status code; this is so that all information
+    is in one place, but also to correct for changes in the status code due to
+    usage of proxy servers.</li>
+</ul>
+<p>Optionally, an <code>instance</code> key may be present, with a unique URI for the specific
+error; this will often point to an error log for that specific response.</p>
+<p>Finally, problem details are <em>extensible</em>. You may provide additional keys that
+give the consumer more information about the error. As an example, in an API
+that has rate limiting, you may want to indicate how many requests the user has
+made, what the rate limit is, and when the limit resets:</p>
+<p> <pre class=codehilite><code class=language-json>{
+    &quot;type&quot;: &quot;https://example.com/problems/rate-limit-exceeded&quot;,
+    &quot;title&quot;: &quot;You have exceeded your API rate limit.&quot;,
+    &quot;detail&quot;: &quot;You have hit your rate limit of 5000 requests per hour.&quot;,
+    &quot;requests_this_hour&quot;: 5025,
+    &quot;rate_limit&quot;: 5000,
+    &quot;rate_limit_reset&quot;: &quot;2017-05-03T14:39-0500&quot;
+}</code></pre></p>
+<h2 id="custom-errors">Custom errors</h2>
+<p>What if you have custom error types?</p>
+<p>RFC 7807 specifically allows you to define these with the following:</p>
+<ul>
+<li>A URI to documentation of the error <em>type</em>.</li>
+<li>A human-readable <em>title</em> describing the error type.</li>
+<li>One or more HTTP <em>status</em> codes associated with the error type.</li>
+</ul>
+<p>For your custom errors, you use the above with a problem details response; if
+the problem type requires additional information, you provide it within the
+payload, and document that information at the URI describing the type.</p>
+<p>This approach allows usage of a single, general-purpose media type for returning
+problem details for your HTTP API, while allowing full customization of what
+types of errors you report.</p>
+<h2 id="problemdetails">ProblemDetails</h2>
+<p>This library provides custom PSR-7 responses for JSON and XML representations of
+<code>application/problem</code>. Additionally, it provides a factory that will introspect
+the contents of a provided <code>Accept</code> header in order to determine which
+representation to return, defaulting to the XML representation. This factory may
+then be composed in middleware in order to create and return problem details
+responses.</p>
+<p>Additionally, the library provides middleware that acts as an error and
+exception handler and wrapping calls to a request handler, converting each into problem
+details responses.</p>
+
+
+
+
+    <nav>
+    <ul class="page-nav hidden-print">
+
+        
+        <li class="page-nav__item">
+            
+                <a rel="prev" class="page-nav__link page-nav__link--prev" href="..">
+                    <i class="fa fa-chevron-left"></i> Previous
+                </a>
+            
+        </li>
+
+        
+        <li class="page-nav__item">
+            
+                <a rel="next" class="page-nav__link page-nav__link--next" href="../quick-start/">
+                    Next <i class="fa fa-chevron-right"></i>
+                </a>
+            
+        </li>
+    </ul>
+</nav>
+
+
+
+
+    <div class="help-wanted">
+        <p>
+            Found a mistake or want to contribute to the documentation?
+            <a href="https://github.com/zendframework/zend-problem-details/edit/master/docs/book/intro.md" target="_blank" class="help-wanted__link">
+                Edit this page on GitHub!
+            </a>
+        </p>
+    </div>
+
+                
+            <!-- content:end -->
+            </div>
+            <div class="col-md-3 col-xs-12 sidebar">
+                
+                    <div class="component-selector">
+    <h4 class="component-selector__title">Components</h4>
+    <h5 class="component-selector__subtitle">Find documentation…</h5>
+    <select class="form-control component-selector__control">
+        <option value="/">Overview</option>
+        <optgroup label="Components"></optgroup>
+    </select>
+</div>
+                    
+    <div class="subnavigation hidden-print">
+        <h4 class="subnavigation__title">
+            <a href="..">zend-problem-details</a>
+        </h4>
+
+        <h5 class="subnavigation__subtitle">Table of Contents</h5>
+
+        <ul class="subnavigation__list">
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item subnavigation__list-item--active">
+                                <a href="./" class="subnavigation__link">Introduction</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../quick-start/" class="subnavigation__link">Quick Start</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item">
+                                <span class="subnavigation__headline">Reference</span>
+                                <ul class="subnavigation__list">
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../response/" class="subnavigation__link">Generating Responses</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../exception/" class="subnavigation__link">Exceptions</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../middleware/" class="subnavigation__link">Error Handling Middleware</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../not-found-handler/" class="subnavigation__link">Not Found Handler</a>
+    </li>
+
+                                    
+                                </ul>
+                            </li>
+                        
+                    
+                
+            
+        </ul>
+    </div>
+
+                
+            </div>
+        </div>
+    </div>
+
+    
+    <footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+                <h5>Zend Framework</h5>
+                <ul>
+                    <li><a href="https://framework.zend.com/">framework.zend.com</a></li>
+                    <li><a href="https://docs.zendframework.com">docs.zendframework.com</a></li>
+                    <li><a href="https://packages.zendframework.com">packages.zendframework.com</a></li>
+                    <li><a href="https://apigility.org">apigility.org</a></li>
+                    <li><a href="https://getexpressive.org/">getexpressive.org</a></li>
+                </ul>
+            </div>
+        </div>
+
+        
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <a class="footer__button" href="#page-top"><i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+            </div>
+        </div>
+
+        <div class="row">
+
+            
+            <div class="col-md-9">
+                <h4 class="footer__headline">Copyright</h4>
+                <p>&copy; 2006-2019 by <a href="https://www.zend.com/">Zend</a>, a <a href="https://www.roguewave.com/">Rogue Wave Company</a>.</p>
+            </div>
+
+            
+            <div class="col-md-3">
+                <h4 class="footer__headline">Support</h4>
+                <ul class="support__list">
+                    <li class="support__list-item">
+                        <a href="https://discourse.zendframework.com" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
+                    </li>
+                    <li class="support__list-item">
+                        <a href="https://zendframework-slack.herokuapp.com" class="support__link" title="Chat"><i class="fa fa-slack"></i></a>
+                    </li>
+                    <li class="support__list-item">
+                        <a href="https://github.com/zendframework" class="support__link" title="Github"><i class="fa fa-github"></i></a>
+                    </li>
+                    <li class="support__list-item">
+                        <a href="https://twitter.com/zfdevteam" class="support__link" title="Twitter"><i class="fa fa-twitter"></i></a>
+                    </li>
+                    <li class="support__list-item">
+                        <a href="https://tinyletter.com/mwopzend" class="support__link" title="Newsletter"><i class="fa fa-envelope"></i></a>
+                    </li>
+                    <li class="support__list-item">
+                        <a href="https://framework.zend.com/blog/feed-rss.xml" class="support__link" title="Blog feed"><i class="fa fa-rss"></i></a>
+                    </li>
+                    <li class="support__list-item">
+                        <a href="https://framework.zend.com/security/feed" class="support__link" title="Security feed"><i class="fa fa-rss-square"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script>
+        var base_url = '..',
+            siteName = 'zend-problem-details';
+    </script>
+    <script src="../js/scripts-8d7ae56abf.js"></script>
+        <script src="../search/main.js"></script>
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        From here you can search these documents. Enter your search terms below.
+                    </p>
+                    <form role="form">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                        </div>
+                    </form>
+                    <div id="mkdocs-search-results"></div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+
+
+</html>
