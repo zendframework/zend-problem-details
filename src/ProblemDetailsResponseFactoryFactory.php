@@ -21,12 +21,15 @@ class ProblemDetailsResponseFactoryFactory
 
         $problemDetailsConfig = $config['problem-details'] ?? [];
         $jsonFlags = $problemDetailsConfig['json_flags'] ?? null;
+        $defaultTypes = $problemDetailsConfig['default_types'] ?? [];
 
         return new ProblemDetailsResponseFactory(
             $container->get(ResponseInterface::class),
             $includeThrowableDetail,
             $jsonFlags,
-            $includeThrowableDetail
+            $includeThrowableDetail,
+            ProblemDetailsResponseFactory::DEFAULT_DETAIL_MESSAGE,
+            $defaultTypes
         );
     }
 }
