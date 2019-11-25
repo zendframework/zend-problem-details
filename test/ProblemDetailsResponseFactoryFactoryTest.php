@@ -139,4 +139,23 @@ class ProblemDetailsResponseFactoryFactoryTest extends TestCase
         $this->assertInstanceOf(ProblemDetailsResponseFactory::class, $factory);
         $this->assertAttributeSame(JSON_PRETTY_PRINT, 'jsonFlags', $factory);
     }
+
+    public function testUsesDefaultTypesSettingFromConfigWhenPresent() : void
+    {
+        $expectedDefaultTypes = [
+            404 => 'https://example.com/problem-details/error/not-found',
+        ];
+
+        $this->container->has('config')->willReturn(true);
+        $this->container->get('config')->willReturn(['problem-details' => ['default_types' => $expectedDefaultTypes]]);
+
+        $this->container->get(ResponseInterface::class)->willReturn(function () {
+        });
+
+        $factoryFactory = new ProblemDetailsResponseFactoryFactory();
+        $factory = $factoryFactory($this->container->reveal());
+
+        $this->assertInstanceOf(ProblemDetailsResponseFactory::class, $factory);
+        $this->assertAttributeSame($expectedDefaultTypes, 'defaultTypes', $factory);
+    }
 }
