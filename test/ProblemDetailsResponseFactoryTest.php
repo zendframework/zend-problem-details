@@ -24,6 +24,7 @@ use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 use function array_keys;
 use function fclose;
 use function fopen;
+use function json_decode;
 use function stripos;
 
 class ProblemDetailsResponseFactoryTest extends TestCase
@@ -474,5 +475,56 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         );
 
         $this->assertSame($this->response->reveal(), $response);
+    }
+
+    public function provideMappedStatuses() : array
+    {
+        $defaultTypes = [
+            404 => 'https://example.com/problem-details/error/not-found',
+            500 => 'https://example.com/problem-details/error/internal-server-error',
+        ];
+
+        return [
+            [$defaultTypes, 404, 'https://example.com/problem-details/error/not-found'],
+            [$defaultTypes, 500, 'https://example.com/problem-details/error/internal-server-error'],
+            [$defaultTypes, 400, 'https://httpstatus.es/400'],
+            [[], 500, 'https://httpstatus.es/500'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideMappedStatuses
+     */
+    public function testTypeIsInferredFromDefaultTypesMap(array $defaultTypes, int $status, string $expectedType) : void
+    {
+        $this->request->getHeaderLine('Accept')->willReturn('application/json');
+
+        $stream = $this->prophesize(StreamInterface::class);
+        $writeStream = $stream->write(Argument::that(function (string $body) use ($expectedType) {
+            $payload = json_decode($body, true);
+            Assert::assertEquals($expectedType, $payload['type']);
+
+            return $body;
+        }));
+
+        $this->response->getBody()->will([$stream, 'reveal']);
+        $witStatus = $this->response->withStatus($status)->will([$this->response, 'reveal']);
+        $this->response->withHeader('Content-Type', 'application/problem+json')->will([$this->response, 'reveal']);
+
+        $factory = new ProblemDetailsResponseFactory(
+            function () {
+                return $this->response->reveal();
+            },
+            false,
+            null,
+            false,
+            '',
+            $defaultTypes
+        );
+
+        $factory->createResponse($this->request->reveal(), $status, 'detail');
+
+        $writeStream->shouldHaveBeenCalled();
+        $witStatus->shouldHaveBeenCalled();
     }
 }
