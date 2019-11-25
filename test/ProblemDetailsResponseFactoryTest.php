@@ -508,7 +508,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         }));
 
         $this->response->getBody()->will([$stream, 'reveal']);
-        $witStatus = $this->response->withStatus($status)->will([$this->response, 'reveal']);
+        $withStatus = $this->response->withStatus($status)->will([$this->response, 'reveal']);
         $this->response->withHeader('Content-Type', 'application/problem+json')->will([$this->response, 'reveal']);
 
         $factory = new ProblemDetailsResponseFactory(
@@ -525,6 +525,6 @@ class ProblemDetailsResponseFactoryTest extends TestCase
         $factory->createResponse($this->request->reveal(), $status, 'detail');
 
         $writeStream->shouldHaveBeenCalled();
-        $witStatus->shouldHaveBeenCalled();
+        $withStatus->shouldHaveBeenCalled();
     }
 }
