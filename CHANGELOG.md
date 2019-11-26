@@ -8,7 +8,8 @@ Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
 ### Added
 
-- Nothing.
+- [#51](https://github.com/zendframework/zend-problem-details/pull/51) adds new `problem-details.default_types_map`
+  config option, that can be used to define custom `type` values based on status codes.
 
 ### Changed
 
