@@ -479,15 +479,15 @@ class ProblemDetailsResponseFactoryTest extends TestCase
 
     public function provideMappedStatuses() : array
     {
-        $defaultTypes = [
+        $defaultTypesMap = [
             404 => 'https://example.com/problem-details/error/not-found',
             500 => 'https://example.com/problem-details/error/internal-server-error',
         ];
 
         return [
-            [$defaultTypes, 404, 'https://example.com/problem-details/error/not-found'],
-            [$defaultTypes, 500, 'https://example.com/problem-details/error/internal-server-error'],
-            [$defaultTypes, 400, 'https://httpstatus.es/400'],
+            [$defaultTypesMap, 404, 'https://example.com/problem-details/error/not-found'],
+            [$defaultTypesMap, 500, 'https://example.com/problem-details/error/internal-server-error'],
+            [$defaultTypesMap, 400, 'https://httpstatus.es/400'],
             [[], 500, 'https://httpstatus.es/500'],
         ];
     }
@@ -495,7 +495,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
     /**
      * @dataProvider provideMappedStatuses
      */
-    public function testTypeIsInferredFromDefaultTypesMap(array $defaultTypes, int $status, string $expectedType) : void
+    public function testTypeIsInferredFromDefaultTypesMap(array $map, int $status, string $expectedType) : void
     {
         $this->request->getHeaderLine('Accept')->willReturn('application/json');
 
@@ -519,7 +519,7 @@ class ProblemDetailsResponseFactoryTest extends TestCase
             null,
             false,
             '',
-            $defaultTypes
+            $map
         );
 
         $factory->createResponse($this->request->reveal(), $status, 'detail');

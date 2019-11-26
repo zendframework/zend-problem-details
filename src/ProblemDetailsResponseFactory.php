@@ -211,7 +211,7 @@ class ProblemDetailsResponseFactory
      *
      * @var array
      */
-    private $defaultTypes;
+    private $defaultTypesMap;
 
     public function __construct(
         callable $responseFactory,
@@ -219,7 +219,7 @@ class ProblemDetailsResponseFactory
         int $jsonFlags = null,
         bool $exceptionDetailsInResponse = false,
         string $defaultDetailMessage = self::DEFAULT_DETAIL_MESSAGE,
-        array $defaultTypes = []
+        array $defaultTypesMap = []
     ) {
         // Ensures type safety of the composed factory
         $this->responseFactory = function () use ($responseFactory) : ResponseInterface {
@@ -238,7 +238,7 @@ class ProblemDetailsResponseFactory
         $this->jsonFlags = $jsonFlags;
         $this->exceptionDetailsInResponse = $exceptionDetailsInResponse;
         $this->defaultDetailMessage = $defaultDetailMessage;
-        $this->defaultTypes = $defaultTypes;
+        $this->defaultTypesMap = $defaultTypesMap;
     }
 
     public function createResponse(
@@ -403,7 +403,7 @@ class ProblemDetailsResponseFactory
 
     private function createTypeFromStatus(int $status) : string
     {
-        return $this->defaultTypes[$status] ?? sprintf('https://httpstatus.es/%s', $status);
+        return $this->defaultTypesMap[$status] ?? sprintf('https://httpstatus.es/%s', $status);
     }
 
     private function createThrowableDetail(Throwable $e) : array

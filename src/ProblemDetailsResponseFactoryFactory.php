@@ -21,7 +21,7 @@ class ProblemDetailsResponseFactoryFactory
 
         $problemDetailsConfig = $config['problem-details'] ?? [];
         $jsonFlags = $problemDetailsConfig['json_flags'] ?? null;
-        $defaultTypes = $problemDetailsConfig['default_types'] ?? [];
+        $defaultTypesMap = $problemDetailsConfig['default_types_map'] ?? [];
 
         return new ProblemDetailsResponseFactory(
             $container->get(ResponseInterface::class),
@@ -29,7 +29,7 @@ class ProblemDetailsResponseFactoryFactory
             $jsonFlags,
             $includeThrowableDetail,
             ProblemDetailsResponseFactory::DEFAULT_DETAIL_MESSAGE,
-            $defaultTypes
+            $defaultTypesMap
         );
     }
 }

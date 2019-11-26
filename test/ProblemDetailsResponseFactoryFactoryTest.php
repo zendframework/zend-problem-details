@@ -147,7 +147,9 @@ class ProblemDetailsResponseFactoryFactoryTest extends TestCase
         ];
 
         $this->container->has('config')->willReturn(true);
-        $this->container->get('config')->willReturn(['problem-details' => ['default_types' => $expectedDefaultTypes]]);
+        $this->container->get('config')->willReturn(
+            ['problem-details' => ['default_types_map' => $expectedDefaultTypes]]
+        );
 
         $this->container->get(ResponseInterface::class)->willReturn(function () {
         });
@@ -156,6 +158,6 @@ class ProblemDetailsResponseFactoryFactoryTest extends TestCase
         $factory = $factoryFactory($this->container->reveal());
 
         $this->assertInstanceOf(ProblemDetailsResponseFactory::class, $factory);
-        $this->assertAttributeSame($expectedDefaultTypes, 'defaultTypes', $factory);
+        $this->assertAttributeSame($expectedDefaultTypes, 'defaultTypesMap', $factory);
     }
 }
