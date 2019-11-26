@@ -146,6 +146,10 @@ This package also provides a factory for generating the
     - If the service contains a `problem-details` key with an array value
       containing a `json_flags` key, and that value is an integer, that value is
       provided as the `$jsonFlags` parameter.
+    - If the service contains a `problem-details` key with an array value
+      containing a `default_types_map` key, and that value is an array, that value is
+      provided as the `$defaultTypesMap` parameter.
+      > More information about defining [default types](default-types.md).
 
 If any of the above config values are not present, a `null` value will be
 passed, allowing the default value to be used.
