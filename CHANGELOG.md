@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file, in reverse 
 
 Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
+## 1.1.1 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 1.1.0 - 2019-12-30
 
 ### Added
