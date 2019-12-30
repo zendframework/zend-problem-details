@@ -9,6 +9,7 @@ pages:
         - "Exceptions": exception.md
         - "Error Handling Middleware": middleware.md
         - "Not Found Handler": not-found-handler.md
+        - "Default Types": default-types.md
 site_name: zend-problem-details
 site_description: 'PSR-7 Problem Details for HTTP API responses and middleware'
 repo_url: 'https://github.com/zendframework/zend-problem-details'
