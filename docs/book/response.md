@@ -150,7 +150,7 @@ This package also provides a factory for generating the
       containing a `default_types_map` key, and that value is an array, that
       value is provided as the `$defaultTypesMap` parameter; see the
       [default types documentation](default-types.md) for details on defining
-      this map.
+      this map. (Since 1.1.0.)
 
 If any of the above config values are not present, a `null` value will be
 passed, allowing the default value to be used.
