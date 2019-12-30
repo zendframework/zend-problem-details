@@ -137,6 +137,12 @@
     </li>
 
                                     
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../default-types/" class="subnavigation__link">Default Types</a>
+    </li>
+
+                                    
                                 </ul>
                             </li>
                         
@@ -295,14 +301,14 @@ generation of problem details for exceptions and PHP errors.</p>
 <p>As an example, using Expressive, you could compose it as an error handler within
 your application pipeline, having it handle <em>all</em> errors and exceptions from
 your application:</p>
-<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe(ProblemDetailsMiddleware::class);</code></pre></p>
+<pre class=codehilite><code class=language-php>$app-&gt;pipe(ProblemDetailsMiddleware::class);</code></pre>
 <p>Or for a subpath of your application:</p>
-<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe('/api', ProblemDetailsMiddleware::class);</code></pre></p>
+<pre class=codehilite><code class=language-php>$app-&gt;pipe('/api', ProblemDetailsMiddleware::class);</code></pre>
 <p>Alternately, you could pipe it within a routed-middleware pipeline:</p>
-<p> <pre class=codehilite><code class=language-php>$app-&gt;get('/api/books', [
+<pre class=codehilite><code class=language-php>$app-&gt;get('/api/books', [
     ProblemDetailsMiddleware::class,
     BooksList::class,
-], 'books');</code></pre></p>
+], 'books');</code></pre>
 <p>This latter approach ensures that you are only providing problem details for
 specific API endpoints, which can be useful when you have a mix of APIs and
 traditional web content in your application.</p>
@@ -324,7 +330,7 @@ triggers them with the following arguments, in the following order:</p>
 a way that that state will propagate meaningfully. As such, you should use
 listeners for reporting purposes only (e.g., logging).</p>
 <p>As an example:</p>
-<p> <pre class=codehilite><code class=language-php>// Where $logger is a PSR-3 logger implementation
+<pre class=codehilite><code class=language-php>// Where $logger is a PSR-3 logger implementation
 $listener = function (
     Throwable $error,
     ServerRequestInterface $request,
@@ -336,10 +342,10 @@ $listener = function (
         'uri'     =&gt; (string) $request-&gt;getUri(),
         'message' =&gt; $error-&gt;getMessage(),
     ]);
-};</code></pre></p>
+};</code></pre>
 <p>Attach listeners to the <code>ProblemDetailsMiddleware</code> instance using its
 <code>attachListener()</code> method:</p>
-<p> <pre class=codehilite><code class=language-php>$middleware-&gt;attachListener($listener);</code></pre></p>
+<pre class=codehilite><code class=language-php>$middleware-&gt;attachListener($listener);</code></pre>
 <h2 id="factory">Factory</h2>
 <p>The <code>ProblemDetailsMiddleware</code> ships with a corresponding PSR-11 compatible factory,
 <code>ProblemDetailsMiddlewareFactory</code>. This factory uses the service named
@@ -356,7 +362,7 @@ plugin in place (it's shipped by default with the Expressive skeleton).</p>
 <a href="https://docs.zendframework.com/zend-expressive/features/container/delegator-factories/">delegator factory</a>
 on the <code>Zend\ProblemDetails\ProblemDetailsMiddleware</code> service.</p>
 <p>As an example:</p>
-<p> <pre class=codehilite><code class=language-php>class LoggerProblemDetailsListenerDelegator
+<pre class=codehilite><code class=language-php>class LoggerProblemDetailsListenerDelegator
 {
     public function __construct(ContainerInterface $container, $serviceName, callable $callback)
     {
@@ -364,13 +370,13 @@ on the <code>Zend\ProblemDetails\ProblemDetailsMiddleware</code> service.</p>
         $middleware-&gt;attachListener($container-&gt;get(LoggerProblemDetailsListener::class));
         return $middleware;
     }
-}</code></pre></p>
+}</code></pre>
 <p>You would then register this as a delegator factory in your configuration:</p>
-<p> <pre class=codehilite><code class=language-php>'delegators' =&gt; [
+<pre class=codehilite><code class=language-php>'delegators' =&gt; [
     ProblemDetailsMiddleware::class =&gt; [
         LoggerProblemDetailsListenerDelegator::class,
     ],
-],</code></pre></p>
+],</code></pre>
 
 
 
@@ -493,6 +499,12 @@ on the <code>Zend\ProblemDetails\ProblemDetailsMiddleware</code> service.</p>
                                         
     <li class="subnavigation__list-item ">
         <a href="../not-found-handler/" class="subnavigation__link">Not Found Handler</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../default-types/" class="subnavigation__link">Default Types</a>
     </li>
 
                                     

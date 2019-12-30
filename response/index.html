@@ -137,6 +137,12 @@
     </li>
 
                                     
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../default-types/" class="subnavigation__link">Default Types</a>
+    </li>
+
+                                    
                                 </ul>
                             </li>
                         
@@ -288,7 +294,7 @@ producing an mepty PSR-7 <code>ResponseInterface</code>. This may be an PHP call
 <code>ServerRequestInterface</code> instance as its first argument, and then additional
 arguments in order to create the response itself:</p>
 <p>For <code>createResponse()</code>, the signature is:</p>
-<p> <pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+<pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 public function createResponse(
@@ -298,7 +304,7 @@ public function createResponse(
     string $title = '',
     string $type = '',
     array $additional = []
-) : ResponseInterface {</code></pre></p>
+) : ResponseInterface {</code></pre>
 <p>where:</p>
 <ul>
 <li><code>ServerRequestInterface $request</code> is the current request.</li>
@@ -314,13 +320,13 @@ public function createResponse(
   transaction data, etc.</li>
 </ul>
 <p>The signature of <code>createResponseFromThrowable()</code> is:</p>
-<p> <pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+<pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 public function createResponseFromThrowable(
     ServerRequestInterface $request,
     Throwable $e
-) : ResponseInterface {</code></pre></p>
+) : ResponseInterface {</code></pre>
 <p>where:</p>
 <ul>
 <li><code>ServerRequestInterface $request</code> is the current request.</li>
@@ -338,7 +344,7 @@ not include exception details (file, line number, backtrace, etc.), and JSON
 responses will use a set of flags for generating human-readable JSON. If these
 defaults work for your needs, you can instantiate the factory directly in your
 code in order to generate a response:</p>
-<p> <pre class=codehilite><code class=language-php>// From scalar data:
+<pre class=codehilite><code class=language-php>// From scalar data:
 $response = (new ProblemDetailsResponseFactory())-&gt;createResponse(
     $request,
     400,
@@ -347,12 +353,12 @@ $response = (new ProblemDetailsResponseFactory())-&gt;createResponse(
 
 // From a throwable:
 $response = (new ProblemDetailsResponseFactory())
-    -&gt;createResponseFromThrowable($request, $e);</code></pre></p>
+    -&gt;createResponseFromThrowable($request, $e);</code></pre>
 <p>More often, you will want to customize behavior of the factory; for instance,
 you may want it to act differently in development than in production, or provide
 an alternate PSR-7 implementation. As such, the constructor has the following
 signature:</p>
-<p> <pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+<pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
 
 public function __construct(
     callable $responseFactory,
@@ -360,7 +366,7 @@ public function __construct(
     int $jsonFlags = null,
     bool $exceptionDetailsInResponse = false,
     string $defaultDetailMessage = self::DEFAULT_DETAIL_MESSAGE
-) {</code></pre></p>
+) {</code></pre>
 <p>where:</p>
 <ul>
 <li><code>callable $responseFactory</code> is a PHP callable that can produce a PSR-7
@@ -400,6 +406,11 @@ public function __construct(
 <li>If the service contains a <code>problem-details</code> key with an array value
   containing a <code>json_flags</code> key, and that value is an integer, that value is
   provided as the <code>$jsonFlags</code> parameter.</li>
+<li>If the service contains a <code>problem-details</code> key with an array value
+  containing a <code>default_types_map</code> key, and that value is an array, that
+  value is provided as the <code>$defaultTypesMap</code> parameter; see the
+  <a href="../default-types/">default types documentation</a> for details on defining
+  this map. (Since 1.1.0.)</li>
 </ul>
 </li>
 </ul>
@@ -420,7 +431,7 @@ the zend-expressive package itself.</p>
 <h2 id="examples">Examples</h2>
 <h3>Returning a Problem Details response</h3>
 <p>Let's say you have middleware that needs to return problem details:</p>
-<p> <pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+<pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -447,7 +458,7 @@ class ApiMiddleware implements MiddlewareInterface
             ['login' =&gt; '/login']
         );
     }
-}</code></pre></p>
+}</code></pre>
 <p>The above will return a JSON response if the <code>Accept</code> request header matches
 <code>application/json</code> or any <code>application/*+json</code> mediatype. Any other mediatype
 will generate an XML response.</p>
@@ -455,7 +466,7 @@ will generate an XML response.</p>
 <p>Let's say you have middleware that invokes functionality from a service it
 composes, and that service could raise an exception or other <code>Throwable</code>. For
 this, you can use the <code>createResponseFromThrowable()</code> method instead.</p>
-<p> <pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+<pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -480,7 +491,7 @@ class ApiMiddleware implements MiddlewareInterface
                 -&gt;createResponseFromThrowable($request, $e);
         }
     }
-}</code></pre></p>
+}</code></pre>
 <p>As with the previous example, the above will return a JSON response if the
 <code>Accept</code> request header matches <code>application/json</code> or any <code>application/*+json</code>
 mediatype. Any other mediatype will generate an XML response.</p>
@@ -497,7 +508,7 @@ wish to provide the <code>type</code>, <code>title</code>, and/or <code>status</
 problem details. For those, we suggest creating extensions to
 <code>ProblemDetailsResponseFactory</code>. To use the example from the introduction, we
 could have a <code>RateLimitResponse</code> generated as follows:</p>
-<p> <pre class=codehilite><code class=language-php>use Psr\Http\Message\ServerRequestInterface;
+<pre class=codehilite><code class=language-php>use Psr\Http\Message\ServerRequestInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class RateLimitResponseFactory extends ProblemDetailsResponseFactory
@@ -525,15 +536,15 @@ class RateLimitResponseFactory extends ProblemDetailsResponseFactory
             ]
         );
     }
-}</code></pre></p>
+}</code></pre>
 <p>You would then compose this alternate factory in your middleware, and invoke it
 as follows:</p>
-<p> <pre class=codehilite><code class=language-php>$this-&gt;rateLimitResponseFactory-&gt;create(
+<pre class=codehilite><code class=language-php>$this-&gt;rateLimitResponseFactory-&gt;create(
     $request,
     $tries,
     $rateLimit,
     $expires
-);</code></pre></p>
+);</code></pre>
 
 
 
@@ -656,6 +667,12 @@ as follows:</p>
                                         
     <li class="subnavigation__list-item ">
         <a href="../not-found-handler/" class="subnavigation__link">Not Found Handler</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../default-types/" class="subnavigation__link">Default Types</a>
     </li>
 
                                     

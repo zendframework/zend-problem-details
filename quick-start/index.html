@@ -137,6 +137,12 @@
     </li>
 
                                     
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../default-types/" class="subnavigation__link">Default Types</a>
+    </li>
+
+                                    
                                 </ul>
                             </li>
                         
@@ -266,7 +272,7 @@
 <h2 id="installation">Installation</h2>
 <p>To install this package in your application, use
 <a href="https://getcomposer.org">Composer</a>:</p>
-<p> <pre class=codehilite><code class=language-bash>$ composer require zendframework/zend-problem-details</code></pre></p>
+<pre class=codehilite><code class=language-bash>$ composer require zendframework/zend-problem-details</code></pre>
 <h2 id="usage">Usage</h2>
 <p>This package provides three primary mechanisms for creating and returning
 Problem Details responses:</p>
@@ -288,7 +294,7 @@ composes the <code>Zend\ProblemDetails\ProblemDetailsResponseFactory</code> imme
 inject that service in your middleware.</p>
 <p>As an example, the following catches domain exceptions and uses them to create
 problem details responses:</p>
-<p> <pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+<pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -319,9 +325,9 @@ class DomainTransactionMiddleware implements MiddlewareInterface
             return $this-&gt;problemDetailsFactory-&gt;createResponseFromThrowable($request, $e);
         }
     }
-}</code></pre></p>
+}</code></pre>
 <p>The factory for the above might look like:</p>
-<p> <pre class=codehilite><code class=language-php>use Psr\Container\ContainerInterface;
+<pre class=codehilite><code class=language-php>use Psr\Container\ContainerInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class DomainTransactionMiddlewareFactory
@@ -333,11 +339,11 @@ class DomainTransactionMiddlewareFactory
             $container-&gt;get(ProblemDetailsResponseFactory::class)
         );
     }
-}</code></pre></p>
+}</code></pre>
 <p>Another way to use the factory is to provide PHP primitives to the factory. As
 an example, validation failure is an expected condition, but should likely
 result in problem details to the end user.</p>
-<p> <pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+<pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -386,7 +392,7 @@ class DomainTransactionMiddleware implements MiddlewareInterface
             return $this-&gt;problemDetailsFactory-&gt;createResponseFromThrowable($request, $e);
         }
     }
-}</code></pre></p>
+}</code></pre>
 <p>The above modifies the original example to add validation and, on failed
 validation, return a custom response that includes the validation failure
 messages.</p>
@@ -399,7 +405,7 @@ otherwise).</p>
 <p>You can also create custom exceptions that provide details for the factory to
 consume by implementing <code>Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface</code>,
 which defines the following:</p>
-<p> <pre class=codehilite><code class=language-php>namespace Zend\ProblemDetails\Exception;
+<pre class=codehilite><code class=language-php>namespace Zend\ProblemDetails\Exception;
 
 use JsonSerializable;
 
@@ -411,11 +417,11 @@ interface ProblemDetailsExceptionInterface extends JsonSerializable
     public function getDetail() : string;
     public function getAdditionalData() : array;
     public function toArray() : array;
-}</code></pre></p>
+}</code></pre>
 <p>We also provide the trait <code>CommonProblemDetailsExceptionTrait</code>, which implements each
 of the above, the <code>jsonSerialize()</code> method, and also defines the following
 instance properties:</p>
-<p> <pre class=codehilite><code class=language-php>/**
+<pre class=codehilite><code class=language-php>/**
  * @var int
  */
 private $status;
@@ -438,9 +444,9 @@ private $type;
 /**
  * @var array
  */
-private $additional = [];</code></pre></p>
+private $additional = [];</code></pre>
 <p>By composing this trait, you can easily define custom exception types:</p>
-<p> <pre class=codehilite><code class=language-php>namespace Api;
+<pre class=codehilite><code class=language-php>namespace Api;
 
 use DomainException as PhpDomainException;
 use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
@@ -460,7 +466,7 @@ class DomainException extends PhpDomainException implements ProblemDetailsExcept
         $e-&gt;additional['transaction'] = $details;
         return $e;
     }
-}</code></pre></p>
+}</code></pre>
 <p>The data present in the generated exception will then be used by the
 <code>ProblemDetailsResponseFactory</code> to generate full Problem Details.</p>
 <h3>Error handling</h3>
@@ -484,15 +490,15 @@ a <code>ProblemDetailsResponseFactory</code>, and does the following:</p>
 ensures the <code>ProblemDetailsResponseFactory</code> is composed. As such, you can wire
 it into your workflow in several ways.</p>
 <p>First, you can have it intercept every request:</p>
-<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe(ProblemDetailsMiddleware::class);</code></pre></p>
+<pre class=codehilite><code class=language-php>$app-&gt;pipe(ProblemDetailsMiddleware::class);</code></pre>
 <p>With Expressive, you can also segregate this to a subpath:</p>
-<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe('/api', ProblemDetailsMiddleware::class);</code></pre></p>
+<pre class=codehilite><code class=language-php>$app-&gt;pipe('/api', ProblemDetailsMiddleware::class);</code></pre>
 <p>Finally, you can include it in a route-specific pipeline:</p>
-<p> <pre class=codehilite><code class=language-php>$app-&gt;post('/api/domain/transaction', [
+<pre class=codehilite><code class=language-php>$app-&gt;post('/api/domain/transaction', [
     ProblemDetailsMiddleware::class,
     BodyParamsMiddleware::class,
     DomainTransactionMiddleware::class,
-]);</code></pre></p>
+]);</code></pre>
 <h3>Not Found handling</h3>
 <p>When writing APIs you may also want 404 responses be in the accepted content-type.
 This package provides <code>ProblemDetailsNotFoundHandler</code> which will return a
@@ -500,8 +506,8 @@ problem details <code>Response</code> with a <code>404</code> status if the requ
 JSON or XML.</p>
 <p>To use this handler in Expressive add it into your pipeline immediate before the
 default <code>NotFoundHandler</code>:</p>
-<p> <pre class=codehilite><code class=language-php>$app-&gt;pipe(\Zend\ProblemDetails\ProblemDetailsNotFoundHandler::class);
-$app-&gt;pipe(NotFoundHandler::class);</code></pre></p>
+<pre class=codehilite><code class=language-php>$app-&gt;pipe(\Zend\ProblemDetails\ProblemDetailsNotFoundHandler::class);
+$app-&gt;pipe(NotFoundHandler::class);</code></pre>
 
 
 
@@ -624,6 +630,12 @@ $app-&gt;pipe(NotFoundHandler::class);</code></pre></p>
                                         
     <li class="subnavigation__list-item ">
         <a href="../not-found-handler/" class="subnavigation__link">Not Found Handler</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../default-types/" class="subnavigation__link">Default Types</a>
     </li>
 
                                     

@@ -137,6 +137,12 @@
     </li>
 
                                     
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../default-types/" class="subnavigation__link">Default Types</a>
+    </li>
+
+                                    
                                 </ul>
                             </li>
                         
@@ -261,7 +267,7 @@
 business domain that contain all the information necessary to report problem
 details.</p>
 <p>To facilitate this, we provide an interface, <code>ProblemDetailsExceptionInterface</code>:</p>
-<p> <pre class=codehilite><code class=language-php>namespace Zend\ProblemDetails\Exception;
+<pre class=codehilite><code class=language-php>namespace Zend\ProblemDetails\Exception;
 
 use JsonSerializable;
 
@@ -278,7 +284,7 @@ interface ProblemDetailsExceptionInterface extends JsonSerializable
     public function getAdditionalData() : array;
 
     public function toArray() : array;
-}</code></pre></p>
+}</code></pre>
 <p>You may create exceptions that implement this interface. When such exceptions
 are passed to <code>ProblemDetailsResponseFactory::createResponseFromThrowable()</code>,
 these will pull the relevant details in order to create a Problem Details
@@ -297,7 +303,7 @@ developer to create implementations with either constructors or named
 constructors for generating exception instances.</p>
 <p>As an example, if you wanted to create an exception type for providing
 transaction problem details, you might do so as follows:</p>
-<p> <pre class=codehilite><code class=language-php>use DomainException;
+<pre class=codehilite><code class=language-php>use DomainException;
 use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
@@ -326,18 +332,18 @@ class TransactionException extends DomainException implements ProblemDetailsExce
 
         return $e;
     }
-}</code></pre></p>
+}</code></pre>
 <p>You might then raise the exception as follows:</p>
-<p> <pre class=codehilite><code class=language-php>throw TransactionException::create($price, $balance, $accountUri);</code></pre></p>
+<pre class=codehilite><code class=language-php>throw TransactionException::create($price, $balance, $accountUri);</code></pre>
 <p>And it might result in the following:</p>
-<p> <pre class=codehilite><code class=language-json>{
+<pre class=codehilite><code class=language-json>{
     &quot;status&quot;: 403,
     &quot;type&quot;: &quot;https://example.com/problems/insufficient-funds&quot;,
     &quot;title&quot;: &quot;You have insufficient funds to complete the transaction.&quot;,
     &quot;detail&quot;: &quot;Your transaction required 5.63, but you only have 1.37 in your account&quot;,
     &quot;account&quot;: &quot;https://example.com/api/accounts/12345&quot;,
     &quot;balance&quot;: 1.37
-}</code></pre></p>
+}</code></pre>
 <p>The benefit to this approach is that you can easily provide domain-specific
 exceptions throughout your application that can, as a side-effect, be
 re-purposed immediately to provide problem details in your application.</p>
@@ -463,6 +469,12 @@ re-purposed immediately to provide problem details in your application.</p>
                                         
     <li class="subnavigation__list-item ">
         <a href="../not-found-handler/" class="subnavigation__link">Not Found Handler</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../default-types/" class="subnavigation__link">Default Types</a>
     </li>
 
                                     
