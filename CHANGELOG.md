@@ -4,33 +4,11 @@ All notable changes to this project will be documented in this file, in reverse 
 
 Versions 0.3.0 and prior were released as "weierophinney/problem-details".
 
-## 1.1.0 - TBD
+## 1.1.0 - 2019-12-30
 
 ### Added
 
 - [#51](https://github.com/zendframework/zend-problem-details/pull/51) adds a new `problem-details.default_types_map` config option, which can be used to define custom `type` values based on status codes.
-
-### Changed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 1.0.3 - TBD
-
-### Added
-
-- Nothing.
 
 ### Changed
 

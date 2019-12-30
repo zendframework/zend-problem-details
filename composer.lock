@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "da79c452dec32265cdda2c6c70e78c0d",
+    "content-hash": "d5b0b8d61dc0da52ec6eeb4a8a020c2d",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -1163,6 +1163,7 @@
                 "mock",
                 "xunit"
             ],
+            "abandoned": true,
             "time": "2018-02-15T05:27:38+00:00"
         },
         {
