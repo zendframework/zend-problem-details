@@ -2,7 +2,7 @@
 
 > ## Repository abandoned 2019-12-31
 >
-> This repository has moved to mezzio/mezzio-problem-details.
+> This repository has moved to [mezzio/mezzio-problem-details](https://github.com/mezzio/mezzio-problem-details).
 
 [![Build Status](https://secure.travis-ci.org/zendframework/zend-problem-details.svg?branch=master)](https://secure.travis-ci.org/zendframework/zend-problem-details)
 [![Coverage Status](https://coveralls.io/repos/github/zendframework/zend-problem-details/badge.svg?branch=master)](https://coveralls.io/github/zendframework/zend-problem-details?branch=master)
