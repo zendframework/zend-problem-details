@@ -7,12 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="PSR-7 Problem Details for HTTP API responses and middleware">  
-    <link rel="canonical" href="https://docs.zendframework.com/zend-problem-details/exception/">
+    <link rel="canonical" href="https://docs.zendframework.com/exception/">
     <link rel="shortcut icon" href="../img/favicon.ico">
 
     <title>Exceptions - zend-problem-details - Zend Framework Docs</title>
 
-    <link rel="stylesheet" href="../css/styles-5cfabd53ee.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body id="page-top">
 
@@ -207,9 +207,9 @@
     <div class="laminas-announcement">
     <div class="container">
         <div class="row">
-            <div class="col-xs-12">
-                Zend Framework transitions to the Linux Foundation. <a href="https://getlaminas.org">Learn More.</a>
-            </div>
+            <div class="col-xs-12"><strong>
+                This package has moved. Visit its replacement, <a href="https://docs.mezzio.dev/mezzio-problem-details/">mezzio/mezzio-problem-details.</a>
+            </strong></div>
         </div>
     </div>
 </div>
@@ -267,7 +267,7 @@
 business domain that contain all the information necessary to report problem
 details.</p>
 <p>To facilitate this, we provide an interface, <code>ProblemDetailsExceptionInterface</code>:</p>
-<pre class=codehilite><code class=language-php>namespace Zend\ProblemDetails\Exception;
+<pre><code class="language-php">namespace Zend\ProblemDetails\Exception;
 
 use JsonSerializable;
 
@@ -284,7 +284,9 @@ interface ProblemDetailsExceptionInterface extends JsonSerializable
     public function getAdditionalData() : array;
 
     public function toArray() : array;
-}</code></pre>
+}
+</code></pre>
+
 <p>You may create exceptions that implement this interface. When such exceptions
 are passed to <code>ProblemDetailsResponseFactory::createResponseFromThrowable()</code>,
 these will pull the relevant details in order to create a Problem Details
@@ -303,7 +305,7 @@ developer to create implementations with either constructors or named
 constructors for generating exception instances.</p>
 <p>As an example, if you wanted to create an exception type for providing
 transaction problem details, you might do so as follows:</p>
-<pre class=codehilite><code class=language-php>use DomainException;
+<pre><code class="language-php">use DomainException;
 use Zend\ProblemDetails\Exception\CommonProblemDetailsExceptionTrait;
 use Zend\ProblemDetails\Exception\ProblemDetailsExceptionInterface;
 
@@ -332,18 +334,24 @@ class TransactionException extends DomainException implements ProblemDetailsExce
 
         return $e;
     }
-}</code></pre>
+}
+</code></pre>
+
 <p>You might then raise the exception as follows:</p>
-<pre class=codehilite><code class=language-php>throw TransactionException::create($price, $balance, $accountUri);</code></pre>
+<pre><code class="language-php">throw TransactionException::create($price, $balance, $accountUri);
+</code></pre>
+
 <p>And it might result in the following:</p>
-<pre class=codehilite><code class=language-json>{
+<pre><code class="language-json">{
     &quot;status&quot;: 403,
     &quot;type&quot;: &quot;https://example.com/problems/insufficient-funds&quot;,
     &quot;title&quot;: &quot;You have insufficient funds to complete the transaction.&quot;,
     &quot;detail&quot;: &quot;Your transaction required 5.63, but you only have 1.37 in your account&quot;,
     &quot;account&quot;: &quot;https://example.com/api/accounts/12345&quot;,
     &quot;balance&quot;: 1.37
-}</code></pre>
+}
+</code></pre>
+
 <p>The benefit to this approach is that you can easily provide domain-specific
 exceptions throughout your application that can, as a side-effect, be
 re-purposed immediately to provide problem details in your application.</p>
@@ -520,7 +528,7 @@ re-purposed immediately to provide problem details in your application.</p>
             
             <div class="col-md-9">
                 <h4 class="footer__headline">Copyright</h4>
-                <p>&copy; 2006-2019 by <a href="https://www.zend.com/">Zend</a>, a <a href="https://www.roguewave.com/">Rogue Wave Company</a>.</p>
+                <p>&copy; 2006-2020 by <a href="https://www.zend.com/">Zend</a> by <a href="https://www.perforce.com/">Perforce</a>.</p>
             </div>
 
             
@@ -528,10 +536,10 @@ re-purposed immediately to provide problem details in your application.</p>
                 <h4 class="footer__headline">Support</h4>
                 <ul class="support__list">
                     <li class="support__list-item">
-                        <a href="https://discourse.zendframework.com" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
+                        <a href="https://discourse.laminas.dev" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
                     </li>
                     <li class="support__list-item">
-                        <a href="https://zendframework-slack.herokuapp.com" class="support__link" title="Chat"><i class="fa fa-slack"></i></a>
+                        <a href="https://laminas.dev/chat/" class="support__link" title="Chat"><i class="fa fa-slack"></i></a>
                     </li>
                     <li class="support__list-item">
                         <a href="https://github.com/zendframework" class="support__link" title="Github"><i class="fa fa-github"></i></a>
@@ -539,27 +547,28 @@ re-purposed immediately to provide problem details in your application.</p>
                     <li class="support__list-item">
                         <a href="https://twitter.com/zfdevteam" class="support__link" title="Twitter"><i class="fa fa-twitter"></i></a>
                     </li>
-                    <li class="support__list-item">
-                        <a href="https://tinyletter.com/mwopzend" class="support__link" title="Newsletter"><i class="fa fa-envelope"></i></a>
-                    </li>
-                    <li class="support__list-item">
-                        <a href="https://framework.zend.com/blog/feed-rss.xml" class="support__link" title="Blog feed"><i class="fa fa-rss"></i></a>
-                    </li>
-                    <li class="support__list-item">
-                        <a href="https://framework.zend.com/security/feed" class="support__link" title="Security feed"><i class="fa fa-rss-square"></i></a>
-                    </li>
                 </ul>
             </div>
         </div>
     </div>
 </footer>
 
+<nav class="cookie-bar navbar navbar-fixed-bottom navbar-default hidden">
+    <div class="container">
+        <p class="navbar-text">
+            We use cookies to allow you to dismiss dialogs such as the Laminas
+            Project notification.
+        </p>
+        <button type="button" class="cookie-button btn btn-default navbar-btn">Allow Cookies</button>
+    </div>
+</nav>
+
     <script>
         var base_url = '..',
             siteName = 'zend-problem-details';
     </script>
-    <script src="../js/scripts-8d7ae56abf.js"></script>
-        <script src="../search/main.js"></script>
+    <script src="/js/scripts.js"></script>
+    <script src="../search/main.js"></script>
 
     
     <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">

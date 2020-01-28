@@ -7,12 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="PSR-7 Problem Details for HTTP API responses and middleware">  
-    <link rel="canonical" href="https://docs.zendframework.com/zend-problem-details/response/">
+    <link rel="canonical" href="https://docs.zendframework.com/response/">
     <link rel="shortcut icon" href="../img/favicon.ico">
 
     <title>Generating Responses - zend-problem-details - Zend Framework Docs</title>
 
-    <link rel="stylesheet" href="../css/styles-5cfabd53ee.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body id="page-top">
 
@@ -207,9 +207,9 @@
     <div class="laminas-announcement">
     <div class="container">
         <div class="row">
-            <div class="col-xs-12">
-                Zend Framework transitions to the Linux Foundation. <a href="https://getlaminas.org">Learn More.</a>
-            </div>
+            <div class="col-xs-12"><strong>
+                This package has moved. Visit its replacement, <a href="https://docs.mezzio.dev/mezzio-problem-details/">mezzio/mezzio-problem-details.</a>
+            </strong></div>
         </div>
     </div>
 </div>
@@ -294,7 +294,7 @@ producing an mepty PSR-7 <code>ResponseInterface</code>. This may be an PHP call
 <code>ServerRequestInterface</code> instance as its first argument, and then additional
 arguments in order to create the response itself:</p>
 <p>For <code>createResponse()</code>, the signature is:</p>
-<pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+<pre><code class="language-php">use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 public function createResponse(
@@ -304,7 +304,9 @@ public function createResponse(
     string $title = '',
     string $type = '',
     array $additional = []
-) : ResponseInterface {</code></pre>
+) : ResponseInterface {
+</code></pre>
+
 <p>where:</p>
 <ul>
 <li><code>ServerRequestInterface $request</code> is the current request.</li>
@@ -320,13 +322,15 @@ public function createResponse(
   transaction data, etc.</li>
 </ul>
 <p>The signature of <code>createResponseFromThrowable()</code> is:</p>
-<pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+<pre><code class="language-php">use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 public function createResponseFromThrowable(
     ServerRequestInterface $request,
     Throwable $e
-) : ResponseInterface {</code></pre>
+) : ResponseInterface {
+</code></pre>
+
 <p>where:</p>
 <ul>
 <li><code>ServerRequestInterface $request</code> is the current request.</li>
@@ -344,7 +348,7 @@ not include exception details (file, line number, backtrace, etc.), and JSON
 responses will use a set of flags for generating human-readable JSON. If these
 defaults work for your needs, you can instantiate the factory directly in your
 code in order to generate a response:</p>
-<pre class=codehilite><code class=language-php>// From scalar data:
+<pre><code class="language-php">// From scalar data:
 $response = (new ProblemDetailsResponseFactory())-&gt;createResponse(
     $request,
     400,
@@ -353,12 +357,14 @@ $response = (new ProblemDetailsResponseFactory())-&gt;createResponse(
 
 // From a throwable:
 $response = (new ProblemDetailsResponseFactory())
-    -&gt;createResponseFromThrowable($request, $e);</code></pre>
+    -&gt;createResponseFromThrowable($request, $e);
+</code></pre>
+
 <p>More often, you will want to customize behavior of the factory; for instance,
 you may want it to act differently in development than in production, or provide
 an alternate PSR-7 implementation. As such, the constructor has the following
 signature:</p>
-<pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+<pre><code class="language-php">use Psr\Http\Message\ResponseInterface;
 
 public function __construct(
     callable $responseFactory,
@@ -366,7 +372,9 @@ public function __construct(
     int $jsonFlags = null,
     bool $exceptionDetailsInResponse = false,
     string $defaultDetailMessage = self::DEFAULT_DETAIL_MESSAGE
-) {</code></pre>
+) {
+</code></pre>
+
 <p>where:</p>
 <ul>
 <li><code>callable $responseFactory</code> is a PHP callable that can produce a PSR-7
@@ -431,7 +439,7 @@ the zend-expressive package itself.</p>
 <h2 id="examples">Examples</h2>
 <h3>Returning a Problem Details response</h3>
 <p>Let's say you have middleware that needs to return problem details:</p>
-<pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+<pre><code class="language-php">use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -458,7 +466,9 @@ class ApiMiddleware implements MiddlewareInterface
             ['login' =&gt; '/login']
         );
     }
-}</code></pre>
+}
+</code></pre>
+
 <p>The above will return a JSON response if the <code>Accept</code> request header matches
 <code>application/json</code> or any <code>application/*+json</code> mediatype. Any other mediatype
 will generate an XML response.</p>
@@ -466,7 +476,7 @@ will generate an XML response.</p>
 <p>Let's say you have middleware that invokes functionality from a service it
 composes, and that service could raise an exception or other <code>Throwable</code>. For
 this, you can use the <code>createResponseFromThrowable()</code> method instead.</p>
-<pre class=codehilite><code class=language-php>use Psr\Http\Message\ResponseInterface;
+<pre><code class="language-php">use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -491,7 +501,9 @@ class ApiMiddleware implements MiddlewareInterface
                 -&gt;createResponseFromThrowable($request, $e);
         }
     }
-}</code></pre>
+}
+</code></pre>
+
 <p>As with the previous example, the above will return a JSON response if the
 <code>Accept</code> request header matches <code>application/json</code> or any <code>application/*+json</code>
 mediatype. Any other mediatype will generate an XML response.</p>
@@ -508,7 +520,7 @@ wish to provide the <code>type</code>, <code>title</code>, and/or <code>status</
 problem details. For those, we suggest creating extensions to
 <code>ProblemDetailsResponseFactory</code>. To use the example from the introduction, we
 could have a <code>RateLimitResponse</code> generated as follows:</p>
-<pre class=codehilite><code class=language-php>use Psr\Http\Message\ServerRequestInterface;
+<pre><code class="language-php">use Psr\Http\Message\ServerRequestInterface;
 use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 class RateLimitResponseFactory extends ProblemDetailsResponseFactory
@@ -536,15 +548,18 @@ class RateLimitResponseFactory extends ProblemDetailsResponseFactory
             ]
         );
     }
-}</code></pre>
+}
+</code></pre>
+
 <p>You would then compose this alternate factory in your middleware, and invoke it
 as follows:</p>
-<pre class=codehilite><code class=language-php>$this-&gt;rateLimitResponseFactory-&gt;create(
+<pre><code class="language-php">$this-&gt;rateLimitResponseFactory-&gt;create(
     $request,
     $tries,
     $rateLimit,
     $expires
-);</code></pre>
+);
+</code></pre>
 
 
 
@@ -718,7 +733,7 @@ as follows:</p>
             
             <div class="col-md-9">
                 <h4 class="footer__headline">Copyright</h4>
-                <p>&copy; 2006-2019 by <a href="https://www.zend.com/">Zend</a>, a <a href="https://www.roguewave.com/">Rogue Wave Company</a>.</p>
+                <p>&copy; 2006-2020 by <a href="https://www.zend.com/">Zend</a> by <a href="https://www.perforce.com/">Perforce</a>.</p>
             </div>
 
             
@@ -726,10 +741,10 @@ as follows:</p>
                 <h4 class="footer__headline">Support</h4>
                 <ul class="support__list">
                     <li class="support__list-item">
-                        <a href="https://discourse.zendframework.com" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
+                        <a href="https://discourse.laminas.dev" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
                     </li>
                     <li class="support__list-item">
-                        <a href="https://zendframework-slack.herokuapp.com" class="support__link" title="Chat"><i class="fa fa-slack"></i></a>
+                        <a href="https://laminas.dev/chat/" class="support__link" title="Chat"><i class="fa fa-slack"></i></a>
                     </li>
                     <li class="support__list-item">
                         <a href="https://github.com/zendframework" class="support__link" title="Github"><i class="fa fa-github"></i></a>
@@ -737,27 +752,28 @@ as follows:</p>
                     <li class="support__list-item">
                         <a href="https://twitter.com/zfdevteam" class="support__link" title="Twitter"><i class="fa fa-twitter"></i></a>
                     </li>
-                    <li class="support__list-item">
-                        <a href="https://tinyletter.com/mwopzend" class="support__link" title="Newsletter"><i class="fa fa-envelope"></i></a>
-                    </li>
-                    <li class="support__list-item">
-                        <a href="https://framework.zend.com/blog/feed-rss.xml" class="support__link" title="Blog feed"><i class="fa fa-rss"></i></a>
-                    </li>
-                    <li class="support__list-item">
-                        <a href="https://framework.zend.com/security/feed" class="support__link" title="Security feed"><i class="fa fa-rss-square"></i></a>
-                    </li>
                 </ul>
             </div>
         </div>
     </div>
 </footer>
 
+<nav class="cookie-bar navbar navbar-fixed-bottom navbar-default hidden">
+    <div class="container">
+        <p class="navbar-text">
+            We use cookies to allow you to dismiss dialogs such as the Laminas
+            Project notification.
+        </p>
+        <button type="button" class="cookie-button btn btn-default navbar-btn">Allow Cookies</button>
+    </div>
+</nav>
+
     <script>
         var base_url = '..',
             siteName = 'zend-problem-details';
     </script>
-    <script src="../js/scripts-8d7ae56abf.js"></script>
-        <script src="../search/main.js"></script>
+    <script src="/js/scripts.js"></script>
+    <script src="../search/main.js"></script>
 
     
     <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">

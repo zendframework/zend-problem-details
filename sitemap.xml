@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-     <loc>https://docs.zendframework.com/zend-problem-details/</loc>
-     <lastmod>2019-12-30</lastmod>
+     <loc>https://docs.zendframework.com/</loc>
+     <lastmod>2020-01-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-problem-details/intro/</loc>
-     <lastmod>2019-12-30</lastmod>
+     <loc>https://docs.zendframework.com/intro/</loc>
+     <lastmod>2020-01-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-problem-details/quick-start/</loc>
-     <lastmod>2019-12-30</lastmod>
+     <loc>https://docs.zendframework.com/quick-start/</loc>
+     <lastmod>2020-01-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-problem-details/response/</loc>
-     <lastmod>2019-12-30</lastmod>
+     <loc>https://docs.zendframework.com/response/</loc>
+     <lastmod>2020-01-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-problem-details/exception/</loc>
-     <lastmod>2019-12-30</lastmod>
+     <loc>https://docs.zendframework.com/exception/</loc>
+     <lastmod>2020-01-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-problem-details/middleware/</loc>
-     <lastmod>2019-12-30</lastmod>
+     <loc>https://docs.zendframework.com/middleware/</loc>
+     <lastmod>2020-01-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-problem-details/not-found-handler/</loc>
-     <lastmod>2019-12-30</lastmod>
+     <loc>https://docs.zendframework.com/not-found-handler/</loc>
+     <lastmod>2020-01-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://docs.zendframework.com/zend-problem-details/default-types/</loc>
-     <lastmod>2019-12-30</lastmod>
+     <loc>https://docs.zendframework.com/default-types/</loc>
+     <lastmod>2020-01-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>
